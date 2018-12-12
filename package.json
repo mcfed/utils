@@ -4,7 +4,7 @@
   "description": "@mcf for utils",
   "module": "esm/mcf-utils.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --watchAll",
     "dev": "rollup -c --watch",
     "build": "rollup -c"
   },
