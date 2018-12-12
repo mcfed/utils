@@ -1,0 +1,28 @@
+stages:
+    - test
+    - compile
+
+cache:
+  key: ${CI_BUILD_REF_NAME}
+  paths:
+    - node_modules/
+    - dist/
+
+before_script:
+    - npm install --save-dev
+
+test_job:
+    stage: test
+    script:
+      - npm run test
+    tags:
+      - master
+      - dev
+
+build_job:
+    stage: compile
+    script:
+      - npm run build
+    tags:
+      - master
+      - dev
