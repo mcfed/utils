@@ -3,7 +3,7 @@
  * @Email:  jaxchow@gmail.com
  * @Last modified time: 2018-03-13T11:45:29+08:00
  */
-import fetch from 'isomorphic-fetch'
+import 'isomorphic-fetch'
 import { stringify } from 'qs'
 import Moment from 'moment'
 
@@ -62,16 +62,17 @@ export function fetchRequest(url, options) {
     }
   }).then(res => {
     //修正后台不返回或返回不是JSON时，为空处理
-    if (res.headers.get('content-type') === 'application/json; charset=utf-8') {
+    // console.log(res.headers.get('content-type'))
+    // if (res.headers.get('content-type') === 'application/json; charset=utf-8') {
       return res.json()
-    } else {
-      return res
-    }
+    // } else {
+      // return res
+    // }
   }).then(results=>{
     if(results.code===0){
       return results.data
     }else{
-      alert(results.code)
+      return results.code
     }
   })
 
