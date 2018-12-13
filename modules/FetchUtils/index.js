@@ -101,3 +101,19 @@ export function fetchPost(url, options) {
     method: 'Post'
   }, options))
 }
+
+export function fetchDownload(url){
+  fetchRequest(url, Object.assign({
+    method: 'GET',
+    responseType:'arraybuffer',
+    headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'},
+  })).then(res => {
+    var blob = new Blob([res.data]);
+    var a = document.createElement('a');
+    var url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = decodeURI(filename);
+    a.click();
+    window.URL.revokeObjectURL(url);
+  })
+}
