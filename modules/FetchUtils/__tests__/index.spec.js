@@ -43,4 +43,12 @@ describe('FetchUtils使用', () => {
      })
   })
 
+  it.skip('fetchDownload 正常下载',(done)=>{
+    done()
+  })
+
+  it.skip('fetchDownload 异常下载',(done)=>{
+    done()
+  })
+
 })
