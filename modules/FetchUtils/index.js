@@ -4,8 +4,7 @@
  * @Last modified time: 2018-03-13T11:45:29+08:00
  */
 import 'isomorphic-fetch'
-import { stringify } from 'qs'
-import Moment from 'moment'
+import {stringify} from 'qs'
 
 function processMoment2DateStr(object){
     for(var key in object){
@@ -15,9 +14,6 @@ function processMoment2DateStr(object){
         }else{
           object[key]=undefined
         }
-      }
-      if(object[key] instanceof Moment ){
-          object[key]=object[key].format("YYYY-MM-DD")
       }
     }
     return object

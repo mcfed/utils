@@ -1,7 +1,9 @@
 import babel from "rollup-plugin-babel"
 import replace from "rollup-plugin-replace"
 import commonjs from "rollup-plugin-commonjs"
+import json from 'rollup-plugin-json'
 import nodeResolve from "rollup-plugin-node-resolve"
+import localResolve from 'rollup-plugin-local-resolve'
 import { sizeSnapshot } from "rollup-plugin-size-snapshot"
 
 import pkg from "./package.json"
@@ -11,7 +13,8 @@ const input = "./modules/index"
 
 const globals = {
   react: "React",
-  "prop-types":"PropTypes"
+  "prop-types":"PropTypes",
+  "qs":"qs"
 };
 const babelOptionsCJS = {
   exclude: /node_modules/
@@ -30,16 +33,22 @@ export default [{
   input,
   output: { file: `esm/${pkg.name}.js`, format: "esm" },
   external:Object.keys(globals),
-  plugins: [nodeResolve(),babel(babelOptionsESM), sizeSnapshot()]
+  plugins: [
+    localResolve(),
+    nodeResolve(),
+    json(),
+    babel(babelOptionsESM),
+  ]
 },{
    input,
    output: { file: `umd/${pkg.name}.js`, format: "umd", name, globals },
    external: Object.keys(globals),
    plugins: [
+     localResolve(),
      nodeResolve(),
+     json(),
      babel(babelOptionsESM),
      commonjs(commonjsOptions),
-     replace({ "process.env.NODE_ENV": JSON.stringify("development") }),
-     sizeSnapshot()
+     replace({ "process.env.NODE_ENV": JSON.stringify("production") }),
    ]
 }]
