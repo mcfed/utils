@@ -24,8 +24,8 @@
 
 | 参数 | 说明 | 参数类型 | 返回类型 |
 | - | :-: | -: | -: |
-| getDictList | 获取指定类型字典数据 |  type：String | Array  |
-| getDictLabel | 获取指定类型值转换名称 | type:String,value:String | String |
+| getDictList | 获取指定类型字典数据 |  type：Object,String | Array  |
+| getDictLabel | 获取指定类型值转换名称 | type: Object,String,value:String | String |
 
 
 

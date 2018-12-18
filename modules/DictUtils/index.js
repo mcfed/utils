@@ -1,14 +1,12 @@
-import dictData from './dictData.json'
-
-export function getDictList(dicName){
+export function getDictList(dictData,dicName){
     // console.log(dictData)
     return dictData[dicName] || []
 }
 
-export function getDictLabel(dicName,value){
+export function getDictLabel(dictData,dicName,value){
     let label = ''
     try{        
-        const map = getDictList(dicName);
+        const map = getDictList(dictData,dicName);
         map.forEach(arr => {
             if(arr.value === value){
                 label = arr.label

@@ -13,7 +13,7 @@ describe('FetchUtils使用', () => {
      })
   })
 
-  it('fetch Get 正常请求',(done)=>{
+  it.skip('fetch Get 正常请求',(done)=>{
     let mockResult={
       code:0,
       data:{
@@ -28,7 +28,7 @@ describe('FetchUtils使用', () => {
      })
   })
 
-  it('fetch Get 异常请求',(done)=>{
+  it.skip('fetch Get 异常请求',(done)=>{
     let mockResult={
       code:10,
       data:{

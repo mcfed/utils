@@ -1,3 +1,4 @@
+import dictData from '../dictData.json'
 import {getDictList,getDictLabel} from '../index'
 
 describe('DictUtils',() => {
@@ -10,28 +11,28 @@ describe('DictUtils',() => {
             {"value":"4","label":"高"},
             {"value":"5","label":"极高"}
         ]
-        const result = getDictList('riskLevel')
+        const result = getDictList(dictData,'riskLevel')
         expect(result).toEqual(demoObj)
         done()
     })
 
     it('getDictList 异常获取',(done) =>{ 
         const demoObj = []
-        const result = getDictList('noEqual')
+        const result = getDictList(dictData,'noEqual')
         expect(result).toEqual(demoObj) 
         done()
     })
 
     it('getDictLabel 正常获取',(done) =>{
         const demoObj = '极低'
-        const result = getDictLabel('riskLevel','1')
+        const result = getDictLabel(dictData,'riskLevel','1')
         expect(result).toEqual(demoObj)
         done() 
     })
 
     it('getDictLabel 异常获取',(done) =>{ 
         const demoObj = ''
-        const result = getDictLabel('riskLevel','-1')
+        const result = getDictLabel(dictData,'riskLevel','-1')
         expect(result).toEqual(demoObj)
         done()
     })
