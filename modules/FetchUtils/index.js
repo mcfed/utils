@@ -55,10 +55,10 @@ const defaults = {
 }
 
 export function toData(json){
-  if(results.code===0){
-      return results.data
+  if(json.code===0){
+      return json.data
     }else{
-      return results
+      return json 
     }
 }
 
