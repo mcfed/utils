@@ -3,8 +3,22 @@
  * @Email:  jaxchow@gmail.com
  * @Last modified time: 2018-03-13T11:45:29+08:00
  */
-import 'isomorphic-fetch'
 import {stringify} from 'qs'
+
+function stringifyURL(str, options) {
+  if (!str) {
+    return str;
+  }
+
+  return str.replace(/:(\w+)/gi, function (match, p1) {
+    var replacement = options[p1];
+    if (!replacement) {
+      throw new Error('Could not find url parameter ' + p1 + ' in passed options object');
+    }
+
+    return replacement;
+  });
+}
 
 function processMoment2DateStr(object){
     for(var key in object){
@@ -28,7 +42,7 @@ function processParams(object){
     pageSize,
     ...other
   }
-  return processMoment2DateStr(body)
+  return body
 }
 const defaults = {
   credentials: 'include',
@@ -40,48 +54,48 @@ const defaults = {
   // }
 }
 
-export function fetchRequest(url, options) {
-  return fetch(url, Object.assign({}, defaults, options)).then(res => {
-
-    if (res.status === 403) {
-      //global.invokeMethod('RefreshMainPage')
+export function toData(json){
+  if(results.code===0){
+      return results.data
+    }else{
+      return results
     }
-    // yield put({type:"FETCH_SUCCESS",payload:{url,fetching:false}});
+}
+
+export function fetchCatch(error){
+    return error
+}
+
+export function fetchRequest(url, options) {
+  console.log("url:",url)
+  return fetch(url, Object.assign({}, defaults, options)).then(res => {
     if (res.ok === true) {
       return res
     } else {
       var err = new Error(res.statusText)
       err.response = res
-      // yield put({type:"FETCH_FAILD",payload:{url,fetching:false}});
-      //message.error(err.response.url+"|"+err.response.statusText+"|"+err.response.status,5,null,true)
       throw err
     }
   }).then(res => {
-    //修正后台不返回或返回不是JSON时，为空处理
-    // console.log(res.headers.get('content-type'))
-    // if (res.headers.get('content-type') === 'application/json; charset=utf-8') {
-      return res.json()
-    // } else {
-      // return res
-    // }
-  }).then(results=>{
-    if(results.code===0){
-      return results.data
-    }else{
-      return results.code
-    }
+    return res.json()
   })
+}
 
+export function processBody(options,format){
+  if (options && typeof (options.body) === 'object') {
+    options.body = processParams(options.body)
+  }
+  return options
+}
+
+export function fetchList(url,options){
+  return fetchGet(url,options)
 }
 
 export function fetchGet(url, options) {
-
-  if (options && typeof (options.body) === 'object') {
-    options.body = stringify(processParams(options.body))
-  }
-
+  options=processBody(options)
   if (options && options.body && options.body !== "") {
-    url = [url, options.body].join("?")
+    url = [stringifyURL(url,options.body),stringify(options.body)].join("?")
   }
   options && delete options.body
   return fetchRequest(url, Object.assign({
@@ -90,17 +104,30 @@ export function fetchGet(url, options) {
 }
 
 export function fetchPost(url, options) {
-  if (options && typeof (options.body) === 'object') {
-    options.body = JSON.stringify(processParams(options.body))
-  }
-  return fetchRequest(url, Object.assign({
-    method: 'Post'
+
+  options=processBody(options)
+  return fetchRequest(stringifyURL(url,options.body), Object.assign({
+    method: 'POST'
   }, options))
 }
 
-export function fetchDownload(url){
-  fetchRequest(url, Object.assign({
-    method: 'GET',
+export function fetchPut(url,options){
+  return fetchPost(url,
+    Object.assign(options,{
+      method:'PUT'
+    })
+  )
+}
+
+export function fetchUpload(url,options){
+
+  return fetchPost(url,Object.assign(options,{
+    // headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'}
+  }))
+}
+
+export function fetchDownload(url,options){
+  return fetchGet(url, Object.assign(options,{
     responseType:'arraybuffer',
     headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'},
   })).then(res => {

@@ -38,17 +38,18 @@ export default [{
     nodeResolve(),
     json(),
     babel(babelOptionsESM),
+    sizeSnapshot()
   ]
 },{
    input,
-   output: { file: `umd/${pkg.name}.js`, format: "umd", name, globals },
+   output: { file: `umd/${pkg.name}.js`, format: "umd", name },
    external: Object.keys(globals),
    plugins: [
      localResolve(),
      nodeResolve(),
-     json(),
      babel(babelOptionsESM),
      commonjs(commonjsOptions),
      replace({ "process.env.NODE_ENV": JSON.stringify("production") }),
+     sizeSnapshot()
    ]
 }]

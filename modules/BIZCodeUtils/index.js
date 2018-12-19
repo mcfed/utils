@@ -1,12 +1,11 @@
 
-import codeData from './codeData.json'
-export function getBIZLabel(value){
+export function getBIZLabel(codeData,value){
     let label = '未知'
-    try{        
+    try{
         codeData.forEach(arr => {
             if(arr.value === value){
                 label = arr.label
-                throw 'Finish and value = ' + label 
+                throw 'Finish and value = ' + label
             }
         });
     } catch (e) {
