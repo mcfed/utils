@@ -35,7 +35,7 @@ function processMoment2DateStr(object){
 
 
 function processParams(object){
-  let {column,current,pageSize,total,field,order,pageSizeOptions,showSizeChanger,columnKey,...other}=object
+  let {column,current,showQuickJumper,pageSize,total,field,order,pageSizeOptions,showSizeChanger,columnKey,...other}=object
   var body={
     currentPage:current,
     totalCount:total,
@@ -58,7 +58,7 @@ export function toData(json){
   if(json.code===0){
       return json.data
     }else{
-      return json 
+      return json
     }
 }
 
@@ -67,7 +67,6 @@ export function fetchCatch(error){
 }
 
 export function fetchRequest(url, options) {
-  console.log("url:",url)
   return fetch(url, Object.assign({}, defaults, options)).then(res => {
     if (res.ok === true) {
       return res

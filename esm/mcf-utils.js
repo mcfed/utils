@@ -103,6 +103,7 @@ function stringifyURL(str, options) {
 function processParams(object) {
   var column = object.column,
       current = object.current,
+      showQuickJumper = object.showQuickJumper,
       pageSize = object.pageSize,
       total = object.total,
       field = object.field,
@@ -110,7 +111,7 @@ function processParams(object) {
       pageSizeOptions = object.pageSizeOptions,
       showSizeChanger = object.showSizeChanger,
       columnKey = object.columnKey,
-      other = _objectWithoutProperties(object, ["column", "current", "pageSize", "total", "field", "order", "pageSizeOptions", "showSizeChanger", "columnKey"]);
+      other = _objectWithoutProperties(object, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "order", "pageSizeOptions", "showSizeChanger", "columnKey"]);
 
   var body = _objectSpread({
     currentPage: current,
@@ -141,7 +142,6 @@ function fetchCatch(error) {
   return error;
 }
 function fetchRequest(url, options) {
-  console.log("url:", url);
   return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
     if (res.ok === true) {
       return res;
