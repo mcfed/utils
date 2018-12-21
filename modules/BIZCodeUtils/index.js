@@ -3,8 +3,8 @@ export function getBIZLabel(codeData,value){
     let label = '未知'
     try{
         codeData.forEach(arr => {
-            if(arr.value === value){
-                label = arr.label
+            if(arr.code === value){
+                label = arr.message
                 throw 'Finish and value = ' + label
             }
         });

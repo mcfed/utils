@@ -226,8 +226,8 @@ function getBIZLabel(codeData, value) {
 
   try {
     codeData.forEach(function (arr) {
-      if (arr.value === value) {
-        label = arr.label;
+      if (arr.code === value) {
+        label = arr.message;
         throw 'Finish and value = ' + label;
       }
     });
