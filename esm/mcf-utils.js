@@ -178,7 +178,15 @@ function fetchGet(url, options) {
 }
 function fetchPost(url, options) {
   options = processBody(options);
+
+  if (options && options.body && options.body !== "") {
+    options.body = JSON.stringify(options.body);
+  }
+
   return fetchRequest(stringifyURL(url, options.body), Object.assign({
+    headers: new Headers({
+      'Content-Type': 'application/json'
+    }),
     method: 'POST'
   }, options));
 }
