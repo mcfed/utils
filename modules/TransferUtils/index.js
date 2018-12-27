@@ -42,7 +42,7 @@ function getTransferJson(jsons, temp, name, sign) {
  * @param {} data 
  */
 export function transferJsonContainsID(data) {    
-    let temp = [];
+    let temp = {};
     try {        
         if(!!data){
             temp = getTransferJsonContainsID(data,temp,'','.')  
@@ -62,17 +62,15 @@ function getTransferJsonContainsID(jsons, temp, name, sign) {
             k = key; 
         }else{
             k = name + sign + key; 
-        }
-        if(jsons[key] instanceof Object){
+        }        
+        if(typeof jsons[key] === "object" && jsons[key].constructor === Object){
             if(jsons[key].hasOwnProperty("defaultMessage")){
-                const arrObj = {};
                 const kKey = k;
-                arrObj[kKey] = {"id":k,"defaultMessage":jsons[key].defaultMessage}; 
-                temp.push(arrObj);   
+                temp[kKey] = {"id":k,"defaultMessage":jsons[key].defaultMessage}; 
             }else{
                 getTransferJsonContainsID(jsons[key], temp, k, sign);
             }                     
         }
     }
-    return temp || [];
+    return temp || {};
 }
