@@ -235,8 +235,7 @@ function getBIZLabel(codeData, value) {
   try {
     codeData.forEach(function (arr) {
       if (arr.code === value) {
-        label = arr.message;
-        throw 'Finish and value = ' + label;
+        label = arr.message; //throw 'Finish and value = ' + label
       }
     });
   } catch (e) {
@@ -261,8 +260,7 @@ function getDictLabel(dictData, dicName, value) {
     var map = getDictList(dictData, dicName);
     map.forEach(function (arr) {
       if (arr.value === value) {
-        label = arr.label;
-        throw 'Finish and value = ' + label;
+        label = arr.label; // throw 'Finish and value = ' + label 
       }
     });
   } catch (e) {
@@ -354,8 +352,7 @@ function getTransferJsonContainsID(jsons, temp, name, sign) {
 
     if (_typeof(jsons[key]) === "object" && jsons[key].constructor === Object) {
       if (jsons[key].hasOwnProperty("defaultMessage")) {
-        var kKey = k;
-        temp[kKey] = {
+        temp[k] = {
           "id": k,
           "defaultMessage": jsons[key].defaultMessage
         };
