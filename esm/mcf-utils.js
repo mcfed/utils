@@ -278,6 +278,10 @@ var index$2 = /*#__PURE__*/Object.freeze({
   getDictLabel: getDictLabel
 });
 
+/**
+ * json转换，国际化标准格式
+ * @param {} data 
+ */
 function transferJson(data) {
   var temp = [];
 
@@ -316,9 +320,57 @@ function getTransferJson(jsons, temp, name, sign) {
 
   return temp || [];
 }
+/**
+ * json转换带ID
+ * @param {} data 
+ */
+
+
+function transferJsonContainsID(data) {
+  var temp = {};
+
+  try {
+    if (!!data) {
+      temp = getTransferJsonContainsID(data, temp, '', '.');
+    } else {
+      throw "待转译的json对象异常";
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return temp;
+}
+
+function getTransferJsonContainsID(jsons, temp, name, sign) {
+  for (var key in jsons) {
+    var k = "";
+
+    if (name === "" || name === undefined) {
+      k = key;
+    } else {
+      k = name + sign + key;
+    }
+
+    if (_typeof(jsons[key]) === "object" && jsons[key].constructor === Object) {
+      if (jsons[key].hasOwnProperty("defaultMessage")) {
+        var kKey = k;
+        temp[kKey] = {
+          "id": k,
+          "defaultMessage": jsons[key].defaultMessage
+        };
+      } else {
+        getTransferJsonContainsID(jsons[key], temp, k, sign);
+      }
+    }
+  }
+
+  return temp || {};
+}
 
 var index$3 = /*#__PURE__*/Object.freeze({
-  transferJson: transferJson
+  transferJson: transferJson,
+  transferJsonContainsID: transferJsonContainsID
 });
 
 export { index as FetchUtils, index$1 as BIZCodeUtils, index$2 as DictUtils, index$3 as TransferUtils };
