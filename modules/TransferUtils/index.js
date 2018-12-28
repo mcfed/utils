@@ -65,8 +65,7 @@ function getTransferJsonContainsID(jsons, temp, name, sign) {
         }        
         if(typeof jsons[key] === "object" && jsons[key].constructor === Object){
             if(jsons[key].hasOwnProperty("defaultMessage")){
-                const kKey = k;
-                temp[kKey] = {"id":k,"defaultMessage":jsons[key].defaultMessage}; 
+                temp[k] = {"id":k,"defaultMessage":jsons[key].defaultMessage}; 
             }else{
                 getTransferJsonContainsID(jsons[key], temp, k, sign);
             }                     
