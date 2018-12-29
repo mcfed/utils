@@ -100,6 +100,24 @@ function stringifyURL(str, options) {
   });
 }
 
+function processPraramItem(object) {
+  for (var key in object) {
+    if (object[key] instanceof Array) {
+      if (object[key].length !== 0) {
+        object[key] = JSON.stringify(object[key]);
+      } else {
+        object[key] = undefined;
+      }
+    } else {
+      if (object[key] === "") {
+        object[key] = undefined;
+      }
+    }
+  }
+
+  return object;
+}
+
 function processParams(object) {
   var column = object.column,
       current = object.current,
@@ -119,7 +137,7 @@ function processParams(object) {
     pageSize: pageSize
   }, other);
 
-  return body;
+  return processPraramItem(body);
 }
 
 var defaults = {
@@ -166,6 +184,7 @@ function fetchList(url, options) {
 }
 function fetchGet(url, options) {
   options = processBody(options);
+  console.log(stringify(options.body));
 
   if (options && options.body && options.body !== "") {
     url = [stringifyURL(url, options.body), stringify(options.body)].join("?");

@@ -2,7 +2,8 @@
   "name": "mcf-utils",
   "version": "1.0.0",
   "description": "@mcf for utils",
-  "module": "umd/mcf-utils.js",
+  "module": "esm/mcf-utils.js",
+  "main": "umd/mcf-utils.js",
   "scripts": {
     "test": "jest --watchAll",
     "dev": "rollup -c --watch",

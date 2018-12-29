@@ -104,6 +104,24 @@
     });
   }
 
+  function processPraramItem(object) {
+    for (var key in object) {
+      if (object[key] instanceof Array) {
+        if (object[key].length !== 0) {
+          object[key] = JSON.stringify(object[key]);
+        } else {
+          object[key] = undefined;
+        }
+      } else {
+        if (object[key] === "") {
+          object[key] = undefined;
+        }
+      }
+    }
+
+    return object;
+  }
+
   function processParams(object) {
     var column = object.column,
         current = object.current,
@@ -123,7 +141,7 @@
       pageSize: pageSize
     }, other);
 
-    return body;
+    return processPraramItem(body);
   }
 
   var defaults = {
@@ -170,6 +188,7 @@
   }
   function fetchGet(url, options) {
     options = processBody(options);
+    console.log(qs.stringify(options.body));
 
     if (options && options.body && options.body !== "") {
       url = [stringifyURL(url, options.body), qs.stringify(options.body)].join("?");
