@@ -105,7 +105,7 @@ export function fetchGet(url, options) {
     url = [stringifyURL(url,options.body),stringify(options.body)].join("?")
   }
   options && delete options.body
-  return fetchRequest(url, Object.assign({
+  return fetchRequest(url, Object.assign({},{
     method: 'GET'
   }, options))
 }
@@ -127,7 +127,7 @@ export function fetchPost(url, options) {
 
 export function fetchPut(url,options){
   return fetchPost(url,
-    Object.assign(options,{
+    Object.assign({},options,{
       method:'PUT'
     })
   )
@@ -135,13 +135,13 @@ export function fetchPut(url,options){
 
 export function fetchUpload(url,options){
 
-  return fetchPost(url,Object.assign(options,{
+  return fetchPost(url,Object.assign({},options,{
     // headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'}
   }))
 }
 
 export function fetchDownload(url,options){
-  return fetchGet(url, Object.assign(options,{
+  return fetchGet(url, Object.assign({},options,{
     responseType:'arraybuffer',
     headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'},
   })).then(res => {

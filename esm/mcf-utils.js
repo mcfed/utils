@@ -194,7 +194,7 @@ function fetchGet(url, options) {
   }
 
   options && delete options.body;
-  return fetchRequest(url, Object.assign({
+  return fetchRequest(url, Object.assign({}, {
     method: 'GET'
   }, options));
 }
@@ -213,16 +213,16 @@ function fetchPost(url, options) {
   }, options));
 }
 function fetchPut(url, options) {
-  return fetchPost(url, Object.assign(options, {
+  return fetchPost(url, Object.assign({}, options, {
     method: 'PUT'
   }));
 }
 function fetchUpload(url, options) {
-  return fetchPost(url, Object.assign(options, {// headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'}
+  return fetchPost(url, Object.assign({}, options, {// headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'}
   }));
 }
 function fetchDownload(url, options) {
-  return fetchGet(url, Object.assign(options, {
+  return fetchGet(url, Object.assign({}, options, {
     responseType: 'arraybuffer',
     headers: {
       'Content-Type': 'multipart/form-data;charset=UTF-8'
