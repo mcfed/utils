@@ -80,7 +80,11 @@ export function fetchRequest(url, options) {
       throw err
     }
   }).then(res => {
-    return res.json()
+    if(options.responseType==='arraybuffer'){
+      return res
+    }else{
+      return res.json()
+    }
   })
 }
 
@@ -144,8 +148,9 @@ export function fetchDownload(url,options){
     var blob = new Blob([res.data]);
     var a = document.createElement('a');
     var url = window.URL.createObjectURL(blob);
+    var filename = res.headers.get('Content-Disposition')||"";
     a.href = url;
-    a.download = decodeURI(filename);
+    a.download = decodeURI(filename.replace("attachment;filename=",""));
     a.click();
     window.URL.revokeObjectURL(url);
   })
