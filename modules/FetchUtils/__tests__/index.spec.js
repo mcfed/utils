@@ -1,10 +1,20 @@
-import {fetchGet} from '../index'
+import {fetchGet,fetchPost} from '../index'
 
 jest.autoMockOff();
 
 describe('FetchUtils使用', () => {
   beforeEach(() => {
     fetch.resetMocks()
+  })
+  it.skip('fetch Post array',()=>{
+    let url = "http://192.168.200.178:3000/mock/60/db-audit/svc_search_biz/backup/task/record"
+    fetchPost(url,{
+      body:{
+        aa:["2019-01-01","2019-02-02"]
+      }
+    })
+    done()
+
   })
   it.skip('fetch Get 正常请求',()=>{
     let url = "http://192.168.200.178:3000/mock/60/db-audit/svc_search_biz/backup/task/record"

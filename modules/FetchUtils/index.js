@@ -97,7 +97,6 @@ export function fetchList(url,options){
 
 export function fetchGet(url, options) {
   options=processBody(options)
-  console.log(stringify(options.body))
   if (options && options.body && options.body !== "") {
     url = [stringifyURL(url,options.body),stringify(options.body)].join("?")
   }
@@ -109,10 +108,11 @@ export function fetchGet(url, options) {
 
 export function fetchPost(url, options) {
 
-  options=processBody(options)
+  // options=processBody(options)
   if (options && options.body && options.body !== "") {
     options.body=JSON.stringify(options.body)
   }
+  // console.log(options)
   return fetchRequest(stringifyURL(url,options.body), Object.assign({
     headers: new Headers({
         'Content-Type': 'application/json'

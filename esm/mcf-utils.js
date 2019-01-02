@@ -184,7 +184,6 @@ function fetchList(url, options) {
 }
 function fetchGet(url, options) {
   options = processBody(options);
-  console.log(stringify(options.body));
 
   if (options && options.body && options.body !== "") {
     url = [stringifyURL(url, options.body), stringify(options.body)].join("?");
@@ -196,11 +195,11 @@ function fetchGet(url, options) {
   }, options));
 }
 function fetchPost(url, options) {
-  options = processBody(options);
-
+  // options=processBody(options)
   if (options && options.body && options.body !== "") {
     options.body = JSON.stringify(options.body);
-  }
+  } // console.log(options)
+
 
   return fetchRequest(stringifyURL(url, options.body), Object.assign({
     headers: new Headers({
