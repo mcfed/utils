@@ -85,6 +85,8 @@ export function fetchRequest(url, options) {
     }else{
       return res.json()
     }
+  }).catch((e) => {
+    console.log(e);
   })
 }
 

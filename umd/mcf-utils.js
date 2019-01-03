@@ -178,6 +178,8 @@
       } else {
         return res.json();
       }
+    }).catch(function (e) {
+      console.log(e);
     });
   }
   function processBody(options, format) {
