@@ -3,7 +3,7 @@
  * @Email:  jaxchow@gmail.com
  * @Last modified time: 2018-03-13T11:45:29+08:00
  */
-import {stringify} from 'qs'
+import { stringify } from 'qs'
 
 function stringifyURL(str, options) {
   if (!str) {
@@ -20,29 +20,29 @@ function stringifyURL(str, options) {
   });
 }
 
-function processPraramItem(object){
-    for(var key in object){
-      if (object[key] instanceof Array ){
-        if(object[key].length!==0){
-          object[key]=JSON.stringify(object[key])
-        }else{
-          object[key]=undefined
-        }
-      }else{
-        if(object[key]===""){
-          object[key]=undefined
-        }
+function processPraramItem(object) {
+  for (var key in object) {
+    if (object[key] instanceof Array) {
+      if (object[key].length !== 0) {
+        object[key] = JSON.stringify(object[key])
+      } else {
+        object[key] = undefined
+      }
+    } else {
+      if (object[key] === "") {
+        object[key] = undefined
       }
     }
-    return object
+  }
+  return object
 }
 
 
-function processParams(object){
-  let {column,current,showQuickJumper,pageSize,total,field,order,pageSizeOptions,showSizeChanger,columnKey,...other}=object
-  var body={
-    currentPage:current,
-    totalCount:total,
+function processParams(object) {
+  let { column, current, showQuickJumper, pageSize, total, field, order, pageSizeOptions, showSizeChanger, columnKey, ...other } = object
+  var body = {
+    currentPage: current,
+    totalCount: total,
     pageSize,
     ...other
   }
@@ -58,16 +58,16 @@ const defaults = {
   }
 }
 
-export function toData(json){
-  if(json.code===0){
-      return json.data
-    }else{
-      return json
-    }
+export function toData(json) {
+  if (json.code === 0) {
+    return json.data
+  } else {
+    return json
+  }
 }
 
-export function fetchCatch(error){
-    return error
+export function fetchCatch(error) {
+  return error
 }
 
 export function fetchRequest(url, options) {
@@ -80,9 +80,9 @@ export function fetchRequest(url, options) {
       throw err
     }
   }).then(res => {
-    if(options.responseType==='arraybuffer'){
+    if (options.responseType === 'arraybuffer') {
       return res
-    }else{
+    } else {
       return res.json()
     }
   }).catch((e) => {
@@ -90,24 +90,24 @@ export function fetchRequest(url, options) {
   })
 }
 
-export function processBody(options,format){
+export function processBody(options, format) {
   if (options && typeof (options.body) === 'object') {
     options.body = processParams(options.body)
   }
   return options
 }
 
-export function fetchList(url,options){
-  return fetchGet(url,options)
+export function fetchList(url, options) {
+  return fetchGet(url, options)
 }
 
 export function fetchGet(url, options) {
-  options=processBody(options)
+  options = processBody(options)
   if (options && options.body && options.body !== "") {
-    url = [stringifyURL(url,options.body),stringify(options.body)].join("?")
+    url = [stringifyURL(url, options.body), stringify(options.body)].join("?")
   }
   options && delete options.body
-  return fetchRequest(url, Object.assign({},{
+  return fetchRequest(url, Object.assign({}, {
     method: 'GET'
   }, options))
 }
@@ -116,47 +116,50 @@ export function fetchPost(url, options) {
 
   // options=processBody(options)
   if (options && options.body && options.body !== "") {
-    options.body=JSON.stringify(options.body)
+    options.body = JSON.stringify(options.body)
   }
   // console.log(options)
-  return fetchRequest(stringifyURL(url,options.body), Object.assign({
+  return fetchRequest(stringifyURL(url, options.body), Object.assign({
     headers: new Headers({
-        'Content-Type': 'application/json'
+      'Content-Type': 'application/json'
     }),
     method: 'POST'
   }, options))
 }
 
-export function fetchPut(url,options){
+export function fetchPut(url, options) {
   return fetchPost(url,
-    Object.assign({},options,{
-      method:'PUT'
+    Object.assign({}, options, {
+      method: 'PUT'
     })
   )
 }
 
-export function fetchUpload(url,options){
+export function fetchUpload(url, options) {
 
-  return fetchPost(url,Object.assign({},options,{
+  return fetchPost(url, Object.assign({}, options, {
     // headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'}
   }))
 }
 
-export function fetchDownload(url,options){
-  return fetchGet(url, Object.assign({},options,{
-    responseType:'arraybuffer',
-    headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'},
+export function fetchDownload(url, options) {
+  return fetchGet(url, Object.assign({}, options, {
+    responseType: 'arraybuffer',
+    headers: { 'Content-Type': 'multipart/form-data;charset=UTF-8' },
   })).then(res => {
-    if(res){
+    if (res) {
       var blob = new Blob([res.data]);
       var a = document.createElement('a');
       var url = window.URL.createObjectURL(blob);
-      var filename = res.headers.get('Content-Disposition')||"";
+      var filename = res.headers.get('Content-Disposition') || "";
       a.href = url;
-      a.download = decodeURI(filename.replace("attachment;filename=",""));
+      a.download = decodeURI(filename.replace("attachment;filename=", ""));
       a.click();
       window.URL.revokeObjectURL(url);
+      return true
+    } else {
+      console.error('no data!')
+      return false
     }
-    else console.error('no data!')
   })
 }

@@ -243,7 +243,11 @@
         a.download = decodeURI(filename.replace("attachment;filename=", ""));
         a.click();
         window.URL.revokeObjectURL(url);
-      } else console.error('no data!');
+        return true;
+      } else {
+        console.error('no data!');
+        return false;
+      }
     });
   }
 
