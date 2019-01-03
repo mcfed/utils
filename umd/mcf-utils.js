@@ -145,13 +145,13 @@
   }
 
   var defaults = {
-    credentials: 'include' // mode: 'cors',
-    // headers: {
-    //   "Content-Type": "application/json",
-    //   "X-Requested-With": "XMLHttpRequest",
-    //   'Access-Control-Allow-Origin': '*',
-    // }
-
+    credentials: 'include',
+    mode: 'cors',
+    headers: {
+      "Content-Type": "application/json",
+      "X-Requested-With": "XMLHttpRequest",
+      'Access-Control-Allow-Origin': '*'
+    }
   };
   function toData(json) {
     if (json.code === 0) {

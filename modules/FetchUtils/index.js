@@ -50,12 +50,12 @@ function processParams(object){
 }
 const defaults = {
   credentials: 'include',
-  // mode: 'cors',
-  // headers: {
-  //   "Content-Type": "application/json",
-  //   "X-Requested-With": "XMLHttpRequest",
-  //   'Access-Control-Allow-Origin': '*',
-  // }
+  mode: 'cors',
+  headers: {
+    "Content-Type": "application/json",
+    "X-Requested-With": "XMLHttpRequest",
+    'Access-Control-Allow-Origin': '*',
+  }
 }
 
 export function toData(json){
