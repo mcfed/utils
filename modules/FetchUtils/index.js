@@ -133,6 +133,16 @@ export function fetchPut(url,options){
   )
 }
 
+export function fetchDelete(url,options){
+  return fetchPost(url,
+    Object.assign({},options,{
+      method:'DELETE'
+    })
+  )
+}
+
+
+
 export function fetchUpload(url,options){
 
   return fetchPost(url,Object.assign({},options,{
