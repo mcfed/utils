@@ -235,20 +235,21 @@ function fetchDownload(url, options) {
       'Content-Type': 'multipart/form-data;charset=UTF-8'
     }
   })).then(function (res) {
-    if (res) {
-      var blob = new Blob([res.data]);
-      var a = document.createElement('a');
-      var url = window.URL.createObjectURL(blob);
-      var filename = res.headers.get('Content-Disposition') || "";
-      a.href = url;
-      a.download = decodeURI(filename.replace("attachment;filename=", ""));
-      a.click();
-      window.URL.revokeObjectURL(url);
-      return true;
-    } else {
-      console.error('no data!');
-      return false;
-    }
+    return res.blob().then(function (blob) {
+      if (blob) {
+        var a = document.createElement('a');
+        var url = window.URL.createObjectURL(blob);
+        var filename = res.headers.get('Content-Disposition') || "";
+        a.href = url;
+        a.download = decodeURI(filename.replace("attachment;filename=", ""));
+        a.click();
+        window.URL.revokeObjectURL(url);
+        return true;
+      } else {
+        console.error('no data!');
+        return false;
+      }
+    });
   });
 }
 

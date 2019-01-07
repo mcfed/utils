@@ -156,9 +156,9 @@ export function fetchDownload(url, options) {
   return fetchGet(url, Object.assign({}, options, {
     responseType: 'arraybuffer',
     headers: { 'Content-Type': 'multipart/form-data;charset=UTF-8' },
-  })).then(res => {
-    if (res) {
-      var blob = new Blob([res.data]);
+  }))
+  .then((res)=>res.blob().then((blob) => {
+    if (blob) {
       var a = document.createElement('a');
       var url = window.URL.createObjectURL(blob);
       var filename = res.headers.get('Content-Disposition') || "";
@@ -171,5 +171,5 @@ export function fetchDownload(url, options) {
       console.error('no data!')
       return false
     }
-  })
+  }))
 }
