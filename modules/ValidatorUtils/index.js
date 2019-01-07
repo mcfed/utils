@@ -38,6 +38,14 @@ export const rules= {
      }
 
    },
+   ranges:(rule,value,callback)=>{
+     if(rule.ranges instanceof Array && rule.ranges.length===2) {
+        if(rule.ranges[0]>=value || rule.ranges[1]<=value){
+          callback(`请输入区间值${JSON.stringify(rule.ranges)}`)
+        }
+     }
+     callback()
+   },
    integer:(rule,value,callback)=>{
      var rexp=/^([1-9]\d*|[0]{0,1})$/
      if(value instanceof Array){

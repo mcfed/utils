@@ -456,6 +456,15 @@
         callback();
       }
     },
+    ranges: function ranges(rule, value, callback) {
+      if (rule.ranges instanceof Array && rule.ranges.length === 2) {
+        if (rule.ranges[0] >= value || rule.ranges[1] <= value) {
+          callback("\u8BF7\u8F93\u5165\u533A\u95F4\u503C".concat(JSON.stringify(rule.ranges)));
+        }
+      }
+
+      callback();
+    },
     integer: function integer(rule, value, callback) {
       var rexp = /^([1-9]\d*|[0]{0,1})$/;
 
