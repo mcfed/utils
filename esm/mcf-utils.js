@@ -454,9 +454,16 @@ var rules = {
   },
   ranges: function ranges(rule, value, callback) {
     if (rule.ranges instanceof Array && rule.ranges.length === 2) {
-      if (rule.ranges[0] >= value || rule.ranges[1] <= value) {
+      if (rule.ranges[0] > value || rule.ranges[1] < value) {
         callback("\u8BF7\u8F93\u5165\u533A\u95F4\u503C".concat(JSON.stringify(rule.ranges)));
       }
+    }
+
+    callback();
+  },
+  fileSize: function fileSize(rule, value, callback) {
+    if (value.file && value.file.size > rule.fileSize) {
+      callback("\u6587\u4EF6\u5927\u5C0F\u4E0D\u8D85\u8FC7 ".concat(rule.fileSize));
     }
 
     callback();

@@ -40,9 +40,16 @@ export const rules= {
    },
    ranges:(rule,value,callback)=>{
      if(rule.ranges instanceof Array && rule.ranges.length===2) {
-        if(rule.ranges[0]>=value || rule.ranges[1]<=value){
+        if(rule.ranges[0]>value || rule.ranges[1]<value){
           callback(`请输入区间值${JSON.stringify(rule.ranges)}`)
         }
+     }
+     callback()
+   },
+
+   fileSize:(rule,value,callback)=>{
+     if(value.file && value.file.size>rule.fileSize){
+       callback(`文件大小不超过 ${rule.fileSize}`)
      }
      callback()
    },
