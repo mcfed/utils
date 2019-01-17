@@ -418,6 +418,15 @@ var rules = {
 
     callback();
   },
+  checkIPCust: function checkIPCust(rule, value, callback) {
+    var reg = /^[0-9a-fA-F\\.\\:////]{2,39}$/;
+
+    if (!reg.test(value)) {
+      callback("Ip地址不正确");
+    }
+
+    callback();
+  },
   checkWeekPassword: function checkWeekPassword(rule, value, callback) {
     if (/^\d{6}$/.test(value)) {
       callback('密码为弱密码！');
@@ -502,32 +511,32 @@ var rules = {
   },
 
   /*
-  remote:(rule,value,callback)=>{
-    // console.log(rule,value,callback,aa,bb,cc)
-    if(rule.defaultValue != value){
-      let name = rule.name
-      let params = rule.params?rule.params:{}
-      params[rule['name']]=value
-      console.log(params)
-      new FetchAPI().fetch(rule.value,{
-        body:params,
-        method:"POST"
-        // method:/\/listJson?$/.test(fetchUrl)?'POST':'GET' //兼容listJSON 使用POST请求处理
-      }).then((json) => {
-        // console.log(json)
-        if(json.status){
-          if(json.msg){
-            callback(json.msg)
-          }else{
-            callback('该字段系统内已存在！')
-          }
-        }else {
-          callback()
-        }
-      });
-    }else {
-      callback()
-    }
+   remote:(rule,value,callback)=>{
+     // console.log(rule,value,callback,aa,bb,cc)
+     if(rule.defaultValue != value){
+       let name = rule.name
+       let params = rule.params?rule.params:{}
+       params[rule['name']]=value
+       console.log(params)
+       new FetchAPI().fetch(rule.value,{
+         body:params,
+         method:"POST"
+         // method:/\/listJson?$/.test(fetchUrl)?'POST':'GET' //兼容listJSON 使用POST请求处理
+       }).then((json) => {
+         // console.log(json)
+         if(json.status){
+           if(json.msg){
+             callback(json.msg)
+           }else{
+             callback('该字段系统内已存在！')
+           }
+         }else {
+           callback()
+         }
+       });
+     }else {
+       callback()
+     }
   },
   */
   dateRangePicked: function dateRangePicked(rule, value, callback) {
