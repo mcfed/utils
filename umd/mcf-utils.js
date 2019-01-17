@@ -426,6 +426,15 @@
         callback();
       }
     },
+    checkIPCust: function checkIPCust(rule, value, callback) {
+      var reg = /^[0-9a-fA-F\\.\\:////]{2,39}$/;
+
+      if (!reg.test(value)) {
+        callback("Ip地址不正确");
+      } else {
+        callback();
+      }
+    },
     checkWeekPassword: function checkWeekPassword(rule, value, callback) {
       if (/^\d{6}$/.test(value)) {
         callback('密码为弱密码！');
