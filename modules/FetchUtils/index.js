@@ -75,9 +75,13 @@ export function fetchRequest(url, options) {
     if (res.ok === true) {
       return res
     } else {
-      var err = new Error(res.statusText)
-      err.response = res
-      throw err
+      // var err = new Error(res.statusText)
+      // err.response = res
+      // throw err
+      return {
+        code:res.statusCode,
+        message:res.statusText
+      }
     }
   }).then(res => {
     if (options.responseType === 'arraybuffer') {

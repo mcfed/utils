@@ -168,9 +168,13 @@
       if (res.ok === true) {
         return res;
       } else {
-        var err = new Error(res.statusText);
-        err.response = res;
-        throw err;
+        // var err = new Error(res.statusText)
+        // err.response = res
+        // throw err
+        return {
+          code: res.statusCode,
+          message: res.statusText
+        };
       }
     }).then(function (res) {
       if (options.responseType === 'arraybuffer') {
@@ -418,17 +422,16 @@
 
       if (!reg.test(value)) {
         callback("Ip地址不正确");
+      } else {
+        callback();
       }
-
-      callback();
     },
     checkWeekPassword: function checkWeekPassword(rule, value, callback) {
       if (/^\d{6}$/.test(value)) {
         callback('密码为弱密码！');
-      } // Note: 必须总是返回一个 callback，否则 validateFieldsAndScroll 无法响应
-
-
-      callback();
+      } else {
+        callback();
+      }
     },
 
     /**
@@ -443,10 +446,10 @@
 
       if (!rexp.test(value)) {
         callback('手机号码格式不正确！');
+      } else {
+        callback();
       } // Note: 必须总是返回一个 callback，否则 validateFieldsAndScroll 无法响应
 
-
-      callback();
     },
     checkIDCard: function checkIDCard(rule, value, callback) {
       var rexp = /(^\d{17}(\d|x|X)$)/i;
@@ -461,17 +464,19 @@
       if (rule.ranges instanceof Array && rule.ranges.length === 2) {
         if (rule.ranges[0] > value || rule.ranges[1] < value) {
           callback("\u8BF7\u8F93\u5165\u533A\u95F4\u503C".concat(JSON.stringify(rule.ranges)));
+        } else {
+          callback();
         }
+      } else {
+        callback();
       }
-
-      callback();
     },
     fileSize: function fileSize(rule, value, callback) {
       if (value.file && value.file.size > rule.fileSize) {
         callback("\u6587\u4EF6\u5927\u5C0F\u4E0D\u8D85\u8FC7 ".concat(rule.fileSize));
+      } else {
+        callback();
       }
-
-      callback();
     },
     integer: function integer(rule, value, callback) {
       var rexp = /^([1-9]\d*|[0]{0,1})$/;
@@ -480,15 +485,17 @@
         value.map(function (it, idx) {
           if (!rexp.test(it)) {
             callback('必须为正整数！');
+          } else {
+            callback();
           }
         });
       } else if (typeof value == "string") {
         if (!rexp.test(value)) {
           callback('必须为正整数！');
+        } else {
+          callback();
         }
       }
-
-      callback();
     },
     maxLength: function maxLength(rule, value, callback) {
       if (value && value.length > rule.value) {
@@ -560,9 +567,9 @@
             callback("开始时间必须小于结束时间！");
           }
         }
+      } else {
+        callback();
       }
-
-      callback();
     }
   };
 
