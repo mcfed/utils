@@ -17,7 +17,6 @@ test_job:
       - npm run test
     tags:
       - master
-      - dev
 
 build_job:
     stage: compile
