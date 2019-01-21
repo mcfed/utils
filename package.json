@@ -5,7 +5,7 @@
   "module": "esm/mcf-utils.js",
   "main": "umd/mcf-utils.js",
   "scripts": {
-    "test": "jest --watchAll",
+    "test": "jest",
     "dev": "rollup -c --watch",
     "build": "rollup -c"
   },
