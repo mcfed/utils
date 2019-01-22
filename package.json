@@ -43,7 +43,7 @@
   "dependencies": {
     "qs": "^6.6.0"
   },
-  "peerDependencies":{
+  "peerDependencies": {
     "isomorphic-fetch": "^2.2.1"
   }
 }
