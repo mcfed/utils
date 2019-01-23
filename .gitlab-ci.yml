@@ -1,7 +1,7 @@
 stages:
     - test
     - compile
-
+    - release
 
 cache:
   key: ${CI_BUILD_REF_NAME}
@@ -33,10 +33,10 @@ test_ci_push:
     - master
   allow_failure: true
   script:
-    - npm run build
-    - git config --global user.name "rebot"
-    - git config --global user.email "rebot@mchz.com.cn"
-    - git add --all
-    - git commit -m "GitLab Runner Push"
-    - git push http://rebot:XpyMqPEHPw7ojAtimwEE@gitlab/mcf/utils.git HEAD:master
-    - echo "push code success!"
+    #- npm run build
+    #- git config --global user.name "rebot"
+    #- git config --global user.email "rebot@mchz.com.cn"
+    #- git add --all
+    #- git commit -m "GitLab Runner Push"
+    #- git push http://rebot:XpyMqPEHPw7ojAtimwEE@gitlab/mcf/utils.git HEAD:master
+    #- echo "push code success!"
