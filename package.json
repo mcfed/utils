@@ -5,7 +5,7 @@
   "module": "esm/mcf-utils.js",
   "main": "umd/mcf-utils.js",
   "scripts": {
-    "test": "jest --watchAll",
+    "test": "jest",
     "dev": "rollup -c --watch",
     "build": "rollup -c"
   },
@@ -43,7 +43,7 @@
   "dependencies": {
     "qs": "^6.6.0"
   },
-  "peerDependencies":{
+  "peerDependencies": {
     "isomorphic-fetch": "^2.2.1"
   }
 }
