@@ -73,18 +73,20 @@ export const rules = {
      if(value instanceof Array){
          value.map((it,idx)=>{
            if (!rexp.test(it)) {
-               callback('必须为正整数！')
+              return callback('必须为正整数！')
            }else{
-               callback()
+                // callback()
            }
          })
+        return callback()
      }else if(typeof(value) == "string"){
        if (!rexp.test(value)) {
-           callback('必须为正整数！')
+           return callback('必须为正整数！')
        }else{
-           callback()
+          return callback()
        }
      }
+    return callback()
    },
    maxLength:(rule,value,callback)=>{
      if(value && value.length>rule.value){
