@@ -169,7 +169,12 @@ export function fetchDownload(url, options) {
       a.href = url;
       a.download = decodeURI(filename.replace("attachment;filename=", ""));
       a.click();
-      window.URL.revokeObjectURL(url);
+      //修正Firefox 无法下载问题
+      setTimeout(function(){
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+      }, 50);
+
       return true
     } else {
       console.error('no data!')

@@ -1,8 +1,8 @@
 {
   "esm/mcf-utils.js": {
-    "bundled": 12551,
-    "minified": 6132,
-    "gzipped": 2511,
+    "bundled": 12662,
+    "minified": 6188,
+    "gzipped": 2538,
     "treeshaked": {
       "rollup": {
         "code": 31,
@@ -14,8 +14,8 @@
     }
   },
   "umd/mcf-utils.js": {
-    "bundled": 13791,
-    "minified": 5622,
-    "gzipped": 2476
+    "bundled": 13908,
+    "minified": 5678,
+    "gzipped": 2506
   }
 }
