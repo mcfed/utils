@@ -162,16 +162,18 @@ export function fetchDownload(url, options) {
     headers: { 'Content-Type': 'multipart/form-data;charset=UTF-8' },
   }))
   .then((res)=>res.blob().then((blob) => {
+
     if (blob) {
       var a = document.createElement('a');
       var url = window.URL.createObjectURL(blob);
       var filename = res.headers.get('Content-Disposition') || "";
+      document.body.appendChild(a);
       a.href = url;
       a.download = decodeURI(filename.replace("attachment;filename=", ""));
       a.click();
       //修正Firefox 无法下载问题
       setTimeout(function(){
-          // document.body.removeChild(a);
+          document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
       }, 100);
 
