@@ -249,7 +249,7 @@ function fetchDownload(url, options) {
         a.click(); //修正Firefox 无法下载问题
 
         setTimeout(function () {
-          document.body.removeChild(a);
+          // document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
         }, 50);
         return true;
