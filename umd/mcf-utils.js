@@ -255,7 +255,7 @@
           setTimeout(function () {
             // document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
-          }, 50);
+          }, 100);
           return true;
         } else {
           console.error('no data!');
