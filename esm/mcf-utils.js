@@ -99,7 +99,6 @@ function stringifyURL(str, options) {
     return replacement;
   });
 }
-
 function processPraramItem(object) {
   for (var key in object) {
     if (object[key] instanceof Array) {
@@ -160,6 +159,7 @@ function fetchCatch(error) {
   return error;
 }
 function fetchRequest(url, options) {
+  // console.log(url)
   return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
     if (res.ok === true) {
       return res;
@@ -168,12 +168,12 @@ function fetchRequest(url, options) {
       // err.response = res
       // throw err
       return {
-        code: res.statusCode,
+        code: res.status,
         message: res.statusText
       };
     }
   }).then(function (res) {
-    if (options.responseType === 'arraybuffer') {
+    if (options.responseType === 'arraybuffer' || res.code) {
       return res;
     } else {
       return res.json();
@@ -212,9 +212,9 @@ function fetchPost(url, options) {
 
 
   return fetchRequest(stringifyURL(url, options.body), Object.assign({
-    headers: new Headers({
-      'Content-Type': 'application/json'
-    }),
+    // headers: {
+    //   'Content-Type': 'application/json'
+    // },
     method: 'POST'
   }, options));
 }
@@ -263,6 +263,8 @@ function fetchDownload(url, options) {
 }
 
 var index = /*#__PURE__*/Object.freeze({
+  stringifyURL: stringifyURL,
+  processPraramItem: processPraramItem,
   toData: toData,
   fetchCatch: fetchCatch,
   fetchRequest: fetchRequest,

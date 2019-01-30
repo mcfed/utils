@@ -5,7 +5,7 @@
  */
 import { stringify } from 'qs'
 
-function stringifyURL(str, options) {
+export function stringifyURL(str, options) {
   if (!str) {
     return str;
   }
@@ -20,7 +20,7 @@ function stringifyURL(str, options) {
   });
 }
 
-function processPraramItem(object) {
+export function processPraramItem(object) {
   for (var key in object) {
     if (object[key] instanceof Array) {
       if (object[key].length !== 0) {
@@ -71,6 +71,7 @@ export function fetchCatch(error) {
 }
 
 export function fetchRequest(url, options) {
+  // console.log(url)
   return fetch(url, Object.assign({}, defaults, options)).then(res => {
     if (res.ok === true) {
       return res
@@ -79,12 +80,12 @@ export function fetchRequest(url, options) {
       // err.response = res
       // throw err
       return {
-        code:res.statusCode,
+        code:res.status,
         message:res.statusText
       }
     }
   }).then(res => {
-    if (options.responseType === 'arraybuffer') {
+    if (options.responseType === 'arraybuffer' || res.code) {
       return res
     } else {
       return res.json()
@@ -124,9 +125,9 @@ export function fetchPost(url, options) {
   }
   // console.log(options)
   return fetchRequest(stringifyURL(url, options.body), Object.assign({
-    headers: new Headers({
-      'Content-Type': 'application/json'
-    }),
+    // headers: {
+    //   'Content-Type': 'application/json'
+    // },
     method: 'POST'
   }, options))
 }

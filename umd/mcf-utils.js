@@ -103,7 +103,6 @@
       return replacement;
     });
   }
-
   function processPraramItem(object) {
     for (var key in object) {
       if (object[key] instanceof Array) {
@@ -164,6 +163,7 @@
     return error;
   }
   function fetchRequest(url, options) {
+    // console.log(url)
     return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
       if (res.ok === true) {
         return res;
@@ -172,12 +172,12 @@
         // err.response = res
         // throw err
         return {
-          code: res.statusCode,
+          code: res.status,
           message: res.statusText
         };
       }
     }).then(function (res) {
-      if (options.responseType === 'arraybuffer') {
+      if (options.responseType === 'arraybuffer' || res.code) {
         return res;
       } else {
         return res.json();
@@ -216,9 +216,9 @@
 
 
     return fetchRequest(stringifyURL(url, options.body), Object.assign({
-      headers: new Headers({
-        'Content-Type': 'application/json'
-      }),
+      // headers: {
+      //   'Content-Type': 'application/json'
+      // },
       method: 'POST'
     }, options));
   }
@@ -267,6 +267,8 @@
   }
 
   var index = /*#__PURE__*/Object.freeze({
+    stringifyURL: stringifyURL,
+    processPraramItem: processPraramItem,
     toData: toData,
     fetchCatch: fetchCatch,
     fetchRequest: fetchRequest,
