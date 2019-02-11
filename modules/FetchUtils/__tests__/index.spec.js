@@ -15,9 +15,10 @@ describe('FetchUtils使用 Get 请求', () => {
     }
     let url = "http://localhost/200"
     let options={}
-    fetchMock.mock(url,JSON.stringify(mockResult),options)
+    let mock = fetchMock.mock(url,JSON.stringify(mockResult),options)
     fetchGet(url).then((result)=>{
       expect(result).toEqual(mockResult)
+      mock.lastOptions(true, {headers:{}})
       done()
     })
   })
