@@ -5,7 +5,7 @@
  */
 import { stringify } from 'qs'
 
-export function stringifyURL(str, options) {
+function stringifyURL(str, options) {
   if (!str) {
     return str;
   }
@@ -20,7 +20,7 @@ export function stringifyURL(str, options) {
   });
 }
 
-export function processPraramItem(object) {
+function processPraramItem(object) {
   for (var key in object) {
     if (object[key] instanceof Array) {
       if (object[key].length !== 0) {
@@ -71,10 +71,11 @@ export function fetchCatch(error) {
 }
 
 export function fetchRequest(url, options) {
-  // console.log(url)
   return fetch(url, Object.assign({}, defaults, options)).then(res => {
     if (res.ok === true) {
       return res
+    } else if(res.status == 601) {
+      window.dispatchEvent(new CustomEvent('login_out'))
     } else {
       // var err = new Error(res.statusText)
       // err.response = res
@@ -85,9 +86,11 @@ export function fetchRequest(url, options) {
       }
     }
   }).then(res => {
-    if (options.responseType === 'arraybuffer' || res.code) {
+    if (options.responseType === 'arraybuffer') {
       return res
-    } else {
+    } else if(res.code){
+      return res
+    }else{
       return res.json()
     }
   }).catch((e) => {
@@ -118,16 +121,16 @@ export function fetchGet(url, options) {
 }
 
 export function fetchPost(url, options) {
-
+  url = stringifyURL(url, options.body)
   // options=processBody(options)
   if (options && options.body && options.body !== "") {
-    options.body = JSON.stringify(options.body)
+    newOption.body = JSON.stringify(options.body)
   }
   // console.log(options)
-  return fetchRequest(stringifyURL(url, options.body), Object.assign({
-    // headers: {
-    //   'Content-Type': 'application/json'
-    // },
+  return fetchRequest(url, Object.assign({
+    headers: new Headers({
+      'Content-Type': 'application/json'
+    }),
     method: 'POST'
   }, options))
 }

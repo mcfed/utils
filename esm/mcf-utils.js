@@ -99,6 +99,7 @@ function stringifyURL(str, options) {
     return replacement;
   });
 }
+
 function processPraramItem(object) {
   for (var key in object) {
     if (object[key] instanceof Array) {
@@ -159,10 +160,11 @@ function fetchCatch(error) {
   return error;
 }
 function fetchRequest(url, options) {
-  // console.log(url)
   return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
     if (res.ok === true) {
       return res;
+    } else if (res.status == 601) {
+      window.dispatchEvent(new CustomEvent('login_out'));
     } else {
       // var err = new Error(res.statusText)
       // err.response = res
@@ -173,7 +175,9 @@ function fetchRequest(url, options) {
       };
     }
   }).then(function (res) {
-    if (options.responseType === 'arraybuffer' || res.code) {
+    if (options.responseType === 'arraybuffer') {
+      return res;
+    } else if (res.code) {
       return res;
     } else {
       return res.json();
@@ -205,16 +209,17 @@ function fetchGet(url, options) {
   }, options));
 }
 function fetchPost(url, options) {
-  // options=processBody(options)
+  url = stringifyURL(url, options.body); // options=processBody(options)
+
   if (options && options.body && options.body !== "") {
-    options.body = JSON.stringify(options.body);
+    newOption.body = JSON.stringify(options.body);
   } // console.log(options)
 
 
-  return fetchRequest(stringifyURL(url, options.body), Object.assign({
-    // headers: {
-    //   'Content-Type': 'application/json'
-    // },
+  return fetchRequest(url, Object.assign({
+    headers: new Headers({
+      'Content-Type': 'application/json'
+    }),
     method: 'POST'
   }, options));
 }
@@ -263,8 +268,6 @@ function fetchDownload(url, options) {
 }
 
 var index = /*#__PURE__*/Object.freeze({
-  stringifyURL: stringifyURL,
-  processPraramItem: processPraramItem,
   toData: toData,
   fetchCatch: fetchCatch,
   fetchRequest: fetchRequest,
