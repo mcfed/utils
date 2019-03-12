@@ -216,7 +216,7 @@
     url = stringifyURL(url, options.body); // options=processBody(options)
 
     if (options && options.body && options.body !== "") {
-      newOption.body = JSON.stringify(options.body);
+      option.body = JSON.stringify(options.body);
     } // console.log(options)
 
 
