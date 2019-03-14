@@ -167,17 +167,21 @@
     return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
       if (res.ok === true) {
         return res;
+      } else if (res.status == 601) {
+        window.dispatchEvent(new CustomEvent('login_out'));
       } else {
         // var err = new Error(res.statusText)
         // err.response = res
         // throw err
         return {
-          code: res.statusCode,
+          code: res.status,
           message: res.statusText
         };
       }
     }).then(function (res) {
       if (options.responseType === 'arraybuffer') {
+        return res;
+      } else if (res.code) {
         return res;
       } else {
         return res.json();
@@ -209,13 +213,14 @@
     }, options));
   }
   function fetchPost(url, options) {
-    // options=processBody(options)
+    url = stringifyURL(url, options.body); // options=processBody(options)
+
     if (options && options.body && options.body !== "") {
       options.body = JSON.stringify(options.body);
     } // console.log(options)
 
 
-    return fetchRequest(stringifyURL(url, options.body), Object.assign({
+    return fetchRequest(url, Object.assign({
       headers: new Headers({
         'Content-Type': 'application/json'
       }),
