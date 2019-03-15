@@ -67,7 +67,7 @@ describe('FetchUtils使用 Get 请求', () => {
   })
 })
 describe('FetchUtils使用 Post 请求', () => {
-  it.skip('post 请求200',(done)=>{
+  it('post 请求200',(done)=>{
     let mockResult={
       code:0
     }
@@ -82,7 +82,7 @@ describe('FetchUtils使用 Post 请求', () => {
     })
   })
 
-  it.skip('post 请求500',(done)=>{
+  it('post 请求500',(done)=>{
     let mockResult={
       code:500
     }

@@ -5,6 +5,8 @@
  */
 import { stringify } from 'qs'
 
+
+
 function stringifyURL(str, options) {
   if (!str) {
     return str;
@@ -152,6 +154,13 @@ export function fetchDelete(url,options){
 }
 
 
+export function fetchGraphql(url, querys) {
+  return fetchPost(url,
+    Object.assign({},options,{
+      body:querys
+    })
+  )
+}
 
 export function fetchUpload(url,options){
 

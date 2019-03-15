@@ -233,6 +233,11 @@ function fetchDelete(url, options) {
     method: 'DELETE'
   }));
 }
+function fetchGraphql(url, querys) {
+  return fetchPost(url, Object.assign({}, options, {
+    body: querys
+  }));
+}
 function fetchUpload(url, options) {
   return fetchPost(url, Object.assign({}, options, {// headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'}
   }));
@@ -277,6 +282,7 @@ var index = /*#__PURE__*/Object.freeze({
   fetchPost: fetchPost,
   fetchPut: fetchPut,
   fetchDelete: fetchDelete,
+  fetchGraphql: fetchGraphql,
   fetchUpload: fetchUpload,
   fetchDownload: fetchDownload
 });
