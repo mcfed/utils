@@ -125,11 +125,9 @@ function processParams(object) {
       pageSize = object.pageSize,
       total = object.total,
       field = object.field,
-      order = object.order,
       pageSizeOptions = object.pageSizeOptions,
       showSizeChanger = object.showSizeChanger,
-      columnKey = object.columnKey,
-      other = _objectWithoutProperties(object, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "order", "pageSizeOptions", "showSizeChanger", "columnKey"]);
+      other = _objectWithoutProperties(object, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "pageSizeOptions", "showSizeChanger"]);
 
   var body = _objectSpread({
     currentPage: current,

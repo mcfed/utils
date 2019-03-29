@@ -41,7 +41,7 @@ function processPraramItem(object) {
 
 
 function processParams(object) {
-  let { column, current, showQuickJumper, pageSize, total, field, order, pageSizeOptions, showSizeChanger, columnKey, ...other } = object
+  let { column, current, showQuickJumper, pageSize, total, field,  pageSizeOptions, showSizeChanger,  ...other } = object
   var body = {
     currentPage: current,
     totalCount: total,
