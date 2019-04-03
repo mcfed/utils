@@ -1,8 +1,10 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('qs')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'qs'], factory) :
-  (factory((global.CRUD = {}),global.qs));
-}(this, (function (exports,qs) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('qs'), require('cross-fetch')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'qs', 'cross-fetch'], factory) :
+  (factory((global.CRUD = {}),global.qs,global.fetch));
+}(this, (function (exports,qs,fetch) { 'use strict';
+
+  fetch = fetch && fetch.hasOwnProperty('default') ? fetch['default'] : fetch;
 
   function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
 
@@ -93,7 +95,7 @@
       return str;
     }
 
-    return str.replace(/:(\w+)/gi, function (match, p1) {
+    return str.replace(/:([A-Z|a-z]+)/gi, function (match, p1) {
       var replacement = options[p1];
 
       if (!replacement) {

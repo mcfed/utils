@@ -1,4 +1,5 @@
 import { stringify } from 'qs';
+import fetch from 'cross-fetch';
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
 
@@ -89,7 +90,7 @@ function stringifyURL(str, options) {
     return str;
   }
 
-  return str.replace(/:(\w+)/gi, function (match, p1) {
+  return str.replace(/:([A-Z|a-z]+)/gi, function (match, p1) {
     var replacement = options[p1];
 
     if (!replacement) {

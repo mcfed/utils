@@ -1,5 +1,5 @@
-global.fetch = require('node-fetch')
-const nodeFetch = jest.requireActual('node-fetch');
+global.fetch = require('cross-fetch')
+const nodeFetch = jest.requireActual('cross-fetch');
 const fetchMock = require('fetch-mock').sandbox();
 Object.assign(fetchMock.config, nodeFetch, {
   fetch: nodeFetch

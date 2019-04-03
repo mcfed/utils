@@ -4,6 +4,7 @@
  * @Last modified time: 2018-03-13T11:45:29+08:00
  */
 import { stringify } from 'qs'
+import fetch from 'cross-fetch'
 
 
 
@@ -12,7 +13,7 @@ function stringifyURL(str, options) {
     return str;
   }
 
-  return str.replace(/:(\w+)/gi, function (match, p1) {
+  return str.replace(/:([A-Z|a-z]+)/gi, function (match, p1) {
     var replacement = options[p1];
     if (!replacement) {
       throw new Error('Could not find url parameter ' + p1 + ' in passed options object');
