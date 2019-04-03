@@ -55,7 +55,7 @@ const defaults = {
   credentials: 'include',
   mode: 'cors',
   headers: {
-    "Content-Type": "application/json",
+    "Content-Type": "application/json; charset=UTF-8",
     "X-Requested-With": "XMLHttpRequest",
     'Access-Control-Allow-Origin': '*',
   }
@@ -131,9 +131,9 @@ export function fetchPost(url, options) {
   }
   // console.log(options)
   return fetchRequest(url, Object.assign({
-    headers: new Headers({
-      'Content-Type': 'application/json'
-    }),
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8'
+    },
     method: 'POST'
   }, options))
 }
@@ -154,14 +154,21 @@ export function fetchDelete(url,options){
   )
 }
 
-
-export function fetchGraphql(url, querys) {
-  return fetchPost(url,
-    Object.assign({},options,{
-      body:querys
-    })
-  )
+export function fetchGraphql(url,options,querys) {
+  return fetchPost(url, Object.assign({},options,{
+      credentials: 'include', // include, same-origin, *omit
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, cors, *same-origin
+  }))
 }
+
+export function fetchGraphqlList(url,options,querys) {
+  return fetchGraphql(url,options,querys).then((result)=>result.data.result)
+}
+
 
 export function fetchUpload(url,options){
 

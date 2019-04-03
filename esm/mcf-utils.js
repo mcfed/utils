@@ -143,7 +143,7 @@ var defaults = {
   credentials: 'include',
   mode: 'cors',
   headers: {
-    "Content-Type": "application/json",
+    "Content-Type": "application/json; charset=UTF-8",
     "X-Requested-With": "XMLHttpRequest",
     'Access-Control-Allow-Origin': '*'
   }
@@ -216,9 +216,9 @@ function fetchPost(url, options) {
 
 
   return fetchRequest(url, Object.assign({
-    headers: new Headers({
-      'Content-Type': 'application/json'
-    }),
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8'
+    },
     method: 'POST'
   }, options));
 }
@@ -232,10 +232,23 @@ function fetchDelete(url, options) {
     method: 'DELETE'
   }));
 }
-function fetchGraphql(url, querys) {
+function fetchGraphql(url, options, querys) {
   return fetchPost(url, Object.assign({}, options, {
-    body: querys
+    credentials: 'include',
+    // include, same-origin, *omit
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8"
+    },
+    method: 'POST',
+    // *GET, POST, PUT, DELETE, etc.
+    mode: 'cors' // no-cors, cors, *same-origin
+
   }));
+}
+function fetchGraphqlList(url, options, querys) {
+  return fetchGraphql(url, options, querys).then(function (result) {
+    return result.data.result;
+  });
 }
 function fetchUpload(url, options) {
   return fetchPost(url, Object.assign({}, options, {// headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'}
@@ -282,6 +295,7 @@ var index = /*#__PURE__*/Object.freeze({
   fetchPut: fetchPut,
   fetchDelete: fetchDelete,
   fetchGraphql: fetchGraphql,
+  fetchGraphqlList: fetchGraphqlList,
   fetchUpload: fetchUpload,
   fetchDownload: fetchDownload
 });
