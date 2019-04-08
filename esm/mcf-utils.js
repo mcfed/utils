@@ -148,6 +148,7 @@ var defaults = {
     'Access-Control-Allow-Origin': '*'
   }
 };
+var defaultsHeaders = defaults;
 function toData(json) {
   if (json.code === 0) {
     return json.data;
@@ -159,6 +160,7 @@ function fetchCatch(error) {
   return error;
 }
 function fetchRequest(url, options) {
+  // console.log( defaults, options)
   return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
     if (res.ok === true) {
       return res;
@@ -285,6 +287,7 @@ function fetchDownload(url, options) {
 }
 
 var index = /*#__PURE__*/Object.freeze({
+  defaultsHeaders: defaultsHeaders,
   toData: toData,
   fetchCatch: fetchCatch,
   fetchRequest: fetchRequest,

@@ -51,7 +51,7 @@ function processParams(object) {
   }
   return processPraramItem(body)
 }
-const defaults = {
+ const defaults = {
   credentials: 'include',
   mode: 'cors',
   headers: {
@@ -60,6 +60,7 @@ const defaults = {
     'Access-Control-Allow-Origin': '*',
   }
 }
+export const defaultsHeaders=defaults
 
 export function toData(json) {
   if (json.code === 0) {
@@ -74,6 +75,7 @@ export function fetchCatch(error) {
 }
 
 export function fetchRequest(url, options) {
+  // console.log( defaults, options)
   return fetch(url, Object.assign({}, defaults, options)).then(res => {
     if (res.ok === true) {
       return res
