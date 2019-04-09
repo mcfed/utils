@@ -106,6 +106,27 @@
     });
   }
 
+  function processGraphqlParams(params) {
+    var column = params.column,
+        current = params.current,
+        showQuickJumper = params.showQuickJumper,
+        pageSize = params.pageSize,
+        total = params.total,
+        field = params.field,
+        pageSizeOptions = params.pageSizeOptions,
+        showSizeChanger = params.showSizeChanger,
+        columnKey = params.columnKey,
+        order = params.order,
+        otherParam = _objectWithoutProperties(params, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "pageSizeOptions", "showSizeChanger", "columnKey", "order"]);
+
+    return JSON.stringify(JSON.stringify(Object.assign({}, otherParam, {
+      start: (current - 1) * pageSize || 0,
+      end: current * pageSize - 1 || 9,
+      order: columnKey,
+      orderBy: order && order.replace(/end$/, "")
+    })));
+  }
+
   function processPraramItem(object) {
     for (var key in object) {
       if (object[key] instanceof Array) {
@@ -169,7 +190,7 @@
     return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
       if (res.ok === true) {
         return res;
-      } else if (res.status == 601) {
+      } else if (res.status == 601 || res.status == 401) {
         window.dispatchEvent(new CustomEvent('login_out'));
       } else {
         // var err = new Error(res.statusText)
@@ -292,6 +313,7 @@
   }
 
   var index = /*#__PURE__*/Object.freeze({
+    processGraphqlParams: processGraphqlParams,
     defaultsHeaders: defaultsHeaders,
     toData: toData,
     fetchCatch: fetchCatch,
