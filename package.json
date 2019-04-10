@@ -43,10 +43,8 @@
     "rollup-plugin-size-snapshot": "^0.7.0"
   },
   "dependencies": {
-    "cross-fetch": "^2.2.3",
     "qs": "^6.6.0"
   },
   "peerDependencies": {
-    "isomorphic-fetch": "^2.2.1"
   }
 }

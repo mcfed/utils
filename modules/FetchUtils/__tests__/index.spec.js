@@ -5,7 +5,7 @@ import { stringify } from 'qs'
 
 jest.autoMockOff();
 
-describe.skip('FetchUtils使用 Get 请求', () => {
+describe('FetchUtils使用 Get 请求', () => {
   beforeEach(() => {
     // fetch.resetMocks()
   })

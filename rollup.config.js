@@ -14,8 +14,7 @@ const input = "./modules/index"
 const globals = {
   react: "React",
   "prop-types":"PropTypes",
-  "qs":"qs",
-  "cross-fetch":"fetch"
+  "qs":"qs"
 };
 const babelOptionsCJS = {
   exclude: /node_modules/

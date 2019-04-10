@@ -1,5 +1,4 @@
 import { stringify } from 'qs';
-import fetch from 'cross-fetch';
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
 
@@ -117,8 +116,8 @@ function processGraphqlParams(params) {
   return JSON.stringify(JSON.stringify(Object.assign({}, otherParam, {
     start: (current - 1) * pageSize || 0,
     end: current * pageSize - 1 || 9,
-    order: columnKey,
-    orderBy: order && order.replace(/end$/, "")
+    order: order && order.replace(/end$/, ""),
+    orderBy: columnKey
   })));
 }
 
@@ -181,36 +180,39 @@ function fetchCatch(error) {
   return error;
 }
 function fetchRequest(url, options) {
-  // console.log( defaults, options)
-  return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
-    if (res.ok === true) {
-      return res;
-    } else if (res.status == 601 || res.status == 401) {
-      window && window.dispatchEvent(new CustomEvent('login_out'));
-      return {
-        code: res.status,
-        message: res.statusText
-      };
-    } else {
-      // var err = new Error(res.statusText)
-      // err.response = res
-      // throw err
-      return {
-        code: res.status,
-        message: res.statusText
-      };
-    }
-  }).then(function (res) {
-    if (options.responseType === 'arraybuffer') {
-      return res;
-    } else if (res.code) {
-      return res;
-    } else {
-      return res.json();
-    }
-  }).catch(function (e) {
-    console.log(e);
-  });
+  if (fetch) {
+    return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
+      if (res.ok === true) {
+        return res;
+      } else if (res.status == 601 || res.status == 401) {
+        global.dispatchEvent && global.dispatchEvent(new CustomEvent('login_out'));
+        return {
+          code: res.status,
+          message: res.statusText
+        };
+      } else {
+        // var err = new Error(res.statusText)
+        // err.response = res
+        // throw err
+        return {
+          code: res.status,
+          message: res.statusText
+        };
+      }
+    }).then(function (res) {
+      if (options.responseType === 'arraybuffer') {
+        return res;
+      } else if (res.code) {
+        return res;
+      } else {
+        return res.json();
+      }
+    }).catch(function (e) {
+      console.log(e);
+    });
+  } else {
+    console.error("\n      import fetch from 'cross-fetch'  // import you fetch utils\n      global.fetch = fetch\n    ");
+  }
 }
 function processBody(options, format) {
   if (options && _typeof(options.body) === 'object') {
