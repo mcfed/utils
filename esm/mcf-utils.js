@@ -186,7 +186,11 @@ function fetchRequest(url, options) {
     if (res.ok === true) {
       return res;
     } else if (res.status == 601 || res.status == 401) {
-      window.dispatchEvent(new CustomEvent('login_out'));
+      window && window.dispatchEvent(new CustomEvent('login_out'));
+      return {
+        code: res.status,
+        message: res.statusText
+      };
     } else {
       // var err = new Error(res.statusText)
       // err.response = res
