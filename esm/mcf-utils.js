@@ -165,7 +165,8 @@ var defaults = {
   headers: {
     "Content-Type": "application/json; charset=UTF-8",
     "X-Requested-With": "XMLHttpRequest",
-    'Access-Control-Allow-Origin': '*'
+    'Access-Control-Allow-Origin': '*',
+    'Pragma': 'no-cache'
   }
 };
 var defaultsHeaders = defaults;
@@ -180,7 +181,7 @@ function fetchCatch(error) {
   return error;
 }
 function fetchRequest(url, options) {
-  if (fetch) {
+  if (global.fetch) {
     return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
       if (res.ok === true) {
         return res;
@@ -246,7 +247,8 @@ function fetchPost(url, options) {
 
   return fetchRequest(url, Object.assign({
     headers: {
-      'Content-Type': 'application/json; charset=UTF-8'
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Pragma': 'no-cache'
     },
     method: 'POST'
   }, options));
@@ -266,7 +268,8 @@ function fetchGraphql(url, options, querys) {
     credentials: 'include',
     // include, same-origin, *omit
     headers: {
-      "Content-Type": "application/json; charset=UTF-8"
+      "Content-Type": "application/json; charset=UTF-8",
+      'Pragma': 'no-cache'
     },
     method: 'POST',
     // *GET, POST, PUT, DELETE, etc.
@@ -276,7 +279,11 @@ function fetchGraphql(url, options, querys) {
 }
 function fetchGraphqlList(url, options, querys) {
   return fetchGraphql(url, options, querys).then(function (result) {
-    return result.data.result;
+    if (result.data) {
+      return result.data.result;
+    } else {
+      return result;
+    }
   });
 }
 function fetchUpload(url, options) {
@@ -287,7 +294,8 @@ function fetchDownload(url, options) {
   return fetchGet(url, Object.assign({}, options, {
     responseType: 'arraybuffer',
     headers: {
-      'Content-Type': 'multipart/form-data;charset=UTF-8'
+      'Content-Type': 'multipart/form-data;charset=UTF-8',
+      'Pragma': 'no-cache'
     }
   })).then(function (res) {
     return res.blob().then(function (blob) {

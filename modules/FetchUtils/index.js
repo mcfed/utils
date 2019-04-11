@@ -67,6 +67,7 @@ function processParams(object) {
     "Content-Type": "application/json; charset=UTF-8",
     "X-Requested-With": "XMLHttpRequest",
     'Access-Control-Allow-Origin': '*',
+    'Pragma' : 'no-cache'
   }
 }
 export const defaultsHeaders=defaults
@@ -84,7 +85,7 @@ export function fetchCatch(error) {
 }
 
 export function fetchRequest(url, options) {
-  if(fetch){
+  if(global.fetch){
     return fetch(url, Object.assign({}, defaults, options)).then(res => {
       if (res.ok === true) {
         return res
@@ -153,7 +154,8 @@ export function fetchPost(url, options) {
   // console.log(options)
   return fetchRequest(url, Object.assign({
     headers: {
-      'Content-Type': 'application/json; charset=UTF-8'
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Pragma' : 'no-cache'
     },
     method: 'POST'
   }, options))
@@ -180,6 +182,7 @@ export function fetchGraphql(url,options,querys) {
       credentials: 'include', // include, same-origin, *omit
       headers: {
         "Content-Type": "application/json; charset=UTF-8",
+        'Pragma' : 'no-cache'
       },
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       mode: 'cors', // no-cors, cors, *same-origin
@@ -187,7 +190,13 @@ export function fetchGraphql(url,options,querys) {
 }
 
 export function fetchGraphqlList(url,options,querys) {
-  return fetchGraphql(url,options,querys).then((result)=>result.data.result)
+  return fetchGraphql(url,options,querys).then((result)=>{
+    if(result.data){
+      return result.data.result
+    }else{
+      return result
+    }
+  })
 }
 
 
@@ -201,7 +210,10 @@ export function fetchUpload(url,options){
 export function fetchDownload(url, options) {
   return fetchGet(url, Object.assign({}, options, {
     responseType: 'arraybuffer',
-    headers: { 'Content-Type': 'multipart/form-data;charset=UTF-8' },
+    headers: {
+      'Content-Type': 'multipart/form-data;charset=UTF-8',
+      'Pragma' : 'no-cache'
+    },
   }))
   .then((res)=>res.blob().then((blob) => {
 
