@@ -7,6 +7,16 @@ export const rules = {
       callback()
     }
   },
+  //validator
+  validatePort :(rule, value, callback) => {
+    let message = '请输入正确的端口'
+    var parten = /^(\d)+$/g
+    if (parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+      callback()
+    } else {
+      callback(message)
+    }
+  },
   checkIPCust:(rule, value, callback) => {
     var reg = /^[0-9a-fA-F\\.\\:////]{2,39}$/;
 
@@ -14,6 +24,16 @@ export const rules = {
       callback("Ip地址不正确");
     }else{
       callback();
+    }
+  },
+  //validator
+  validateToNextPassword:(rule, value, callback) => {
+    let message = '请不要输入非法字符'
+    let regEx = /^[A-z0-9\\_\\#\\$\\\u4e00-\u9fa5]*$/
+    if (value && !regEx.test(value)) {
+      callback(message)
+    } else {
+      callback()
     }
   },
   checkWeekPassword: (rule, value, callback) =>{

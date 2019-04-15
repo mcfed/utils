@@ -1,4 +1,4 @@
-import {fetchDownload,fetchGet,fetchPost,stringifyURL,processBody} from '../index'
+import {fetchDownload,fetchGet,fetchList,fetchPost,stringifyURL,processBody} from '../index'
 import fetchMock from 'fetch-mock'
 import { stringify } from 'qs'
 // import Headers from 'headers'
@@ -65,8 +65,22 @@ describe('FetchUtils使用 Get 请求', () => {
       done()
     })
   })
+  it('fetchList 请求200',(done)=>{
+    const mockResult={
+      code:0,
+      data:{
+        item:[]
+      }
+    }
+    let url = "http://localhost/fetchList/200"
+    fetchMock.mock(url,JSON.stringify(mockResult))
+    fetchList(url).then((result)=>{
+      expect(result).toEqual(mockResult)
+      done()
+    })
+  })
 })
-describe.skip('FetchUtils使用 Post 请求', () => {
+describe('FetchUtils使用 Post 请求', () => {
   it('post 请求200',(done)=>{
     let mockResult={
       code:0

@@ -174,13 +174,6 @@
     }
   };
   var defaultsHeaders = defaults;
-  function toData(json) {
-    if (json.code === 0) {
-      return json.data;
-    } else {
-      return json;
-    }
-  }
   function fetchCatch(error) {
     return error;
   }
@@ -328,7 +321,6 @@
   var index = /*#__PURE__*/Object.freeze({
     processGraphqlParams: processGraphqlParams,
     defaultsHeaders: defaultsHeaders,
-    toData: toData,
     fetchCatch: fetchCatch,
     fetchRequest: fetchRequest,
     processBody: processBody,
@@ -400,11 +392,33 @@
         callback();
       }
     },
+    //validator
+    validatePort: function validatePort(rule, value, callback) {
+      var message = '请输入正确的端口';
+      var parten = /^(\d)+$/g;
+
+      if (parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+        callback();
+      } else {
+        callback(message);
+      }
+    },
     checkIPCust: function checkIPCust(rule, value, callback) {
       var reg = /^[0-9a-fA-F\\.\\:////]{2,39}$/;
 
       if (!reg.test(value)) {
         callback("Ip地址不正确");
+      } else {
+        callback();
+      }
+    },
+    //validator
+    validateToNextPassword: function validateToNextPassword(rule, value, callback) {
+      var message = '请不要输入非法字符';
+      var regEx = /^[A-z0-9\\_\\#\\$\\\u4e00-\u9fa5]*$/;
+
+      if (value && !regEx.test(value)) {
+        callback(message);
       } else {
         callback();
       }

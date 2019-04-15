@@ -72,13 +72,6 @@ function processParams(object) {
 }
 export const defaultsHeaders=defaults
 
-export function toData(json) {
-  if (json.code === 0) {
-    return json.data
-  } else {
-    return json
-  }
-}
 
 export function fetchCatch(error) {
   return error
@@ -216,7 +209,6 @@ export function fetchDownload(url, options) {
     },
   }))
   .then((res)=>res.blob().then((blob) => {
-
     if (blob) {
       var a = document.createElement('a');
       var url = window.URL.createObjectURL(blob);
