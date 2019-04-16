@@ -37,7 +37,7 @@ export const rules = {
     }
   },
   checkWeekPassword: (rule, value, callback) =>{
-    if (/^\d{6}$/.test(value)) {
+    if (/^\d{1,6}$/.test(value)) {
       callback('密码为弱密码！')
     }else{
       callback()
@@ -91,13 +91,13 @@ export const rules = {
    integer:(rule,value,callback)=>{
      var rexp=/^([1-9]\d*|[0]{0,1})$/
      if(value instanceof Array){
-         value.map((it,idx)=>{
-           if (!rexp.test(it)) {
+       for(let i=0;i<value.length;i++){
+           if (!rexp.test(value[i])) {
               return callback('必须为正整数！')
            }else{
                 // callback()
            }
-         })
+        }
         return callback()
      }else if(typeof(value) == "string"){
        if (!rexp.test(value)) {
