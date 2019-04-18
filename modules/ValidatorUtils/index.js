@@ -1,9 +1,20 @@
 export const rules = {
+  validateSpecialCharacters : (rule, value, callback) => {
+    let message = '请不要输入非法字符'
+    let regEx = /^[A-z0-9\\_\\#\\$\\\u4e00-\u9fa5]*$/
+    if (value && !regEx.test(value)) {
+      callback(message)
+    } else {
+      callback()
+    }
+  },
+
   checkIP: (rule, value, callback) => {
     var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
     if (!reg.test(value)) {
       callback("Ip地址不正确")
     }else{
+      // console.log("callback")
       callback()
     }
   },

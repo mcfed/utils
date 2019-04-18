@@ -379,12 +379,23 @@ var index$2 = /*#__PURE__*/Object.freeze({
 });
 
 var rules = {
+  validateSpecialCharacters: function validateSpecialCharacters(rule, value, callback) {
+    var message = '请不要输入非法字符';
+    var regEx = /^[A-z0-9\\_\\#\\$\\\u4e00-\u9fa5]*$/;
+
+    if (value && !regEx.test(value)) {
+      callback(message);
+    } else {
+      callback();
+    }
+  },
   checkIP: function checkIP(rule, value, callback) {
     var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
 
     if (!reg.test(value)) {
       callback("Ip地址不正确");
     } else {
+      // console.log("callback")
       callback();
     }
   },
@@ -420,7 +431,7 @@ var rules = {
     }
   },
   checkWeekPassword: function checkWeekPassword(rule, value, callback) {
-    if (/^\d{6}$/.test(value)) {
+    if (/^\d{1,6}$/.test(value)) {
       callback('密码为弱密码！');
     } else {
       callback();
@@ -475,11 +486,12 @@ var rules = {
     var rexp = /^([1-9]\d*|[0]{0,1})$/;
 
     if (value instanceof Array) {
-      value.map(function (it, idx) {
-        if (!rexp.test(it)) {
+      for (var i = 0; i < value.length; i++) {
+        if (!rexp.test(value[i])) {
           return callback('必须为正整数！');
         }
-      });
+      }
+
       return callback();
     } else if (typeof value == "string") {
       if (!rexp.test(value)) {
