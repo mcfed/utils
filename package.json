@@ -43,8 +43,8 @@
     "rollup-plugin-size-snapshot": "^0.7.0"
   },
   "dependencies": {
+    "moment": "^2.24.0",
     "qs": "^6.6.0"
   },
-  "peerDependencies": {
-  }
+  "peerDependencies": {}
 }
