@@ -5,7 +5,7 @@
  */
 import { stringify } from 'qs'
 
-function stringifyURL(str, options) {
+export function stringifyURL(str, options) {
   if (!str) {
     return str;
   }
@@ -32,7 +32,7 @@ export function processGraphqlParams(params){
   })))
 }
 
-function processPraramItem(object) {
+export function processPraramItem(object) {
   for (var key in object) {
     if (object[key] instanceof Array) {
       if (object[key].length !== 0) {

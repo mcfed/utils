@@ -99,7 +99,6 @@ function stringifyURL(str, options) {
     return replacement;
   });
 }
-
 function processGraphqlParams(params) {
   var column = params.column,
       current = params.current,
@@ -120,7 +119,6 @@ function processGraphqlParams(params) {
     orderBy: columnKey
   })));
 }
-
 function processPraramItem(object) {
   for (var key in object) {
     if (object[key] instanceof Array) {
@@ -319,7 +317,9 @@ function fetchDownload(url, options) {
 }
 
 var index = /*#__PURE__*/Object.freeze({
+  stringifyURL: stringifyURL,
   processGraphqlParams: processGraphqlParams,
+  processPraramItem: processPraramItem,
   defaultsHeaders: defaultsHeaders,
   fetchCatch: fetchCatch,
   fetchRequest: fetchRequest,

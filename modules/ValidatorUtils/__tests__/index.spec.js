@@ -1,4 +1,5 @@
 import {rules} from '../index'
+import moment from 'moment'
 
 
 describe('验证方法测试validateSpecialCharacters', () => {
@@ -618,6 +619,66 @@ describe('验证方法测试正确性', () => {
                 done()
             })
         })
+    })
+
+
+    describe("验证dataRangePicked正确性",()=>{
+      it('dateRange 日期差不超过1天',()=>{
+        rules.dateRangePicked({
+          days:1
+        },[moment("2019-04-18"),moment("2019-04-20")],(args)=>{
+          expect(args).toBe("日期差不能超过1天")
+        })
+      })
+
+      it("传入符合规则的值不报错",()=>{
+        rules.dateRangePicked({
+          days:3
+        },[moment("2019-04-18"),moment("2019-04-20")],(args)=>{
+          expect(args).toBe(undefined)
+        })
+      })
+    })
+
+    describe("验证dateCompare正确性",()=>{
+
+
+      it("datecompare 传入的时间结束时间小于开始时间时报错",()=>{
+        rules.dateCompare({
+          date:moment("2018-04-18"),
+          type:"bigger"
+        },moment("2019-04-12"),(args)=>{
+          expect(args).toBe("结束时间必须大于开始时间！")
+        })
+      })
+
+      it("datecompare type为bigger传入的时间正确时不报错",()=>{
+        rules.dateCompare({
+          date:moment("2018-04-18"),
+          type:"bigger"
+        },moment("2019-04-20"),(args)=>{
+          expect(args).toBe(undefined)
+        })
+      })
+
+      it("dateCompare 传入的时间开始时间大于结束时间报错",()=>{
+        rules.dateCompare({
+          date:moment("2018-04-18"),
+          type:"smaller"
+        },moment("2019-04-20"),(args)=>{
+          expect(args).toBe("开始时间必须小于结束时间！")
+        })
+      })
+
+      it("datecompare type为smaller传入的时间正确时不报错",()=>{
+        rules.dateCompare({
+          date:moment("2018-04-18"),
+          type:"bigger"
+        },moment("2019-04-16"),(args)=>{
+          expect(args).toBe(undefined)
+        })
+      })
+
     })
 
     // describe.only('验证dateRangePicked正确性', () => {

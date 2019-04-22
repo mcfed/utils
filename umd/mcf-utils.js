@@ -103,7 +103,6 @@
       return replacement;
     });
   }
-
   function processGraphqlParams(params) {
     var column = params.column,
         current = params.current,
@@ -124,7 +123,6 @@
       orderBy: columnKey
     })));
   }
-
   function processPraramItem(object) {
     for (var key in object) {
       if (object[key] instanceof Array) {
@@ -323,7 +321,9 @@
   }
 
   var index = /*#__PURE__*/Object.freeze({
+    stringifyURL: stringifyURL,
     processGraphqlParams: processGraphqlParams,
+    processPraramItem: processPraramItem,
     defaultsHeaders: defaultsHeaders,
     fetchCatch: fetchCatch,
     fetchRequest: fetchRequest,

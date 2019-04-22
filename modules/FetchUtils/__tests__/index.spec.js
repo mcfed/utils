@@ -1,4 +1,4 @@
-import {fetchDownload,fetchGet,fetchList,fetchPost,stringifyURL,processBody} from '../index'
+import {fetchDownload,fetchGet,fetchList,fetchPost,fetchCatch,stringifyURL,processPraramItem,processBody} from '../index'
 import fetchMock from 'fetch-mock'
 import { stringify } from 'qs'
 // import Headers from 'headers'
@@ -128,12 +128,86 @@ describe.skip('FetchUtils使用 fetchDownload 请求', () => {
   })
 })
 
-describe.skip('FetchUtils使用 processBody 方法', () => {
-  it.skip('processBody',(done)=>{
+describe("stringifyURL 方法", () => {
+
+
+  it("是否可以将对应url中的变量替换", () => {
+    const url = "http://localhost/:id"
+    const options = {
+      id:123
+    }
+    const result = 'http://localhost/123'
+
+    expect(stringifyURL(url,options)).toBe(result)
+  });
+
+  it.skip("如果变量不同则不替换", () => {
+    const url = "http://localhost/:id"
+    const options = {
+      member:213
+    }
+
+    expect(stringifyURL(url,options)).toBe(url)
+  });
+});
+
+// describe("", () => {
+//
+// });
+
+describe('FetchUtils使用 processBody 方法', () => {
+  it('processBody',(done)=>{
+    const options ={
+      body:{
+        aa:123,
+        bb:456
+      }
+    }
+    const result = {
+      body:Object.assign({},options.body,{
+        currentPage:undefined,
+        totalCount:undefined,
+        pageSize:undefined
+      })
+    }
+    expect(result).toEqual(processBody(options))
     done()
   })
 
-  it.skip('processPraramItem 处理参数方法',(done) =>{
-    done()
+  it("processPraramItem 如果正常传入值没有空和数组则不转化", () => {
+    const obj = {
+      a:1,
+      b:2,
+      c:3
+    }
+    expect(processPraramItem(obj)).toEqual(obj)
+  });
+
+  it('processPraramItem 如果对象值为空则转为undefined',() =>{
+    const obj = {
+      a:""
+    }
+
+    expect(processPraramItem(obj).a).toBe(undefined)
   })
+
+  it("processPraramItem 如果值为数组则转为字符串", () => {
+    const obj = {
+      a:[1,2,3]
+    }
+
+    expect(processPraramItem(obj).a).toBe(JSON.stringify([1,2,3]))
+  })
+
+  it("processPraramItem 如果值为json则不处理", () => {
+    const obj = {
+      a:{
+        b:1
+      }
+    }
+    const result = {
+      b:1
+    }
+    expect(processPraramItem(obj).a).toEqual(result)
+  });
 })
