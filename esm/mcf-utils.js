@@ -273,6 +273,10 @@ function fetchGraphql(url, options, querys) {
 function fetchGraphqlList(url, options, querys) {
   return fetchGraphql(url, options, querys).then(function (result) {
     if (result.data) {
+      if (result.data.result.code == 401) {
+        global.dispatchEvent && global.dispatchEvent(new CustomEvent('login_out'));
+      }
+
       return result.data.result;
     } else {
       return result;
