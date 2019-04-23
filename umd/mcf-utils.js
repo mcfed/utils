@@ -456,7 +456,7 @@
     checkMobile: function checkMobile(rule, value, callback) {
       var rexp = /^(0?1[123456789]\d{9})$/;
 
-      if (!rexp.test(value)) {
+      if (value && !rexp.test(value)) {
         callback('手机号码格式不正确！');
       } else {
         callback();
