@@ -396,8 +396,8 @@ var rules = {
   checkIP: function checkIP(rule, value, callback) {
     var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
 
-    if (!reg.test(value)) {
-      callback("Ip地址不正确");
+    if (value && !reg.test(value)) {
+      callback("IP地址不正确");
     } else {
       // console.log("callback")
       callback();
@@ -408,7 +408,7 @@ var rules = {
     var message = '请输入正确的端口';
     var parten = /^(\d)+$/g;
 
-    if (parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+    if (value && parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
       callback();
     } else {
       callback(message);
