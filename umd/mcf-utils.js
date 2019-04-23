@@ -407,15 +407,19 @@
         callback();
       }
     },
-    //validator
+    // validator
     validatePort: function validatePort(rule, value, callback) {
       var message = '请输入正确的端口';
       var parten = /^(\d)+$/g;
 
-      if (value && parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+      if (!value) {
         callback();
       } else {
-        callback(message);
+        if (parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+          callback();
+        } else {
+          callback(message);
+        }
       }
     },
     checkIPCust: function checkIPCust(rule, value, callback) {

@@ -13,19 +13,23 @@ export const rules = {
     var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
     if (value && !reg.test(value)) {
       callback("IP地址不正确")
-    }else{
+    } else {
       // console.log("callback")
       callback()
     }
   },
-  //validator
-  validatePort :(rule, value, callback) => {
+  // validator
+  validatePort: (rule, value, callback) => {
     let message = '请输入正确的端口'
     var parten = /^(\d)+$/g
-    if (value && parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+    if (!value) {
       callback()
     } else {
-      callback(message)
+      if (parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+        callback()
+      } else {
+        callback(message)
+      }
     }
   },
   checkIPCust:(rule, value, callback) => {
