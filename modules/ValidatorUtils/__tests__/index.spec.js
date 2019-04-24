@@ -62,13 +62,13 @@ describe('验证方法测试正确性', () => {
             result: undefined
         },{
             ip: '192.1',
-            result: "Ip地址不正确"
+            result: "IP地址不正确"
         },{
             ip: '1.1.1.1',
             result: undefined
         },{
             ip: '190.168.0.0.0',
-            result: "Ip地址不正确"
+            result: "IP地址不正确"
         }]
         it(`checkIP[${testData[0].ip}]`, (done) => {
             rules.checkIP('',testData[0].ip,(args)=>{
