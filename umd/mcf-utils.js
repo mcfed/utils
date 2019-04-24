@@ -103,7 +103,6 @@
       return replacement;
     });
   }
-
   function processGraphqlParams(params) {
     var column = params.column,
         current = params.current,
@@ -124,7 +123,6 @@
       orderBy: columnKey
     })));
   }
-
   function processPraramItem(object) {
     for (var key in object) {
       if (object[key] instanceof Array) {
@@ -277,6 +275,10 @@
   function fetchGraphqlList(url, options, querys) {
     return fetchGraphql(url, options, querys).then(function (result) {
       if (result.data) {
+        if (result.data.result.code == 401) {
+          global.dispatchEvent && global.dispatchEvent(new CustomEvent('login_out'));
+        }
+
         return result.data.result;
       } else {
         return result;
@@ -319,7 +321,9 @@
   }
 
   var index = /*#__PURE__*/Object.freeze({
+    stringifyURL: stringifyURL,
     processGraphqlParams: processGraphqlParams,
+    processPraramItem: processPraramItem,
     defaultsHeaders: defaultsHeaders,
     fetchCatch: fetchCatch,
     fetchRequest: fetchRequest,
@@ -396,22 +400,26 @@
     checkIP: function checkIP(rule, value, callback) {
       var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
 
-      if (!reg.test(value)) {
-        callback("Ip地址不正确");
+      if (value && !reg.test(value)) {
+        callback("IP地址不正确");
       } else {
         // console.log("callback")
         callback();
       }
     },
-    //validator
+    // validator
     validatePort: function validatePort(rule, value, callback) {
       var message = '请输入正确的端口';
       var parten = /^(\d)+$/g;
 
-      if (parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+      if (!value) {
         callback();
       } else {
-        callback(message);
+        if (parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+          callback();
+        } else {
+          callback(message);
+        }
       }
     },
     checkIPCust: function checkIPCust(rule, value, callback) {
@@ -452,7 +460,7 @@
     checkMobile: function checkMobile(rule, value, callback) {
       var rexp = /^(0?1[123456789]\d{9})$/;
 
-      if (!rexp.test(value)) {
+      if (value && !rexp.test(value)) {
         callback('手机号码格式不正确！');
       } else {
         callback();

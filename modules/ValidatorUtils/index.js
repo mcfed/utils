@@ -11,21 +11,25 @@ export const rules = {
 
   checkIP: (rule, value, callback) => {
     var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-    if (!reg.test(value)) {
-      callback("Ip地址不正确")
-    }else{
+    if (value && !reg.test(value)) {
+      callback("IP地址不正确")
+    } else {
       // console.log("callback")
       callback()
     }
   },
-  //validator
-  validatePort :(rule, value, callback) => {
+  // validator
+  validatePort: (rule, value, callback) => {
     let message = '请输入正确的端口'
     var parten = /^(\d)+$/g
-    if (parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+    if (!value) {
       callback()
     } else {
-      callback(message)
+      if (parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+        callback()
+      } else {
+        callback(message)
+      }
     }
   },
   checkIPCust:(rule, value, callback) => {
@@ -63,7 +67,7 @@ export const rules = {
     */
    checkMobile: (rule, value, callback) =>{
      var rexp= /^(0?1[123456789]\d{9})$/
-     if (!rexp.test(value)) {
+     if (value && !rexp.test(value)) {
        callback('手机号码格式不正确！')
      }else{
        callback()
@@ -117,7 +121,7 @@ export const rules = {
           return callback()
        }
      }
-    return callback()
+    // return callback()
    },
    maxLength:(rule,value,callback)=>{
      if(value && value.length>rule.value){
@@ -176,13 +180,19 @@ export const rules = {
     var type = rule.type
     if (value && date) {
       let diff = value.diff(date)
-      if (type == "bigger") {
+      // console.log("diff",diff,value,date)
+      if (type === "bigger") {
         if (diff < 0) {
           callback("结束时间必须大于开始时间！")
+        }else{
+          callback()
         }
+
       } else if (type == "smaller") {
         if (diff > 0) {
           callback("开始时间必须小于结束时间！")
+        }else{
+          callback()
         }
       }
     }else{
