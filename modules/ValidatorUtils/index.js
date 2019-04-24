@@ -121,7 +121,7 @@ export const rules = {
           return callback()
        }
      }
-    return callback()
+    // return callback()
    },
    maxLength:(rule,value,callback)=>{
      if(value && value.length>rule.value){
@@ -180,13 +180,19 @@ export const rules = {
     var type = rule.type
     if (value && date) {
       let diff = value.diff(date)
-      if (type == "bigger") {
+      // console.log("diff",diff,value,date)
+      if (type === "bigger") {
         if (diff < 0) {
           callback("结束时间必须大于开始时间！")
+        }else{
+          callback()
         }
+
       } else if (type == "smaller") {
         if (diff > 0) {
           callback("开始时间必须小于结束时间！")
+        }else{
+          callback()
         }
       }
     }else{
