@@ -682,19 +682,7 @@ describe('验证方法测试正确性', () => {
       })
     })
 
-    describe.skip("验证dateCompare正确性",()=>{
-
-      it.skip("datecompare 传入的结束时间必须大于开始时间",(done)=>{
-        rules.dateCompare({
-          date:moment("2018-04-10"),
-          type:"bigger"
-        },moment("2019-04-12"),(args)=>{
-          console.log(args)
-          expect(args).toBe("结束时间必须大于开始时间！")
-          done()
-        })
-        // done()
-      })
+    describe("验证dateCompare正确性",()=>{
 
       it("datecompare 传入的时间结束时间小于开始时间时报错",()=>{
         rules.dateCompare({

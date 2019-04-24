@@ -180,7 +180,6 @@ export const rules = {
     var type = rule.type
     if (value && date) {
       let diff = value.diff(date)
-      // console.log("diff",diff,value,date)
       if (type === "bigger") {
         if (diff < 0) {
           callback("结束时间必须大于开始时间！")
