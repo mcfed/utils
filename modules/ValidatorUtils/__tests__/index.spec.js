@@ -539,8 +539,8 @@ describe('验证方法测试正确性', () => {
             value: '_',
             result: "必须为正整数！"
         },{
-          value:{},
-          result:undefined
+            value:{},
+            result:undefined
         }]
         it(`integer[${testData[0].value}]`, (done) => {
             rules.integer('',testData[0].value,(args)=>{
@@ -572,10 +572,10 @@ describe('验证方法测试正确性', () => {
                 done()
             })
         })
-        it(`integer[${testData[5].value}]`, (done) => {
+
+        it(`integer[${testData[5].value}]`, () => {
             rules.integer('',testData[5].value,(args)=>{
                 expect(args).toEqual(testData[5].result)
-                done()
             })
         })
     })
@@ -752,5 +752,4 @@ describe('验证方法测试正确性', () => {
 
     })
 
-    })
 })
