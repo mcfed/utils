@@ -408,6 +408,18 @@ describe('验证方法测试正确性', () => {
             },
             value: 'a',
             result: undefined
+        },{
+          range:{
+            ranges:213
+          },
+          value:"d",
+          result:undefined
+        },{
+          range:{
+            ranges:[1,2,3]
+          },
+          value:"d",
+          result:undefined
         }]
         it(`ranges[${testData[0].value}]`, (done) => {
             rules.ranges(testData[0].range,testData[0].value,(args)=>{
@@ -427,6 +439,17 @@ describe('验证方法测试正确性', () => {
                 done()
             })
         })
+
+        it("rangs 不为数组 结果为undefined", () => {
+          rules.ranges(testData[3].range,testData[3].value,(args)=>{
+              expect(args).toEqual(testData[3].result)
+          })
+        });
+        it("rangs 长度不为2 结果为undefined", () => {
+          rules.ranges(testData[4].range,testData[4].value,(args)=>{
+              expect(args).toEqual(testData[4].result)
+          })
+        });
     })
 
     describe('验证fileSize正确性', () => {
@@ -505,6 +528,9 @@ describe('验证方法测试正确性', () => {
         },{
             value: '_',
             result: "必须为正整数！"
+        },{
+          value:{},
+          result:undefined
         }]
         it(`integer[${testData[0].value}]`, (done) => {
             rules.integer('',testData[0].value,(args)=>{
@@ -533,6 +559,12 @@ describe('验证方法测试正确性', () => {
         it(`integer[${testData[4].value}]`, (done) => {
             rules.integer('',testData[4].value,(args)=>{
                 expect(args).toEqual(testData[4].result)
+                done()
+            })
+        })
+        it(`integer[${testData[5].value}]`, (done) => {
+            rules.integer('',testData[5].value,(args)=>{
+                expect(args).toEqual(testData[5].result)
                 done()
             })
         })
@@ -645,7 +677,7 @@ describe('验证方法测试正确性', () => {
 
       it("datecompare 传入的时间结束时间小于开始时间时报错",()=>{
         rules.dateCompare({
-          date:moment("2018-04-18"),
+          date:moment("2019-04-18"),
           type:"bigger"
         },moment("2019-04-12"),(args)=>{
           expect(args).toBe("结束时间必须大于开始时间！")
@@ -654,7 +686,7 @@ describe('验证方法测试正确性', () => {
 
       it("datecompare type为bigger传入的时间正确时不报错",()=>{
         rules.dateCompare({
-          date:moment("2018-04-18"),
+          date:moment("2019-04-18"),
           type:"bigger"
         },moment("2019-04-20"),(args)=>{
           expect(args).toBe(undefined)
@@ -663,7 +695,7 @@ describe('验证方法测试正确性', () => {
 
       it("dateCompare 传入的时间开始时间大于结束时间报错",()=>{
         rules.dateCompare({
-          date:moment("2018-04-18"),
+          date:moment("2019-04-18"),
           type:"smaller"
         },moment("2019-04-20"),(args)=>{
           expect(args).toBe("开始时间必须小于结束时间！")
@@ -672,12 +704,30 @@ describe('验证方法测试正确性', () => {
 
       it("datecompare type为smaller传入的时间正确时不报错",()=>{
         rules.dateCompare({
-          date:moment("2018-04-18"),
-          type:"bigger"
+          date:moment("2019-04-18"),
+          type:"smaller"
         },moment("2019-04-16"),(args)=>{
           expect(args).toBe(undefined)
         })
       })
+
+      it("datecompare 两个值date为undefined时不报错", () => {
+        rules.dateCompare({
+          date:undefined,
+          type:"smaller"
+        },moment("2019-04-16"),(args)=>{
+          expect(args).toBe(undefined)
+        })
+      });
+
+      it("datecompare 两个值date为undefined时不报错", () => {
+        rules.dateCompare({
+          date:moment("2019-04-18"),
+          type:"smaller"
+        },undefined,(args)=>{
+          expect(args).toBe(undefined)
+        })
+      });
 
     })
 
