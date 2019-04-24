@@ -176,38 +176,12 @@
     return error;
   }
   function fetchRequest(url, options) {
-    if (global.fetch) {
-      return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
-        if (res.ok === true) {
-          return res;
-        } else if (res.status == 601 || res.status == 401) {
-          global.dispatchEvent && global.dispatchEvent(new CustomEvent('login_out'));
-          return {
-            code: res.status,
-            message: res.statusText
-          };
-        } else {
-          // var err = new Error(res.statusText)
-          // err.response = res
-          // throw err
-          return {
-            code: res.status,
-            message: res.statusText
-          };
-        }
-      }).then(function (res) {
-        if (options.responseType === 'arraybuffer') {
-          return res;
-        } else if (res.code) {
-          return res;
-        } else {
-          return res.json();
-        }
-      }).catch(function (e) {
-        console.log(e);
-      });
+    if (global.fetch.responseProcess) {
+      return fetch(url, Object.assign({}, defaults, options)).then(global.fetch.responseProcess);
     } else {
-      console.error("\n      import fetch from 'cross-fetch'  // import you fetch utils\n      global.fetch = fetch\n    ");
+      return fetch(url, Object.assign({}, defaults, options)).then(function (response) {
+        return response.json();
+      });
     }
   }
   function processBody(options, format) {
@@ -273,16 +247,8 @@
     }));
   }
   function fetchGraphqlList(url, options, querys) {
-    return fetchGraphql(url, options, querys).then(function (result) {
-      if (result.data) {
-        if (result.data.result.code == 401) {
-          global.dispatchEvent && global.dispatchEvent(new CustomEvent('login_out'));
-        }
-
-        return result.data.result;
-      } else {
-        return result;
-      }
+    return fetchGraphql(url, options, querys).then(function (json) {
+      return json.data.result;
     });
   }
   function fetchUpload(url, options) {
@@ -511,9 +477,8 @@
         } else {
           return callback();
         }
-      }
+      } // return callback()
 
-      return callback();
     },
     maxLength: function maxLength(rule, value, callback) {
       if (value && value.length > rule.value) {
@@ -576,14 +541,20 @@
       if (value && date) {
         var diff = value.diff(date);
 
-        if (type == "bigger") {
+        if (type === "bigger") {
           if (diff < 0) {
             callback("结束时间必须大于开始时间！");
+          } else {
+            callback();
           }
         } else if (type == "smaller") {
           if (diff > 0) {
             callback("开始时间必须小于结束时间！");
+          } else {
+            callback();
           }
+        } else {
+          callback();
         }
       } else {
         callback();
