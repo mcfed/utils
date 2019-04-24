@@ -186,13 +186,14 @@ export const rules = {
         }else{
           callback()
         }
-
       } else if (type == "smaller") {
         if (diff > 0) {
           callback("开始时间必须小于结束时间！")
         }else{
           callback()
         }
+      }else{
+        callback()
       }
     }else{
       callback()

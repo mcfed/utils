@@ -720,6 +720,15 @@ describe('验证方法测试正确性', () => {
         })
       })
 
+      it("datecompare type为不为smaller和bigger时 不报错",()=>{
+        rules.dateCompare({
+          date:moment("2019-04-18"),
+          type:"aaa"
+        },moment("2019-04-16"),(args)=>{
+          expect(args).toBe(undefined)
+        })
+      })
+
       it("datecompare 两个值date为undefined时不报错", () => {
         rules.dateCompare({
           date:undefined,
