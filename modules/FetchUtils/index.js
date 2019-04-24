@@ -78,10 +78,41 @@ export function fetchCatch(error) {
 }
 
 export function fetchRequest(url, options) {
-  if(global.fetch.responseProcess){
-    return fetch(url, Object.assign({}, defaults, options)).then(global.fetch.responseProcess)
+  if(global.fetch){
+    return fetch(url, Object.assign({}, defaults, options)).then(res => {
+      if (res.ok === true) {
+        return res
+      } else if(res.status == 601 || res.status == 401) {
+        global.dispatchEvent && global.dispatchEvent(new CustomEvent('login_out'))
+        return {
+          code:res.status,
+          message:res.statusText
+        }
+      } else {
+        // var err = new Error(res.statusText)
+        // err.response = res
+        // throw err
+        return {
+          code:res.status,
+          message:res.statusText
+        }
+      }
+    }).then(res => {
+      if (options.responseType === 'arraybuffer') {
+        return res
+      } else if(res.code){
+        return res
+      }else{
+        return res.json()
+      }
+    }).catch((e) => {
+      console.log(e);
+    })
   }else{
-    return fetch(url, Object.assign({}, defaults, options)).then((response)=>response.json())
+    console.error(`
+      import fetch from 'cross-fetch'  // import you fetch utils
+      global.fetch = fetch
+    `)
   }
 }
 
@@ -152,7 +183,16 @@ export function fetchGraphql(url,options,querys) {
 }
 
 export function fetchGraphqlList(url,options,querys) {
-  return fetchGraphql(url,options,querys).then(json=> json.data.result)
+  return fetchGraphql(url,options,querys).then((result)=>{
+    if(result.data){
+      if(result.data.result.code == 401) {
+        global.dispatchEvent && global.dispatchEvent(new CustomEvent('login_out'))
+      }
+      return result.data.result
+    }else{
+      return result
+    }
+  })
 }
 
 
@@ -185,6 +225,7 @@ export function fetchDownload(url, options) {
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
       }, 100);
+
       return true
     } else {
       console.error('no data!')

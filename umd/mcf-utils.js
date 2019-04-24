@@ -176,12 +176,38 @@
     return error;
   }
   function fetchRequest(url, options) {
-    if (global.fetch.responseProcess) {
-      return fetch(url, Object.assign({}, defaults, options)).then(global.fetch.responseProcess);
-    } else {
-      return fetch(url, Object.assign({}, defaults, options)).then(function (response) {
-        return response.json();
+    if (global.fetch) {
+      return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
+        if (res.ok === true) {
+          return res;
+        } else if (res.status == 601 || res.status == 401) {
+          global.dispatchEvent && global.dispatchEvent(new CustomEvent('login_out'));
+          return {
+            code: res.status,
+            message: res.statusText
+          };
+        } else {
+          // var err = new Error(res.statusText)
+          // err.response = res
+          // throw err
+          return {
+            code: res.status,
+            message: res.statusText
+          };
+        }
+      }).then(function (res) {
+        if (options.responseType === 'arraybuffer') {
+          return res;
+        } else if (res.code) {
+          return res;
+        } else {
+          return res.json();
+        }
+      }).catch(function (e) {
+        console.log(e);
       });
+    } else {
+      console.error("\n      import fetch from 'cross-fetch'  // import you fetch utils\n      global.fetch = fetch\n    ");
     }
   }
   function processBody(options, format) {
@@ -247,8 +273,16 @@
     }));
   }
   function fetchGraphqlList(url, options, querys) {
-    return fetchGraphql(url, options, querys).then(function (json) {
-      return json.data.result;
+    return fetchGraphql(url, options, querys).then(function (result) {
+      if (result.data) {
+        if (result.data.result.code == 401) {
+          global.dispatchEvent && global.dispatchEvent(new CustomEvent('login_out'));
+        }
+
+        return result.data.result;
+      } else {
+        return result;
+      }
     });
   }
   function fetchUpload(url, options) {
