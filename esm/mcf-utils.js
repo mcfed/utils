@@ -430,7 +430,7 @@ var rules = {
   //validator
   validateToNextPassword: function validateToNextPassword(rule, value, callback) {
     var message = '请不要输入非法字符';
-    var regEx = /^[A-z0-9\\_\\#\\$\\\u4e00-\u9fa5]*$/;
+    var regEx = /^[A-z0-9\\\s+\\_\\#\\$\\\u4e00-\u9fa5]*$/;
 
     if (value && !regEx.test(value)) {
       callback(message);
