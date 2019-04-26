@@ -5,12 +5,12 @@
  */
 import { stringify } from 'qs'
 
-function stringifyURL(str, options) {
+export function stringifyURL(str, options) {
   if (!str) {
     return str;
   }
 
-  return str.replace(/:(\w+)/gi, function (match, p1) {
+  return str.replace(/:([A-Z|a-z]+)/gi, function (match, p1) {
     var replacement = options[p1];
     if (!replacement) {
       throw new Error('Could not find url parameter ' + p1 + ' in passed options object');
@@ -20,7 +20,19 @@ function stringifyURL(str, options) {
   });
 }
 
-function processPraramItem(object) {
+
+
+export function processGraphqlParams(params){
+  const {column, current, showQuickJumper, pageSize, total, field,  pageSizeOptions, showSizeChanger,columnKey,order,...otherParam} = params
+  return JSON.stringify(JSON.stringify(Object.assign({},otherParam,{
+    start:(current-1)* pageSize || 0,
+    end:(current)* pageSize-1 || 9,
+    order:order && order.replace(/end$/,""),
+    orderBy:columnKey
+  })))
+}
+
+export function processPraramItem(object) {
   for (var key in object) {
     if (object[key] instanceof Array) {
       if (object[key].length !== 0) {
@@ -39,7 +51,7 @@ function processPraramItem(object) {
 
 
 function processParams(object) {
-  let { column, current, showQuickJumper, pageSize, total, field, order, pageSizeOptions, showSizeChanger, columnKey, ...other } = object
+  let { column, current, showQuickJumper, pageSize, total, field,  pageSizeOptions, showSizeChanger,  ...other } = object
   var body = {
     currentPage: current,
     totalCount: total,
@@ -48,54 +60,29 @@ function processParams(object) {
   }
   return processPraramItem(body)
 }
-const defaults = {
+ const defaults = {
   credentials: 'include',
   mode: 'cors',
   headers: {
-    "Content-Type": "application/json",
+    "Content-Type": "application/json; charset=UTF-8",
     "X-Requested-With": "XMLHttpRequest",
     'Access-Control-Allow-Origin': '*',
+    'Pragma' : 'no-cache'
   }
 }
+export const defaultsHeaders=defaults
 
-export function toData(json) {
-  if (json.code === 0) {
-    return json.data
-  } else {
-    return json
-  }
-}
 
 export function fetchCatch(error) {
   return error
 }
 
 export function fetchRequest(url, options) {
-  return fetch(url, Object.assign({}, defaults, options)).then(res => {
-    if (res.ok === true) {
-      return res
-    } else if(res.status == 601) {
-      window.dispatchEvent(new CustomEvent('login_out'))
-    } else {
-      // var err = new Error(res.statusText)
-      // err.response = res
-      // throw err
-      return {
-        code:res.status,
-        message:res.statusText
-      }
-    }
-  }).then(res => {
-    if (options.responseType === 'arraybuffer') {
-      return res
-    } else if(res.code){
-      return res
-    }else{
-      return res.json()
-    }
-  }).catch((e) => {
-    console.log(e);
-  })
+  if(global.fetch.responseProcess){
+    return fetch(url, Object.assign({}, defaults, options)).then(global.fetch.responseProcess)
+  }else{
+    return fetch(url, Object.assign({}, defaults, options)).then((response)=>response.json())
+  }
 }
 
 export function processBody(options, format) {
@@ -128,9 +115,10 @@ export function fetchPost(url, options) {
   }
   // console.log(options)
   return fetchRequest(url, Object.assign({
-    headers: new Headers({
-      'Content-Type': 'application/json'
-    }),
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Pragma' : 'no-cache'
+    },
     method: 'POST'
   }, options))
 }
@@ -151,6 +139,21 @@ export function fetchDelete(url,options){
   )
 }
 
+export function fetchGraphql(url,options,querys) {
+  return fetchPost(url, Object.assign({},options,{
+      credentials: 'include', // include, same-origin, *omit
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+        'Pragma' : 'no-cache'
+      },
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, cors, *same-origin
+  }))
+}
+
+export function fetchGraphqlList(url,options,querys) {
+  return fetchGraphql(url,options,querys).then(json=> json.data.result)
+}
 
 
 export function fetchUpload(url,options){
@@ -163,10 +166,12 @@ export function fetchUpload(url,options){
 export function fetchDownload(url, options) {
   return fetchGet(url, Object.assign({}, options, {
     responseType: 'arraybuffer',
-    headers: { 'Content-Type': 'multipart/form-data;charset=UTF-8' },
+    headers: {
+      'Content-Type': 'multipart/form-data;charset=UTF-8',
+      'Pragma' : 'no-cache'
+    },
   }))
   .then((res)=>res.blob().then((blob) => {
-
     if (blob) {
       var a = document.createElement('a');
       var url = window.URL.createObjectURL(blob);
@@ -180,7 +185,6 @@ export function fetchDownload(url, options) {
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
       }, 100);
-
       return true
     } else {
       console.error('no data!')

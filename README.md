@@ -15,6 +15,8 @@
 | fetchDelete | put 方式提交请求参数使用body传递 | Object | - |
 | fetchPostForm | post方式提交请求参数使用FormData文件上传 | object | - |
 | fetchDownload |  使用GET 方式进行文件下载 | Object | - |
+| fetchGraphql |  使用POST 提交graphql | url,option,querys | - |
+| fetchGraphqlList |  使用POST 提交graphql | url,option,querys | - |
 
 
 

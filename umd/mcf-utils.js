@@ -93,7 +93,7 @@
       return str;
     }
 
-    return str.replace(/:(\w+)/gi, function (match, p1) {
+    return str.replace(/:([A-Z|a-z]+)/gi, function (match, p1) {
       var replacement = options[p1];
 
       if (!replacement) {
@@ -103,7 +103,26 @@
       return replacement;
     });
   }
+  function processGraphqlParams(params) {
+    var column = params.column,
+        current = params.current,
+        showQuickJumper = params.showQuickJumper,
+        pageSize = params.pageSize,
+        total = params.total,
+        field = params.field,
+        pageSizeOptions = params.pageSizeOptions,
+        showSizeChanger = params.showSizeChanger,
+        columnKey = params.columnKey,
+        order = params.order,
+        otherParam = _objectWithoutProperties(params, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "pageSizeOptions", "showSizeChanger", "columnKey", "order"]);
 
+    return JSON.stringify(JSON.stringify(Object.assign({}, otherParam, {
+      start: (current - 1) * pageSize || 0,
+      end: current * pageSize - 1 || 9,
+      order: order && order.replace(/end$/, ""),
+      orderBy: columnKey
+    })));
+  }
   function processPraramItem(object) {
     for (var key in object) {
       if (object[key] instanceof Array) {
@@ -129,11 +148,9 @@
         pageSize = object.pageSize,
         total = object.total,
         field = object.field,
-        order = object.order,
         pageSizeOptions = object.pageSizeOptions,
         showSizeChanger = object.showSizeChanger,
-        columnKey = object.columnKey,
-        other = _objectWithoutProperties(object, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "order", "pageSizeOptions", "showSizeChanger", "columnKey"]);
+        other = _objectWithoutProperties(object, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "pageSizeOptions", "showSizeChanger"]);
 
     var body = _objectSpread({
       currentPage: current,
@@ -148,47 +165,24 @@
     credentials: 'include',
     mode: 'cors',
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json; charset=UTF-8",
       "X-Requested-With": "XMLHttpRequest",
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
+      'Pragma': 'no-cache'
     }
   };
-  function toData(json) {
-    if (json.code === 0) {
-      return json.data;
-    } else {
-      return json;
-    }
-  }
+  var defaultsHeaders = defaults;
   function fetchCatch(error) {
     return error;
   }
   function fetchRequest(url, options) {
-    return fetch(url, Object.assign({}, defaults, options)).then(function (res) {
-      if (res.ok === true) {
-        return res;
-      } else if (res.status == 601) {
-        window.dispatchEvent(new CustomEvent('login_out'));
-      } else {
-        // var err = new Error(res.statusText)
-        // err.response = res
-        // throw err
-        return {
-          code: res.status,
-          message: res.statusText
-        };
-      }
-    }).then(function (res) {
-      if (options.responseType === 'arraybuffer') {
-        return res;
-      } else if (res.code) {
-        return res;
-      } else {
-        return res.json();
-      }
-    }).catch(function (e) {
-      console.log(e);
-    });
+    if (global.fetch.responseProcess) {
+      return fetch(url, Object.assign({}, defaults, options)).then(global.fetch.responseProcess);
+    } else {
+      return fetch(url, Object.assign({}, defaults, options)).then(function (response) {
+        return response.json();
+      });
+    }
   }
   function processBody(options, format) {
     if (options && _typeof(options.body) === 'object') {
@@ -221,9 +215,10 @@
 
 
     return fetchRequest(url, Object.assign({
-      headers: new Headers({
-        'Content-Type': 'application/json'
-      }),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Pragma': 'no-cache'
+      },
       method: 'POST'
     }, options));
   }
@@ -237,6 +232,25 @@
       method: 'DELETE'
     }));
   }
+  function fetchGraphql(url, options, querys) {
+    return fetchPost(url, Object.assign({}, options, {
+      credentials: 'include',
+      // include, same-origin, *omit
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+        'Pragma': 'no-cache'
+      },
+      method: 'POST',
+      // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors' // no-cors, cors, *same-origin
+
+    }));
+  }
+  function fetchGraphqlList(url, options, querys) {
+    return fetchGraphql(url, options, querys).then(function (json) {
+      return json.data.result;
+    });
+  }
   function fetchUpload(url, options) {
     return fetchPost(url, Object.assign({}, options, {// headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'}
     }));
@@ -245,7 +259,8 @@
     return fetchGet(url, Object.assign({}, options, {
       responseType: 'arraybuffer',
       headers: {
-        'Content-Type': 'multipart/form-data;charset=UTF-8'
+        'Content-Type': 'multipart/form-data;charset=UTF-8',
+        'Pragma': 'no-cache'
       }
     })).then(function (res) {
       return res.blob().then(function (blob) {
@@ -272,7 +287,10 @@
   }
 
   var index = /*#__PURE__*/Object.freeze({
-    toData: toData,
+    stringifyURL: stringifyURL,
+    processGraphqlParams: processGraphqlParams,
+    processPraramItem: processPraramItem,
+    defaultsHeaders: defaultsHeaders,
     fetchCatch: fetchCatch,
     fetchRequest: fetchRequest,
     processBody: processBody,
@@ -281,6 +299,8 @@
     fetchPost: fetchPost,
     fetchPut: fetchPut,
     fetchDelete: fetchDelete,
+    fetchGraphql: fetchGraphql,
+    fetchGraphqlList: fetchGraphqlList,
     fetchUpload: fetchUpload,
     fetchDownload: fetchDownload
   });
@@ -333,13 +353,39 @@
   });
 
   var rules = {
+    validateSpecialCharacters: function validateSpecialCharacters(rule, value, callback) {
+      var message = '请不要输入非法字符';
+      var regEx = /^[A-z0-9\\_\\#\\$\\\u4e00-\u9fa5]*$/;
+
+      if (value && !regEx.test(value)) {
+        callback(message);
+      } else {
+        callback();
+      }
+    },
     checkIP: function checkIP(rule, value, callback) {
       var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
 
-      if (!reg.test(value)) {
-        callback("Ip地址不正确");
+      if (value && !reg.test(value)) {
+        callback("IP地址不正确");
       } else {
+        // console.log("callback")
         callback();
+      }
+    },
+    // validator
+    validatePort: function validatePort(rule, value, callback) {
+      var message = '请输入正确的端口';
+      var parten = /^(\d)+$/g;
+
+      if (!value) {
+        callback();
+      } else {
+        if (parten.test(value) && parseInt(value) <= 65535 && parseInt(value) > 0) {
+          callback();
+        } else {
+          callback(message);
+        }
       }
     },
     checkIPCust: function checkIPCust(rule, value, callback) {
@@ -351,8 +397,19 @@
         callback();
       }
     },
+    //validator
+    validateToNextPassword: function validateToNextPassword(rule, value, callback) {
+      var message = '请不要输入非法字符';
+      var regEx = /^[A-z0-9\\_\\#\\$\\\u4e00-\u9fa5]*$/;
+
+      if (value && !regEx.test(value)) {
+        callback(message);
+      } else {
+        callback();
+      }
+    },
     checkWeekPassword: function checkWeekPassword(rule, value, callback) {
-      if (/^\d{6}$/.test(value)) {
+      if (/^\d{1,6}$/.test(value)) {
         callback('密码为弱密码！');
       } else {
         callback();
@@ -369,7 +426,7 @@
     checkMobile: function checkMobile(rule, value, callback) {
       var rexp = /^(0?1[123456789]\d{9})$/;
 
-      if (!rexp.test(value)) {
+      if (value && !rexp.test(value)) {
         callback('手机号码格式不正确！');
       } else {
         callback();
@@ -407,11 +464,12 @@
       var rexp = /^([1-9]\d*|[0]{0,1})$/;
 
       if (value instanceof Array) {
-        value.map(function (it, idx) {
-          if (!rexp.test(it)) {
+        for (var i = 0; i < value.length; i++) {
+          if (!rexp.test(value[i])) {
             return callback('必须为正整数！');
           }
-        });
+        }
+
         return callback();
       } else if (typeof value == "string") {
         if (!rexp.test(value)) {
@@ -419,9 +477,8 @@
         } else {
           return callback();
         }
-      }
+      } // return callback()
 
-      return callback();
     },
     maxLength: function maxLength(rule, value, callback) {
       if (value && value.length > rule.value) {
@@ -484,14 +541,20 @@
       if (value && date) {
         var diff = value.diff(date);
 
-        if (type == "bigger") {
+        if (type === "bigger") {
           if (diff < 0) {
             callback("结束时间必须大于开始时间！");
+          } else {
+            callback();
           }
         } else if (type == "smaller") {
           if (diff > 0) {
             callback("开始时间必须小于结束时间！");
+          } else {
+            callback();
           }
+        } else {
+          callback();
         }
       } else {
         callback();
