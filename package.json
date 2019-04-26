@@ -1,9 +1,13 @@
 {
   "name": "mcf-utils",
-  "version": "1.0.0rc",
+  "version": "1.0.0-rc1",
   "description": "@mcf for utils",
   "module": "esm/mcf-utils.js",
   "main": "umd/mcf-utils.js",
+  "repository": {
+    "type": "git",
+    "url": "http://git.mchz.com.cn/mcf/utils.git"
+  },
   "scripts": {
     "test": "jest",
     "dev": "rollup -c --watch",
