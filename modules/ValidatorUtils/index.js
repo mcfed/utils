@@ -44,7 +44,7 @@ export const rules = {
   //validator
   validateToNextPassword:(rule, value, callback) => {
     let message = '请不要输入非法字符'
-    let regEx = /^[A-z0-9\\_\\#\\$\\\u4e00-\u9fa5]*$/
+    let regEx = /^[A-z0-9\\\s+\\_\\#\\$\\\u4e00-\u9fa5]*$/
     if (value && !regEx.test(value)) {
       callback(message)
     } else {

@@ -430,7 +430,7 @@ var rules = {
   //validator
   validateToNextPassword: function validateToNextPassword(rule, value, callback) {
     var message = '请不要输入非法字符';
-    var regEx = /^[A-z0-9\\_\\#\\$\\\u4e00-\u9fa5]*$/;
+    var regEx = /^[A-z0-9\\\s+\\_\\#\\$\\\u4e00-\u9fa5]*$/;
 
     if (value && !regEx.test(value)) {
       callback(message);
@@ -507,9 +507,8 @@ var rules = {
       } else {
         return callback();
       }
-    }
+    } // return callback()
 
-    return callback();
   },
   maxLength: function maxLength(rule, value, callback) {
     if (value && value.length > rule.value) {
@@ -572,14 +571,20 @@ var rules = {
     if (value && date) {
       var diff = value.diff(date);
 
-      if (type == "bigger") {
+      if (type === "bigger") {
         if (diff < 0) {
           callback("结束时间必须大于开始时间！");
+        } else {
+          callback();
         }
       } else if (type == "smaller") {
         if (diff > 0) {
           callback("开始时间必须小于结束时间！");
+        } else {
+          callback();
         }
+      } else {
+        callback();
       }
     } else {
       callback();

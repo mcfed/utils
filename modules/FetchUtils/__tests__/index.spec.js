@@ -3,9 +3,10 @@ import fetchMock from 'fetch-mock'
 import { stringify } from 'qs'
 // import Headers from 'headers'
 
+
 jest.autoMockOff();
 
-describe('FetchUtils使用 Get 请求', () => {
+describe.skip('FetchUtils使用 Get 请求', () => {
   beforeEach(() => {
     // fetch.resetMocks()
   })
@@ -24,7 +25,7 @@ describe('FetchUtils使用 Get 请求', () => {
   })
   it('fetch Get 请求500 不带参数',(done)=>{
     let mockResult={
-      code:500,
+      code:500
     }
     let url = "http://localhost/500"
     let options={}
@@ -80,7 +81,7 @@ describe('FetchUtils使用 Get 请求', () => {
     })
   })
 })
-describe('FetchUtils使用 Post 请求', () => {
+describe.skip('FetchUtils使用 Post 请求', () => {
   it('post 请求200',(done)=>{
     let mockResult={
       code:0
