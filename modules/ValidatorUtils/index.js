@@ -74,6 +74,14 @@ export const rules = {
      }
      // Note: 必须总是返回一个 callback，否则 validateFieldsAndScroll 无法响应
    },
+   checkEmail : (rule, value, callback) => {
+		var rexp = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+    if(value && !rexp.test(value)) {
+      callback('邮箱格式不正确！')
+    }else{
+      callback()
+    }
+   },
    checkIDCard: (rule, value, callback) =>{
      var rexp= /(^\d{17}(\d|x|X)$)/i
      if (!rexp.test(value)) {
