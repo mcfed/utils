@@ -32,6 +32,15 @@ export const rules = {
       }
     }
   },
+  checkIPorDomain : (rule, value, callback) => {
+    var reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
+    if (value && !reg.test(value)) {
+      callback("端口或域名不正确！")
+    } else {
+      // console.log("callback")
+      callback()
+    }
+  },
   checkIPCust:(rule, value, callback) => {
     var reg = /^[0-9a-fA-F\\.\\:////]{2,39}$/;
 
@@ -103,7 +112,7 @@ export const rules = {
      }
 
    },
-
+   
    fileSize:(rule,value,callback)=>{
      if(value.file && value.file.size>rule.fileSize){
        callback(`文件大小不超过 ${rule.fileSize}`)
