@@ -97,7 +97,7 @@
       var replacement = options[p1];
 
       if (!replacement) {
-        throw new Error('Could not find url parameter ' + p1 + ' in passed options object');
+        throw new Error("Could not find url parameter " + p1 + " in passed options object");
       }
 
       return replacement;
@@ -162,13 +162,13 @@
   }
 
   var defaults = {
-    credentials: 'include',
-    mode: 'cors',
+    credentials: "include",
+    mode: "cors",
     headers: {
       "Content-Type": "application/json; charset=UTF-8",
       "X-Requested-With": "XMLHttpRequest",
-      'Access-Control-Allow-Origin': '*',
-      'Pragma': 'no-cache'
+      "Access-Control-Allow-Origin": "*",
+      Pragma: "no-cache"
     }
   };
   var defaultsHeaders = defaults;
@@ -181,7 +181,7 @@
         if (res.ok === true) {
           return res;
         } else if (res.status == 601 || res.status == 401) {
-          global.dispatchEvent && global.dispatchEvent(new CustomEvent('login_out'));
+          global.dispatchEvent && global.dispatchEvent(new CustomEvent("login_out"));
           return {
             code: res.status,
             message: res.statusText
@@ -196,7 +196,7 @@
           };
         }
       }).then(function (res) {
-        if (options.responseType === 'arraybuffer') {
+        if (options.responseType === "arraybuffer") {
           return res;
         } else if (res.code) {
           return res;
@@ -211,7 +211,7 @@
     }
   }
   function processBody(options, format) {
-    if (options && _typeof(options.body) === 'object') {
+    if (options && _typeof(options.body) === "object") {
       options.body = processParams(options.body);
     }
 
@@ -224,12 +224,12 @@
     options = processBody(options);
 
     if (options && options.body && options.body !== "") {
-      url = [stringifyURL(url, options.body), qs.stringify(options.body)].join("?");
+      url = [stringifyURL(url, options.body), qs.stringify(options.body)].join(url.indexOf("?") > 0 ? "&" : "?");
     }
 
     options && delete options.body;
     return fetchRequest(url, Object.assign({}, {
-      method: 'GET'
+      method: "GET"
     }, options));
   }
   function fetchPost(url, options) {
@@ -242,48 +242,43 @@
 
     return fetchRequest(url, Object.assign({
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Pragma': 'no-cache'
+        "Content-Type": "application/json; charset=UTF-8",
+        Pragma: "no-cache"
       },
-      method: 'POST'
+      method: "POST"
     }, options));
   }
   function fetchPut(url, options) {
     return fetchPost(url, Object.assign({}, options, {
-      method: 'PUT'
+      method: "PUT"
     }));
   }
   function fetchDelete(url, options) {
     return fetchPost(url, Object.assign({}, options, {
-      method: 'DELETE'
+      method: "DELETE"
     }));
   }
   function fetchGraphql(url, options, querys) {
     return fetchPost(url, Object.assign({}, options, {
-      credentials: 'include',
+      credentials: "include",
       // include, same-origin, *omit
       headers: {
         "Content-Type": "application/json; charset=UTF-8",
-        'Pragma': 'no-cache'
+        Pragma: "no-cache"
       },
-      method: 'POST',
+      method: "POST",
       // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors' // no-cors, cors, *same-origin
+      mode: "cors" // no-cors, cors, *same-origin
 
     }));
   }
-  function fetchGraphqlList(url, options, querys) {
+  function fetchGraphqlAsResult(url, options, querys) {
     return fetchGraphql(url, options, querys).then(function (result) {
-      if (result.data) {
-        if (result.data.result.code == 401) {
-          global.dispatchEvent && global.dispatchEvent(new CustomEvent('login_out'));
-        }
-
-        return result.data.result;
-      } else {
-        return result;
-      }
+      return result.data.result;
     });
+  }
+  function fetchGraphqlList(url, options, querys) {
+    return fetchGraphqlAsResult(url, options, querys);
   }
   function fetchUpload(url, options) {
     return fetchPost(url, Object.assign({}, options, {// headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'}
@@ -291,17 +286,17 @@
   }
   function fetchDownload(url, options) {
     return fetchGet(url, Object.assign({}, options, {
-      responseType: 'arraybuffer',
+      responseType: "arraybuffer",
       headers: {
-        'Content-Type': 'multipart/form-data;charset=UTF-8',
-        'Pragma': 'no-cache'
+        "Content-Type": "multipart/form-data;charset=UTF-8",
+        Pragma: "no-cache"
       }
     })).then(function (res) {
       return res.blob().then(function (blob) {
         if (blob) {
-          var a = document.createElement('a');
+          var a = document.createElement("a");
           var url = window.URL.createObjectURL(blob);
-          var filename = res.headers.get('Content-Disposition') || "";
+          var filename = res.headers.get("Content-Disposition") || "";
           document.body.appendChild(a);
           a.href = url;
           a.download = decodeURI(filename.replace("attachment;filename=", ""));
@@ -313,7 +308,7 @@
           }, 100);
           return true;
         } else {
-          console.error('no data!');
+          console.error("no data!");
           return false;
         }
       });
@@ -334,6 +329,7 @@
     fetchPut: fetchPut,
     fetchDelete: fetchDelete,
     fetchGraphql: fetchGraphql,
+    fetchGraphqlAsResult: fetchGraphqlAsResult,
     fetchGraphqlList: fetchGraphqlList,
     fetchUpload: fetchUpload,
     fetchDownload: fetchDownload
@@ -422,6 +418,16 @@
         }
       }
     },
+    checkIPorDomain: function checkIPorDomain(rule, value, callback) {
+      var reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/;
+
+      if (value && !reg.test(value)) {
+        callback("端口或域名不正确！");
+      } else {
+        // console.log("callback")
+        callback();
+      }
+    },
     checkIPCust: function checkIPCust(rule, value, callback) {
       var reg = /^[0-9a-fA-F\\.\\:////]{2,39}$/;
 
@@ -466,6 +472,15 @@
         callback();
       } // Note: 必须总是返回一个 callback，否则 validateFieldsAndScroll 无法响应
 
+    },
+    checkEmail: function checkEmail(rule, value, callback) {
+      var rexp = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+
+      if (value && !rexp.test(value)) {
+        callback('邮箱格式不正确！');
+      } else {
+        callback();
+      }
     },
     checkIDCard: function checkIDCard(rule, value, callback) {
       var rexp = /(^\d{17}(\d|x|X)$)/i;
