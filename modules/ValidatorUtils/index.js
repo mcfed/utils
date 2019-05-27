@@ -32,6 +32,15 @@ export const rules = {
       }
     }
   },
+  checkIPorDomain : (rule, value, callback) => {
+    var reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
+    if (value && !reg.test(value)) {
+      callback("端口或域名不正确！")
+    } else {
+      // console.log("callback")
+      callback()
+    }
+  },
   checkIPCust:(rule, value, callback) => {
     var reg = /^[0-9a-fA-F\\.\\:////]{2,39}$/;
 
@@ -44,7 +53,7 @@ export const rules = {
   //validator
   validateToNextPassword:(rule, value, callback) => {
     let message = '请不要输入非法字符'
-    let regEx = /^[A-z0-9\\_\\#\\$\\\u4e00-\u9fa5]*$/
+    let regEx = /^[A-z0-9\\\s+\\_\\#\\$\\\u4e00-\u9fa5]*$/
     if (value && !regEx.test(value)) {
       callback(message)
     } else {
@@ -74,6 +83,14 @@ export const rules = {
      }
      // Note: 必须总是返回一个 callback，否则 validateFieldsAndScroll 无法响应
    },
+   checkEmail : (rule, value, callback) => {
+		var rexp = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+    if(value && !rexp.test(value)) {
+      callback('邮箱格式不正确！')
+    }else{
+      callback()
+    }
+   },
    checkIDCard: (rule, value, callback) =>{
      var rexp= /(^\d{17}(\d|x|X)$)/i
      if (!rexp.test(value)) {
@@ -95,7 +112,7 @@ export const rules = {
      }
 
    },
-
+   
    fileSize:(rule,value,callback)=>{
      if(value.file && value.file.size>rule.fileSize){
        callback(`文件大小不超过 ${rule.fileSize}`)
