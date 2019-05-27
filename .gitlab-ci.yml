@@ -1,7 +1,7 @@
 stages:
-    - test
-    - compile
-
+  - test
+  - compile
+  - release
 
 cache:
   key: ${CI_BUILD_REF_NAME}
@@ -10,20 +10,37 @@ cache:
     - dist/
 
 before_script:
-    - npm install --save-dev
+  - npm install --save-dev
 
 test_job:
-    stage: test
-    script:
-      - npm run test
-    tags:
-      - master
+  stage: test
+  script:
+    - npm run test
+  tags:
+    - master
+    - develop
 
 build_job:
-    stage: compile
-    script:
-      - npm run build
-    tags:
-      - master
+  stage: compile
+  script:
+    - npm run build
+  only:
+    - develop
+  tags:
+    - master
 
-
+test_ci_push:
+  stage: release
+  only:
+    - master
+  tags:
+    - master
+  allow_failure: true
+  script:
+    - npm run build
+    - git config --global user.name "zhouhuan"
+    - git config --global user.email "zhouhuan@mchz.com.cn"
+    - git add --all
+    - git commit -m "GitLab Runner Complie Push"
+    - git push http://zhouhuan:qo9UF5Ey94yQJs1TZ3x3@git.mchz.com.cn/mcf/utils.git HEAD:master
+    - echo "push code success!"
