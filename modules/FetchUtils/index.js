@@ -2,7 +2,7 @@
  * @Date:   2017-09-07T09:45:33+08:00
  * @Email:  jaxchow@gmail.com
  * @Last modified time: 2018-03-13T11:45:29+08:00
- * @module FetchUtils
+ * @module FetchUtils 获取数据方法工具模块
  */
 import { stringify } from "qs";
 
@@ -14,7 +14,7 @@ import { stringify } from "qs";
  * @param {string} str URL字符串
  * @param {object} options 替换URL中:key的值的对象
  * @return {string} 返回处理过的字符串
- * @throws 如果匹配不到:key,但是options中options[key]为假值，则抛出 "Could not find url parameter key in passed options object"的错误
+ * @throws 如果匹配到:key,但是options中options[key]为假值，则抛出 "Could not find url parameter key in passed options object"的错误
  */
 export function stringifyURL(str, options) {
   if (!str) {
@@ -157,6 +157,22 @@ function processParams(object) {
   return processPraramItem(body);
 }
 
+/**
+ * HTTP HEADER 的默认值
+ * 
+ * @constant
+ * @default
+ * @example {
+ *    credentials: "include",
+ *    mode: "cors",
+ *    headers: {
+ *      "Content-Type": "application/json; charset=UTF-8",
+ *      "X-Requested-With": "XMLHttpRequest",
+ *      "Access-Control-Allow-Origin": "*",
+ *      "Pragma": "no-cache"
+ *    }
+ * }
+ */
 const defaults = {
   credentials: "include",
   mode: "cors",
@@ -164,25 +180,9 @@ const defaults = {
     "Content-Type": "application/json; charset=UTF-8",
     "X-Requested-With": "XMLHttpRequest",
     "Access-Control-Allow-Origin": "*",
-    Pragma: "no-cache"
+    "Pragma": "no-cache"
   }
 };
-
-/**
- * HTTP HEADER 的默认值
- * 
- * @constant
- * @default {
- *     credentials: "include",
- *     mode: "cors",
- *     headers: {
- *       "Content-Type": "application/json; charset=UTF-8",
- *       "X-Requested-With": "XMLHttpRequest",
- *       "Access-Control-Allow-Origin": "*",
- *       Pragma: "no-cache"
- *     }
- *   }
- */
 export const defaultsHeaders = defaults;
 
 /**
