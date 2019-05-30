@@ -1,5 +1,5 @@
 /**
- * @module BIZCodeUtils 业务码模块
+ * @module BIZCodeUtils
  */
  
 /**

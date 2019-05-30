@@ -1,5 +1,5 @@
 /**
- * @module DictUtils 字典模块
+ * @module DictUtils
  */
 
  /**

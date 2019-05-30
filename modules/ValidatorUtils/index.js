@@ -1,5 +1,5 @@
 /**
- * @module ValidatorUtils 校验模块
+ * @module ValidatorUtils
  */
 
 /**

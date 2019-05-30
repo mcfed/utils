@@ -2,7 +2,7 @@
  * @Date:   2017-09-07T09:45:33+08:00
  * @Email:  jaxchow@gmail.com
  * @Last modified time: 2018-03-13T11:45:29+08:00
- * @module FetchUtils 获取数据方法工具模块
+ * @module FetchUtils
  */
 import { stringify } from "qs";
 
