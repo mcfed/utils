@@ -11,7 +11,7 @@
  * @param {string} rule 规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回请不要输入非法字符
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回请不要输入非法字符
  */ 
 function validateSpecialCharacters(rule, value, callback) {
   let message = '请不要输入非法字符'
@@ -32,7 +32,7 @@ function validateSpecialCharacters(rule, value, callback) {
  * @param {string} rule 规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回IP地址不正确
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回IP地址不正确
  */ 
 function checkIP(rule, value, callback) {
   var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
@@ -53,7 +53,7 @@ function checkIP(rule, value, callback) {
  * @param {string} rule 规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回请输入正确的端口
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回请输入正确的端口
  */ 
 function validatePort(rule, value, callback) {
   let message = '请输入正确的端口'
@@ -78,7 +78,7 @@ function validatePort(rule, value, callback) {
  * @param {string} rule 规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回端口或域名不正确！
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回端口或域名不正确！
  */ 
 function checkIPorDomain (rule, value, callback) {
   var reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
@@ -99,7 +99,7 @@ function checkIPorDomain (rule, value, callback) {
  * @param {string} rule 规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回Ip地址不正确
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回Ip地址不正确
  */
 function checkIPCust(rule, value, callback) {
   var reg = /^[0-9a-fA-F\\.\\:////]{2,39}$/;
@@ -120,7 +120,7 @@ function checkIPCust(rule, value, callback) {
  * @param {string} rule 规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回请不要输入非法字符
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回请不要输入非法字符
  */
 function validateToNextPassword(rule, value, callback) {
   let message = '请不要输入非法字符'
@@ -141,7 +141,7 @@ function validateToNextPassword(rule, value, callback) {
  * @param {string} rule 规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回密码为弱密码！
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回密码为弱密码！
  */
 function checkWeekPassword(rule, value, callback) {
   if (/^\d{1,6}$/.test(value)) {
@@ -161,7 +161,7 @@ function checkWeekPassword(rule, value, callback) {
  * @param {string} rule 校验规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回手机号码格式不正确！
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回手机号码格式不正确！
  */
 function checkMobile(rule, value, callback) {
   var rexp= /^(0?1[123456789]\d{9})$/
@@ -182,7 +182,7 @@ function checkMobile(rule, value, callback) {
  * @param {string} rule 校验规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回邮箱格式不正确！
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回邮箱格式不正确！
  */
 function checkEmail(rule, value, callback) {
   var rexp = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
@@ -202,7 +202,7 @@ function checkEmail(rule, value, callback) {
  * @param {string} rule 校验规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回身份证号码格式不正确！
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回身份证号码格式不正确！
  */
 function checkIDCard(rule, value, callback) {
   var rexp= /(^\d{17}(\d|x|X)$)/i
@@ -227,7 +227,7 @@ function checkIDCard(rule, value, callback) {
  * @param {number[]} rule.ranges 边界数组[min, max]
  * @param {number} value 需要验证的值
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回请输入区间值[min, max]
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回请输入区间值[min, max]
  */
 function ranges(rule,value,callback) {
   if(rule.ranges instanceof Array && rule.ranges.length===2) {
@@ -256,7 +256,7 @@ function ranges(rule,value,callback) {
  * @param {object} value.file 需要验证的文件对象
  * @param {number} value.file.size 文件尺寸大小
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回文件大小不超过fileSize
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回文件大小不超过fileSize
  */
 function fileSize(rule,value,callback) {
   if(value.file && value.file.size>rule.fileSize){
@@ -277,7 +277,7 @@ function fileSize(rule,value,callback) {
  * @param {string} rule 校验规则（暂时无用）
  * @param {string|number[]} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回必须为正整数！
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回必须为正整数！
  */
 function integer(rule,value,callback) {
   var rexp=/^([1-9]\d*|[0]{0,1})$/
@@ -315,7 +315,7 @@ function integer(rule,value,callback) {
  * @param {number} rule.value 最大长度
  * @param {string|number[]} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回不能大于（最大长度）项
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回不能大于（最大长度）项
  */
 function maxLength(rule,value,callback) {
   if(value && value.length>rule.value){
@@ -338,7 +338,7 @@ function maxLength(rule,value,callback) {
  * @param {object} rule 校验规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回备注标签最多5项
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回备注标签最多5项
  */
 function tagMaxLength(rule,value,callback) {
   if(value && value.split(",").length > 5){
@@ -363,7 +363,7 @@ function tagMaxLength(rule,value,callback) {
  * @param {number} rule.days 日期差（天数）
  * @param {array} value 需要验证的日期 [min, max]
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回日期差不能超过(days)天
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回日期差不能超过(days)天
  */
 function dateRangePicked(rule, value, callback) {
   var days = rule.days
@@ -392,7 +392,7 @@ function dateRangePicked(rule, value, callback) {
  * @param {string} rule.type 比较类型 bigger|smaller
  * @param {object} value 需要验证的日期(moment日期)
  * @param {function} callback 完成回调
- * @return {string} 通过校验的字符串返回undefined 未通过返回日期差不能超过(days)天
+ * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回日期差不能超过(days)天
  */
 function dateCompare(rule, value, callback) {
   var date = rule.date

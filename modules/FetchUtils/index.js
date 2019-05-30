@@ -13,7 +13,7 @@ import { stringify } from "qs";
  * 
  * @param {string} str URL字符串
  * @param {object} options 替换URL中:key的值的对象
- * @return {string} 返回处理过的字符串
+ * @return {string} Desc: 返回处理过的字符串
  * @throws 如果匹配到:key,但是options中options[key]为假值，则抛出 "Could not find url parameter key in passed options object"的错误
  */
 export function stringifyURL(str, options) {
@@ -42,7 +42,7 @@ export function stringifyURL(str, options) {
  * } -> "{\"key1\":\"value1\",\"key2\":\"value2\",\"start\":0,\"end\":9}"
  * 
  * @param {object} params 需要处理的对象
- * @return {string} 处理完成的字符串
+ * @return {string} Desc: 处理完成的字符串
  */
 export function processGraphqlParams(params) {
   const {
@@ -84,7 +84,7 @@ export function processGraphqlParams(params) {
  * }
  * 
  * @param {object} object
- * @return {object} 返回处理后的对象
+ * @return {object} Desc: 返回处理后的对象
  */
 export function processPraramItem(object) {
   for (var key in object) {
@@ -134,7 +134,7 @@ export function processPraramItem(object) {
  * 
  * @private
  * @param {object} object 
- * @return {object} 返回处理后的对象
+ * @return {object} Desc: 返回处理后的对象
  */
 function processParams(object) {
   let {
@@ -189,7 +189,7 @@ export const defaultsHeaders = defaults;
  * 返回传入的错误
  * 
  * @param {object} error 
- * @return {object} error 
+ * @return {object} Desc: error 
  */
 export function fetchCatch(error) {
   return error;
@@ -201,7 +201,7 @@ export function fetchCatch(error) {
  * 
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
- * @return {object} 请求结果
+ * @return {object} Desc: 请求结果
  * @throws  如果全局的fetch 不存在则抛出措施 import fetch from 'cross-fetch'  // import you fetch utils global.fetch = fetch
  */
 export function fetchRequest(url, options) {
@@ -252,7 +252,7 @@ export function fetchRequest(url, options) {
  * 
  * @param {object} options 
  * @param {object} options.body 
- * @return {object} 返回处理过body的options
+ * @return {object} Desc: 返回处理过body的options
  */
 export function processBody(options, format) {
   if (options && typeof options.body === "object") {
