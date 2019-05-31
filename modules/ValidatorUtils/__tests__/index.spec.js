@@ -221,6 +221,58 @@ describe('验证方法测试正确性', () => {
         })
     })
 
+    describe("验证 checkIPorDomain正确性", () => {
+
+
+      it("validate checkipordomain 纯数字", () => {
+        rules.checkIPorDomain('','123123',(args)=>{
+          expect(args).toEqual("端口或域名不正确！")
+        })
+      });
+
+      it("validate checkipordomain 字符串", () => {
+        rules.checkIPorDomain('','ddddddwww',(args)=>{
+          expect(args).toEqual("端口或域名不正确！")
+        })
+      });
+
+      it("validate checkipordomain 合法ip域名", () => {
+        rules.checkIPorDomain('','192.168.1.2',(args)=>{
+          expect(args).toEqual(undefined)
+        })
+      });
+
+      it("validate checkipordomain 合法ip域名http", () => {
+        rules.checkIPorDomain('','http://192.168.1.2',(args)=>{
+          expect(args).toEqual(undefined)
+        })
+      });
+
+      it("validate checkipordomain 合法ip域名https", () => {
+        rules.checkIPorDomain('','https://192.168.1.2',(args)=>{
+          expect(args).toEqual(undefined)
+        })
+      });
+
+      it("validate checkipordomain 合法域名", () => {
+        rules.checkIPorDomain('','www.baidu.com',(args)=>{
+          expect(args).toEqual(undefined)
+        })
+      });
+
+      it("validate checkipordomain 合法域名http", () => {
+        rules.checkIPorDomain('','http://www.baidu.com',(args)=>{
+          expect(args).toEqual(undefined)
+        })
+      });
+
+      it("validate checkipordomain 合法域名https", () => {
+        rules.checkIPorDomain('','https://www.baidu.com',(args)=>{
+          expect(args).toEqual(undefined)
+        })
+      });
+    });
+
     describe('验证validateToNextPassword正确性', () => {
         const testData = [{
             value: '12345',
@@ -358,6 +410,28 @@ describe('验证方法测试正确性', () => {
             })
         })
     })
+
+    describe("验证 checkEmail 正确性", () => {
+
+
+      it("checkEmail 传入错误邮箱纯数字", () => {
+        rules.checkEmail('','123123',(args)=>{
+          expect(args).toEqual('邮箱格式不正确！');
+        })
+      });
+
+      it("checkEmail 传入错误邮箱 格式错误", () => {
+        rules.checkEmail('','1231@23',(args)=>{
+          expect(args).toEqual('邮箱格式不正确！');
+        })
+      });
+
+      it("checkEmail 传入正确邮箱格式", () => {
+        rules.checkEmail('','aa123123@163.com',(args)=>{
+          expect(args).toEqual(undefined);
+        })
+      });
+    });
 
     describe('验证checkIDCard正确性', () => {
         const testData = [{
