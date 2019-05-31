@@ -8,9 +8,9 @@ import { stringify } from "qs";
 
 /**
  * 处理url，将url中带有:key的字符串替换成options中属性key的真值
- * 
+ *
  * @example http://.../user/:id -> http://.../user/1 (如果options对象中存在属性id=1，不存在则报错)
- * 
+ *
  * @param {string} str URL字符串
  * @param {object} options 替换URL中:key的值的对象
  * @return {string} Desc: 返回处理过的字符串
@@ -35,12 +35,12 @@ export function stringifyURL(str, options) {
 
 /**
  * 处理对象返回Graphql中请求变量的字符串
- * 
+ *
  * @example {
- *  key1: 'value1', 
- *  key2: 'value2' 
+ *  key1: 'value1',
+ *  key2: 'value2'
  * } -> "{\"key1\":\"value1\",\"key2\":\"value2\",\"start\":0,\"end\":9}"
- * 
+ *
  * @param {object} params 需要处理的对象
  * @return {string} Desc: 处理完成的字符串
  */
@@ -57,7 +57,7 @@ export function processGraphqlParams(params) {
     columnKey,
     order,
     ...otherParam
-  } = params; 
+  } = params;
   return JSON.stringify(
     JSON.stringify(
       Object.assign({}, otherParam, {
@@ -72,17 +72,17 @@ export function processGraphqlParams(params) {
 
 /**
  * 将参数对象中每一个数组json.stringify,空数组和空字符串变成undefined
- * 
- * @example { 
- *    key1: 'value1', 
- *    key2: [], 
+ *
+ * @example {
+ *    key1: 'value1',
+ *    key2: [],
  *    key3: [1,2,3]
- * } -> { 
- *    key1: 'value1', 
- *    key2: undefined, 
+ * } -> {
+ *    key1: 'value1',
+ *    key2: undefined,
  *    key3: '[1,2,3]'
  * }
- * 
+ *
  * @param {object} object
  * @return {object} Desc: 返回处理后的对象
  */
@@ -105,35 +105,35 @@ export function processPraramItem(object) {
 
 /**
  * 处理参数
- * 
- * @example {  
+ *
+ * @example {
  *    column: {},
- *    current: 1,                                                     
- *    showQuickJumper: true,                                                      
- *    pageSize: 20,                                                     
- *    total: 1123,                                                      
- *    field: 'field',                                                     
- *    pageSizeOptions: {},                                                      
- *    showSizeChanger: false,                                                     
- *    key1: 'value1',                                                     
- *    key2: [],                                                     
- *    key3: [ 1, 2, 3 ]                                                       
- *  } -> {                                                      
- *    column: {},                                                     
- *    current: 1,                                                     
- *    showQuickJumper: true,                                                      
- *    pageSize: 20,                                                     
- *    total: 1123,                                                      
- *    field: 'field',                                                     
- *    pageSizeOptions: {},                                                      
- *    showSizeChanger: false,                                                     
- *    key1: 'value1',                                                     
- *    key2: [],                                                     
- *    key3: [ 1, 2, 3 ]                                                       
- *  }                                                     
- * 
+ *    current: 1,
+ *    showQuickJumper: true,
+ *    pageSize: 20,
+ *    total: 1123,
+ *    field: 'field',
+ *    pageSizeOptions: {},
+ *    showSizeChanger: false,
+ *    key1: 'value1',
+ *    key2: [],
+ *    key3: [ 1, 2, 3 ]
+ *  } -> {
+ *    column: {},
+ *    current: 1,
+ *    showQuickJumper: true,
+ *    pageSize: 20,
+ *    total: 1123,
+ *    field: 'field',
+ *    pageSizeOptions: {},
+ *    showSizeChanger: false,
+ *    key1: 'value1',
+ *    key2: [],
+ *    key3: [ 1, 2, 3 ]
+ *  }
+ *
  * @private
- * @param {object} object 
+ * @param {object} object
  * @return {object} Desc: 返回处理后的对象
  */
 function processParams(object) {
@@ -159,7 +159,7 @@ function processParams(object) {
 
 /**
  * HTTP HEADER 的默认值
- * 
+ *
  * @constant
  * @default
  * @example {
@@ -180,16 +180,16 @@ const defaults = {
     "Content-Type": "application/json; charset=UTF-8",
     "X-Requested-With": "XMLHttpRequest",
     "Access-Control-Allow-Origin": "*",
-    "Pragma": "no-cache"
+    Pragma: "no-cache"
   }
 };
 export const defaultsHeaders = defaults;
 
 /**
  * 返回传入的错误
- * 
- * @param {object} error 
- * @return {object} Desc: error 
+ *
+ * @param {object} error
+ * @return {object} Desc: error
  */
 export function fetchCatch(error) {
   return error;
@@ -198,7 +198,7 @@ export function fetchCatch(error) {
 /**
  * 获取请求处理结果
  *    返回数据中ok=true，则返回全部数据，如果返回的状态status是401或601且全局的dispatchEvent存在还发送登出事件，返回结果结构为 { code, message }
- * 
+ *
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
  * @return {object} Desc: 请求结果
@@ -206,39 +206,45 @@ export function fetchCatch(error) {
  */
 export function fetchRequest(url, options) {
   if (global.fetch) {
-    return fetch(url, Object.assign({}, defaults, options))
-      .then(res => {
-        if (res.ok === true) {
-          return res;
-        } else if (res.status == 601 || res.status == 401) {
-          global.dispatchEvent &&
-            global.dispatchEvent(new CustomEvent("login_out"));
-          return {
-            code: res.status,
-            message: res.statusText
-          };
-        } else {
-          // var err = new Error(res.statusText)
-          // err.response = res
-          // throw err
-          return {
-            code: res.status,
-            message: res.statusText
-          };
-        }
-      })
-      .then(res => {
-        if (options.responseType === "arraybuffer") {
-          return res;
-        } else if (res.code) {
-          return res;
-        } else {
-          return res.json();
-        }
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    if (global.fetch.responseProcess) {
+      return fetch(url, Object.assign({}, defaults, options)).then(
+        global.fetch.responseProcess
+      );
+    } else {
+      return fetch(url, Object.assign({}, defaults, options))
+        .then(res => {
+          if (res.ok === true) {
+            return res;
+          } else if (res.status == 601 || res.status == 401) {
+            global.dispatchEvent &&
+              global.dispatchEvent(new CustomEvent("login_out"));
+            return {
+              code: res.status,
+              message: res.statusText
+            };
+          } else {
+            // var err = new Error(res.statusText)
+            // err.response = res
+            // throw err
+            return {
+              code: res.status,
+              message: res.statusText
+            };
+          }
+        })
+        .then(res => {
+          if (options.responseType === "arraybuffer") {
+            return res;
+          } else if (res.code) {
+            return res;
+          } else {
+            return res.json();
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
   } else {
     console.error(`
       import fetch from 'cross-fetch'  // import you fetch utils
@@ -249,9 +255,9 @@ export function fetchRequest(url, options) {
 
 /**
  * 处理请求体
- * 
- * @param {object} options 
- * @param {object} options.body 
+ *
+ * @param {object} options
+ * @param {object} options.body
  * @return {object} Desc: 返回处理过body的options
  */
 export function processBody(options, format) {
@@ -263,7 +269,7 @@ export function processBody(options, format) {
 
 /**
  * 获取列表数据（GET）
- * 
+ *
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
  */
@@ -273,7 +279,7 @@ export function fetchList(url, options) {
 
 /**
  * 获取数据（GET）
- * 
+ *
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
  */
@@ -299,7 +305,7 @@ export function fetchGet(url, options) {
 
 /**
  * 更新数据（POST）
- * 
+ *
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
  */
@@ -327,7 +333,7 @@ export function fetchPost(url, options) {
 
 /**
  * 更新数据（PUT）
- * 
+ *
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
  */
@@ -342,7 +348,7 @@ export function fetchPut(url, options) {
 
 /**
  * 删除数据（DELETE）
- * 
+ *
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
  */
@@ -357,7 +363,7 @@ export function fetchDelete(url, options) {
 
 /**
  * 获取数据（Graphql接口）
- * 
+ *
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
  */
@@ -378,7 +384,7 @@ export function fetchGraphql(url, options, querys) {
 
 /**
  * 获取数据（Graphql接口，返回去掉data.result的外包装）
- * 
+ *
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
  */
@@ -388,7 +394,7 @@ export function fetchGraphqlAsResult(url, options, querys) {
 
 /**
  * 获取数据(Graphql列表接口，返回去掉data.result的外包装)
- * 
+ *
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
  */
@@ -398,7 +404,7 @@ export function fetchGraphqlList(url, options, querys) {
 
 /**
  * 上传数据
- * 
+ *
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
  */
@@ -413,7 +419,7 @@ export function fetchUpload(url, options) {
 
 /**
  * 下载文件流
- * 
+ *
  * @param {string} url 请求链接
  * @param {object} options 请求选项参数
  */
