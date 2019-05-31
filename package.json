@@ -8,7 +8,8 @@
     "test": "jest",
     "dev": "rollup -c --watch",
     "build": "rollup -c",
-    "version": "PACKAGE_VERSION=$(node -p -e \"require('./package.json').version\")"
+    "version": "PACKAGE_VERSION=$(node -p -e \"require('./package.json').version\")",
+    "generate-docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
   },
   "keywords": [
     "@mcf",
@@ -44,6 +45,8 @@
     "rollup-plugin-size-snapshot": "^0.7.0"
   },
   "dependencies": {
+    "jsdoc": "^3.6.2",
+    "minami": "^1.2.3",
     "moment": "^2.24.0",
     "qs": "^6.6.0"
   },
