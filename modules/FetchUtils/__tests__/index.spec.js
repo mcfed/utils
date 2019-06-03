@@ -9,6 +9,7 @@ import {
   fetchGraphqlAsResult,
   stringifyURL,
   processPraramItem,
+  processGraphqlParams,
   processBody
 } from "../index";
 import fetchMock from "fetch-mock";
@@ -301,5 +302,21 @@ describe("FetchUtils使用 processBody 方法", () => {
       b: 1
     };
     expect(processPraramItem(obj).a).toEqual(result);
+  });
+
+  it("processGraphqlParams undefined", () => {
+    let result = { start: 0, end: 9 };
+    expect(processGraphqlParams(undefined)).toEqual(result);
+  });
+
+  it("processGraphqlParams {order:'descend',columnKey:'aa'} 别名转换 ", () => {
+    let params = { order: "descend", columnKey: "aa" };
+    let result = { start: 0, end: 9, order: "desc", orderBy: "aa" };
+    expect(processGraphqlParams(params)).toEqual(result);
+  });
+  it("processGraphqlParams {order:'descend',columnKey:'aa'} 非别名不转换 ", () => {
+    let params = { order: "descend", columnKey: "aa", name: "11" };
+    let result = { start: 0, end: 9, order: "desc", orderBy: "aa", name: "11" };
+    expect(processGraphqlParams(params)).toEqual(result);
   });
 });

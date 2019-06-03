@@ -44,7 +44,7 @@ export function stringifyURL(str, options) {
  * @param {object} params 需要处理的对象
  * @return {string} Desc: 处理完成的字符串
  */
-export function processGraphqlParams(params) {
+export function processGraphqlParams(params = {}) {
   const {
     column,
     current,
@@ -58,15 +58,23 @@ export function processGraphqlParams(params) {
     order,
     ...otherParam
   } = params;
-  return JSON.stringify(
-    JSON.stringify(
-      Object.assign({}, otherParam, {
-        start: (current - 1) * pageSize || 0,
-        end: current * pageSize - 1 || 9,
-        order: order && order.replace(/end$/, ""),
-        orderBy: columnKey
-      })
-    )
+  return Object.assign(
+    {},
+    otherParam,
+    {
+      start: (current - 1) * pageSize || 0,
+      end: current * pageSize - 1 || 9
+    },
+    order
+      ? {
+          order: order && order.replace(/end$/, "")
+        }
+      : {},
+    columnKey
+      ? {
+          orderBy: columnKey
+        }
+      : {}
   );
 }
 
@@ -371,6 +379,14 @@ export function fetchGraphql(url, options, querys) {
   return fetchPost(
     url,
     Object.assign({}, options, {
+      body:
+        options && options.body
+          ? {
+              operationName: options.body.operationName,
+              query: options.body.query,
+              variables: processGraphqlParams(options.body.variables)
+            }
+          : {},
       credentials: "include", // include, same-origin, *omit
       headers: {
         "Content-Type": "application/json; charset=UTF-8",
