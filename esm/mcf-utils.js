@@ -122,7 +122,9 @@ function stringifyURL(str, options) {
  * @return {string} Desc: 处理完成的字符串
  */
 
-function processGraphqlParams(params) {
+function processGraphqlParams() {
+  var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
   var column = params.column,
       current = params.current,
       showQuickJumper = params.showQuickJumper,
@@ -135,12 +137,14 @@ function processGraphqlParams(params) {
       order = params.order,
       otherParam = _objectWithoutProperties(params, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "pageSizeOptions", "showSizeChanger", "columnKey", "order"]);
 
-  return JSON.stringify(JSON.stringify(Object.assign({}, otherParam, {
+  return Object.assign({}, otherParam, {
     start: (current - 1) * pageSize || 0,
-    end: current * pageSize - 1 || 9,
-    order: order && order.replace(/end$/, ""),
+    end: current * pageSize - 1 || 9
+  }, order ? {
+    order: order && order.replace(/end$/, "")
+  } : {}, columnKey ? {
     orderBy: columnKey
-  })));
+  } : {});
 }
 /**
  * 将参数对象中每一个数组json.stringify,空数组和空字符串变成undefined
@@ -417,6 +421,11 @@ function fetchDelete(url, options) {
 
 function fetchGraphql(url, options, querys) {
   return fetchPost(url, Object.assign({}, options, {
+    body: options && options.body ? {
+      operationName: options.body.operationName,
+      query: options.body.query,
+      variables: processGraphqlParams(options.body.variables)
+    } : {},
     credentials: "include",
     // include, same-origin, *omit
     headers: {
