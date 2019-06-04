@@ -1,6 +1,6 @@
 {
   "name": "mcf-utils",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "@mcf for utils",
   "module": "esm/mcf-utils.js",
   "main": "umd/mcf-utils.js",
