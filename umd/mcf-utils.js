@@ -141,10 +141,11 @@
         order = params.order,
         otherParam = _objectWithoutProperties(params, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "pageSizeOptions", "showSizeChanger", "columnKey", "order"]);
 
-    return Object.assign({}, otherParam, {
-      start: (current - 1) * pageSize || 0,
+    return Object.assign({}, otherParam, current ? {
+      start: (current - 1) * pageSize || 0
+    } : {}, pageSize ? {
       end: current * pageSize - 1 || 9
-    }, order ? {
+    } : {}, order ? {
       order: order && order.replace(/end$/, "")
     } : {}, columnKey ? {
       orderBy: columnKey
