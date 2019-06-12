@@ -139,9 +139,13 @@ function processGraphqlParams() {
 
   return Object.assign({}, otherParam, current ? {
     start: (current - 1) * pageSize || 0
-  } : {}, pageSize ? {
+  } : {
+    start: 0
+  }, pageSize ? {
     end: current * pageSize - 1 || 9
-  } : {}, order ? {
+  } : {
+    end: 9
+  }, order ? {
     order: order && order.replace(/end$/, "")
   } : {}, columnKey ? {
     orderBy: columnKey
