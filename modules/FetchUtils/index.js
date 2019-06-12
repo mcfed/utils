@@ -62,7 +62,7 @@ export function processGraphqlParams(params = {}) {
     {},
     otherParam,
     current ? { start: (current - 1) * pageSize || 0 } : { start: 0 },
-    pageSize ? { end: current * pageSize - 1 || 9 } : { end: 0 },
+    pageSize ? { end: current * pageSize - 1 || 9 } : { end: 9 },
     order
       ? {
           order: order && order.replace(/end$/, "")

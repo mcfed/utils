@@ -290,7 +290,10 @@ describe("FetchUtils使用 processBody 方法", () => {
   });
 
   it("processGraphqlParams undefined", () => {
-    let result = {};
+    let result = {
+      start:0,
+      end:9
+    };
     expect(processGraphqlParams(undefined)).toEqual(result);
   });
 
@@ -302,12 +305,12 @@ describe("FetchUtils使用 processBody 方法", () => {
 
   it("processGraphqlParams {order:'descend',columnKey:'aa'} 别名转换 ", () => {
     let params = { order: "descend", columnKey: "aa" };
-    let result = { order: "desc", orderBy: "aa" };
+    let result = { order: "desc", orderBy: "aa" ,start:0,end:9};
     expect(processGraphqlParams(params)).toEqual(result);
   });
   it("processGraphqlParams {order:'descend',columnKey:'aa'} 非别名不转换 ", () => {
     let params = { order: "descend", columnKey: "aa", name: "11" };
-    let result = { order: "desc", orderBy: "aa", name: "11" };
+    let result = { order: "desc", orderBy: "aa", name: "11" ,start:0,end:9};
     expect(processGraphqlParams(params)).toEqual(result);
   });
 });
