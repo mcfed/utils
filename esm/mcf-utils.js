@@ -429,7 +429,7 @@ function fetchGraphql(url, options, querys) {
     body: options && options.body ? {
       operationName: options.body.operationName,
       query: options.body.query,
-      variables: processGraphqlParams(options.body.variables)
+      variables: options.body.variables
     } : {},
     credentials: "include",
     // include, same-origin, *omit
@@ -463,6 +463,7 @@ function fetchGraphqlAsResult(url, options, querys) {
  */
 
 function fetchGraphqlList(url, options, querys) {
+  options.body.variables = processGraphqlParams(options.body.variables);
   return fetchGraphqlAsResult(url, options, querys);
 }
 /**

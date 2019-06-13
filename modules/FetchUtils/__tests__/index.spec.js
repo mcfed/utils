@@ -197,7 +197,7 @@ describe("FetchUtils使用 fetchGraphql请求", () => {
       body: {}
     };
     fetchMock.mock(url, JSON.stringify(mockResult), options);
-    fetchGraphqlList(url).then(result => {
+    fetchGraphqlList(url,options).then(result => {
       expect(result).toEqual(mockResult.data.result);
       done();
     });
