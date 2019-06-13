@@ -382,7 +382,7 @@ export function fetchGraphql(url, options, querys) {
           ? {
               operationName: options.body.operationName,
               query: options.body.query,
-              variables: processGraphqlParams(options.body.variables)
+              variables: options.body.variables
             }
           : {},
       credentials: "include", // include, same-origin, *omit
@@ -413,6 +413,7 @@ export function fetchGraphqlAsResult(url, options, querys) {
  * @param {object} options 请求选项参数
  */
 export function fetchGraphqlList(url, options, querys) {
+  options.body.variables = processGraphqlParams(options.body.variables)
   return fetchGraphqlAsResult(url, options, querys);
 }
 
