@@ -151,6 +151,21 @@ describe("FetchUtils使用 Post 请求", () => {
   });
 });
 
+describe.skip("FetchUtils使用 fetchDownload 请求", () => {
+  it.skip("fetchDownload 请求200", done => {
+    let mockResult = {};
+    let url = "http://localhost/download/200";
+    let options = {
+      body: {}
+    };
+    fetchMock.mock(url, JSON.stringify(mockResult), options);
+    fetchDownload(url).then(result => {
+      expect(result).toEqual(mockResult);
+      done();
+    });
+  });
+});
+
 describe("FetchUtils使用 fetchGraphql请求", () => {
   it("fetchGraphql请求200", done => {
     let mockResult = {
