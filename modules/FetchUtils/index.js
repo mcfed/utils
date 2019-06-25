@@ -23,7 +23,7 @@ export function stringifyURL(str, options) {
 
   return str.replace(/:([A-Z|a-z]+)/gi, function(match, p1) {
     var replacement = options[p1];
-    if (!replacement) {
+    if (replacement === undefined) {
       throw new Error(
         "Could not find url parameter " + p1 + " in passed options object"
       );
@@ -61,8 +61,10 @@ export function processGraphqlParams(params = {}) {
   return Object.assign(
     {},
     otherParam,
-    current ? { start: (current - 1) * pageSize || 0 } : { start: 0 },
-    pageSize ? { end: current * pageSize - 1 || 9 } : { end: 9 },
+    {
+      start: (current - 1) * pageSize || 0,
+      end: current * pageSize - 1 || 9
+    },
     order
       ? {
           order: order && order.replace(/end$/, "")
@@ -248,6 +250,10 @@ export function fetchRequest(url, options) {
           }
         })
         .catch(e => {
+          return {
+            code: -1,
+            message: "request aborted"
+          };
           console.log(e);
         });
     }
@@ -413,7 +419,7 @@ export function fetchGraphqlAsResult(url, options, querys) {
  * @param {object} options 请求选项参数
  */
 export function fetchGraphqlList(url, options, querys) {
-  options.body.variables = processGraphqlParams(options.body.variables)
+  options.body.variables = processGraphqlParams(options.body.variables);
   return fetchGraphqlAsResult(url, options, querys);
 }
 
