@@ -107,7 +107,7 @@
     return str.replace(/:([A-Z|a-z]+)/gi, function (match, p1) {
       var replacement = options[p1];
 
-      if (!replacement) {
+      if (replacement === undefined) {
         throw new Error("Could not find url parameter " + p1 + " in passed options object");
       }
 
@@ -141,14 +141,9 @@
         order = params.order,
         otherParam = _objectWithoutProperties(params, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "pageSizeOptions", "showSizeChanger", "columnKey", "order"]);
 
-    return Object.assign({}, otherParam, current ? {
-      start: (current - 1) * pageSize || 0
-    } : {
-      start: 0
-    }, pageSize ? {
+    return Object.assign({}, otherParam, {
+      start: (current - 1) * pageSize || 0,
       end: current * pageSize - 1 || 9
-    } : {
-      end: 9
     }, order ? {
       order: order && order.replace(/end$/, "")
     } : {}, columnKey ? {
@@ -323,6 +318,10 @@
             return res.json();
           }
         }).catch(function (e) {
+          return {
+            code: -1,
+            message: "request aborted"
+          };
           console.log(e);
         });
       }
