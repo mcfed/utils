@@ -12,10 +12,20 @@ import {
   processGraphqlParams,
   processBody
 } from "../index";
+// import { ServerResponse as Response } from "http";
+
 import fetchMock from "fetch-mock";
 import { stringify } from "qs";
 // import Headers from 'headers'
+const ponyfill = require("fetch-ponyfill")();
+fetchMock.config = Object.assign(fetchMock.config, {
+  Headers: ponyfill.Headers,
+  Request: ponyfill.Request,
+  Response: ponyfill.Response,
+  fetch: ponyfill
+});
 
+const Response = ponyfill.Response;
 jest.autoMockOff();
 
 describe("FetchUtils使用 Get 请求", () => {
@@ -149,6 +159,43 @@ describe("FetchUtils使用 Post 请求", () => {
       done();
     });
   });
+
+  it("fetch aborted throw error ", done => {
+    let mockResult = {
+      code: -1,
+      message: "request aborted"
+    };
+    let url = "http://localhost/post/500/throw";
+    let options = {
+      body: {}
+    };
+    fetchMock.config.fallbackToNetwork = false;
+    fetchMock.mock(
+      url,
+      new Response({ throws: new TypeError("Failed to fetch") }),
+      options
+    );
+    fetchPost(url, options).then(result => {
+      console.log(result);
+      expect(result).toEqual(mockResult);
+      done();
+    });
+  });
+});
+
+describe.skip("FetchUtils使用 fetchDownload 请求", () => {
+  it.skip("fetchDownload 请求200", done => {
+    let mockResult = {};
+    let url = "http://localhost/download/200";
+    let options = {
+      body: {}
+    };
+    fetchMock.mock(url, JSON.stringify(mockResult), options);
+    fetchDownload(url).then(result => {
+      expect(result).toEqual(mockResult);
+      done();
+    });
+  });
 });
 
 describe("FetchUtils使用 fetchGraphql请求", () => {
@@ -182,7 +229,7 @@ describe("FetchUtils使用 fetchGraphql请求", () => {
       body: {}
     };
     fetchMock.mock(url, JSON.stringify(mockResult), options);
-    fetchGraphqlList(url,options).then(result => {
+    fetchGraphqlList(url, options).then(result => {
       expect(result).toEqual(mockResult.data.result);
       done();
     });
@@ -314,8 +361,8 @@ describe("FetchUtils使用 processBody 方法", () => {
 
   it("processGraphqlParams undefined", () => {
     let result = {
-      start:0,
-      end:9
+      start: 0,
+      end: 9
     };
     expect(processGraphqlParams(undefined)).toEqual(result);
   });
@@ -328,12 +375,12 @@ describe("FetchUtils使用 processBody 方法", () => {
 
   it("processGraphqlParams {order:'descend',columnKey:'aa'} 别名转换 ", () => {
     let params = { order: "descend", columnKey: "aa" };
-    let result = { order: "desc", orderBy: "aa" ,start:0,end:9};
+    let result = { order: "desc", orderBy: "aa", start: 0, end: 9 };
     expect(processGraphqlParams(params)).toEqual(result);
   });
   it("processGraphqlParams {order:'descend',columnKey:'aa'} 非别名不转换 ", () => {
     let params = { order: "descend", columnKey: "aa", name: "11" };
-    let result = { order: "desc", orderBy: "aa", name: "11" ,start:0,end:9};
+    let result = { order: "desc", orderBy: "aa", name: "11", start: 0, end: 9 };
     expect(processGraphqlParams(params)).toEqual(result);
   });
 });
