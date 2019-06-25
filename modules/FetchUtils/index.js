@@ -23,7 +23,7 @@ export function stringifyURL(str, options) {
 
   return str.replace(/:([A-Z|a-z]+)/gi, function(match, p1) {
     var replacement = options[p1];
-    if (!replacement) {
+    if (replacement === undefined) {
       throw new Error(
         "Could not find url parameter " + p1 + " in passed options object"
       );

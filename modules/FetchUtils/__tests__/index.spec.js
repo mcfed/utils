@@ -227,6 +227,29 @@ describe("stringifyURL 方法", () => {
 
     expect(stringifyURL(url, options)).toBe(url);
   });
+
+  it("替换值为0的时候，不报错", () => {
+    const url = "http://localhost/:id";
+
+    const options = {
+      id:0
+    }
+    const result = "http://localhost/0";
+
+    expect(stringifyURL(url,options)).toBe(result);
+
+  });
+
+  it("替换值为null 时，转换为字符串null ", () => {
+    const url = "http://localhost/:id";
+
+    const options = {
+      id:null
+    }
+    const result = "http://localhost/null";
+
+    expect(stringifyURL(url,options)).toBe(result);
+  });
 });
 
 // describe("", () => {
