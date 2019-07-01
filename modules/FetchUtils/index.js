@@ -430,12 +430,21 @@ export function fetchGraphqlList(url, options, querys) {
  * @param {object} options 请求选项参数
  */
 export function fetchUpload(url, options) {
-  return fetchPost(
+  url = stringifyURL(url,options.body)
+  let params = new FormData()
+  for(let i in options.body){
+    params.append(i,options.body[i])
+  }
+  // options.body = params
+  return fetchRequest(
     url,
     Object.assign({}, options, {
-      // headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'}
+      method :"POST",
+      headers: {},
+      body:params
     })
   );
+
 }
 
 /**

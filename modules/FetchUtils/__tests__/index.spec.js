@@ -129,6 +129,39 @@ describe("FetchUtils使用 Get 请求", () => {
     });
   });
 });
+
+describe("FetchUtils使用 upload 请求", () => {
+
+  it("upload 请求200", (done) => {
+    let mockResult = {
+      code: 0
+    };
+    let url = "http://localhost/upload/200";
+    let options = {
+      body: {}
+    };
+    fetchMock.mock(url, JSON.stringify(mockResult), options);
+    fetchPost(url, options).then(result => {
+      expect(result).toEqual(mockResult);
+      done();
+    });
+  });
+
+  it("upload 请求500", done => {
+    let mockResult = {
+      code: 500
+    };
+    let url = "http://localhost/upload/500";
+    let options = {
+      body: {}
+    };
+    fetchMock.mock(url, JSON.stringify(mockResult), options);
+    fetchPost(url, options).then(result => {
+      expect(result).toEqual(mockResult);
+      done();
+    });
+  });
+});
 describe("FetchUtils使用 Post 请求", () => {
   it("post 请求200", done => {
     let mockResult = {
