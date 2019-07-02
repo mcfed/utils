@@ -477,7 +477,18 @@
    */
 
   function fetchUpload(url, options) {
-    return fetchPost(url, Object.assign({}, options, {// headers: {'Content-Type': 'multipart/form-data;charset=UTF-8'}
+    url = stringifyURL(url, options.body);
+    var params = new FormData();
+
+    for (var i in options.body) {
+      params.append(i, options.body[i]);
+    } // options.body = params
+
+
+    return fetchRequest(url, Object.assign({}, options, {
+      method: "POST",
+      headers: {},
+      body: params
     }));
   }
   /**
