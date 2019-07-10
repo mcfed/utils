@@ -15,8 +15,7 @@
 
 <!-- Your comment below this -->
 
-# 1.2.6
+# 1.3.0
 
-- MODIFY:FetchUtils 增加 fetchUpload 文件上传方法 [@shibo]
 - MODIFY:重新修改打包机制，master 上使用自动化发布 [@zhouhuan]
-- ADD: prettierrc 配置规范代码格式
+- ADD: prettierrc 配置规范代码格式 [@zhouhuan]
