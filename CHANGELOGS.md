@@ -19,3 +19,7 @@
 
 - MODIFY:重新修改打包机制，master 上使用自动化发布 [@zhouhuan]
 - ADD: prettierrc 配置规范代码格式 [@zhouhuan]
+
+# 1.3.1
+
+- 修正 CI 打包脚本问题，造布发布没进行编译代码 [@zhouhuan]
