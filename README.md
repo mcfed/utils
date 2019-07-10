@@ -1,3 +1,6 @@
+[![pipeline status](http://git.mchz.com.cn/mcf/utils/badges/master/pipeline.svg)](http://git.mchz.com.cn/mcf/utils/commits/master)
+[![coverage report](http://git.mchz.com.cn/mcf/utils/badges/master/coverage.svg)](http://git.mchz.com.cn/mcf/utils/commits/master)
+
 ## useage
 
 当前版本已发布 npm 仓库（私有仓库）
