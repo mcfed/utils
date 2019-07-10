@@ -1,53 +1,25 @@
-# utils
+## useage
 
-> utils 模块提供工具类包：请求类 FetchUtils、字典码类 DictUtils、状态码类 BIZCodeUtils、权限类 AuthUtils 等。
+当前版本已发布 npm 仓库（私有仓库）
 
-## 请求类 FetchUtils
+- 添加.npmrc 文件
+  `registry=http://192.168.200.178:4873/`
+- 运行命令安装包
+  `npm install mcf-utils`
 
-> 用于统一请求封装类，提供各种标准化接口参数转换
+## develop 规范要求
 
-| 参数                 |                    说明                     |          参数类型 | 返回类型 |
-| -------------------- | :-----------------------------------------: | ----------------: | -------: |
-| fetchGet             |              get 方法发送请求               |            object |        - |
-| fetchList            |   get 方法发送请求,适用于分页参数转换请求   |            object |        - |
-| fetchPost            |     post 方式提交请求参数使用 body 传递     |            object |        - |
-| fetchPut             |     put 方式提交请求参数使用 body 传递      |            Object |        - |
-| fetchDelete          |     put 方式提交请求参数使用 body 传递      |            Object |        - |
-| fetchPostForm        | post 方式提交请求参数使用 FormData 文件上传 |            object |        - |
-| fetchDownload        |          使用 GET 方式进行文件下载          |            Object |        - |
-| fetchGraphql         |           使用 POST 提交 graphql            | url,option,querys |        - |
-| fetchGraphqlList     |           使用 POST 提交 graphql            | url,option,querys |        - |
-| fetchGraphqlAsResult |           别名返回数据 result:{}            | url,option,querys |        - |
+- `创建新功能`分支来源 `master` 统一采用 `feature/组件英文名称` 上进行代码开发，开发完成后提交 `merge_request` ,合并成功后`owner`将删除当前分支
+- `修改BUG` 分支来源 `master` 统一采用 `hotfix/已有组件英文名称` 上进行代码开发，开发完成后提交 `merge_request` 合并成功后`owner`将删除当前分支
+- `master` 与 `develop` 不允许直接提交，统一采用 branch 开发后，提交`merge_request` 到 `develop` 请求合并代码审核。
+- CI 单元测试能过后才能提交代码合并请求，未通过一概不允许合并
+- 合并请求时请 清楚描述 修改内容 `add : 新增XXX组件`
+- 合并请求描述规范格式要求：`ADD:新增XXX组件`、`MODIFY:XXX组件增加单元测试`、`BUGFIXED:修改 XXX 组件 YYY bug`
 
-## 字典码类 DictUtils
+- 合并 master 规范：`master`禁止提交代码，只允许来源`develop`内容
 
-> 用于统一 ｀字典｀ 数据转换工具，获指定类型字典数据或 转换某一类型名称
-
-| 参数         |          说明          |                         参数类型 | 返回类型 |
-| ------------ | :--------------------: | -------------------------------: | -------: |
-| getDictList  |  获取指定类型字典数据  |              type：Object,String |    Array |
-| getDictLabel | 获取指定类型值转换名称 | type: Object,String,value:String |   String |
-
-## 状态码类 BIZCodeUtils
-
-| 参数        |            说明             |  参数类型 | 返回类型 |
-| ----------- | :-------------------------: | --------: | -------: |
-| getBIZLabel | 转换 BIZCode value -> label | value:int |   String |
-
-## 权限类 AuthUtils
-
-> 以下未定义使用
-
-| 参数    |         说明          |  类型 | 默认值 |
-| ------- | :-------------------: | ----: | -----: |
-| options | 传送渲染子节点数据 [] | Array |      - |
-
-## 用户信息
-
-## json 递归转译类 TransferUtils
-
-> 用于将有层级关系的 json 国际化中英对照的翻译对象转换成 react 能直接使用的标准化对象
-
-| 参数 |        说明        |     参数类型 | 返回类型 |
-| ---- | :----------------: | -----------: | -------: |
-| data | 需要翻译 json 对象 | type：Object |   Object |
+- 合并 发布版本内容 在`develop`分支工作
+  - 修改 changelogs.md 文件 将发布描述版本内容
+  - 修改 version 号 配置，防止合并到 `master` 后发起发布失败(已发布版本号不允许二次发布)
+  - 合并将要发布的版本内容合并
+  - 提交 `meger_request` 到 `master` 在`master`合并 CI 自动发版成功
