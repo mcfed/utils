@@ -1,7 +1,8 @@
 /**
  * @module ValidatorUtils
  */
-
+import * as FetchUtils from '../FetchUtils'
+import { stringify } from "qs";
 /**
  * 验证非法字符串
  *
@@ -419,6 +420,72 @@ function dateCompare(rule, value, callback) {
   }
 }
 
+/*
+<Input name='realName' label='测试下' defaultValue={realName} rules={[{
+  validator:ValidatorUtils.rules.remote,
+  name:'realname',
+  url:'/test/validate',
+  method:'get',
+  options:{
+    body:{
+      a:1,
+      b:2
+    }
+  },
+  callback:(res,callback)=>{callback('zijide jiaoyan')}
+}]}/>
+*/
+
+function remote(rule, value, callback){
+    let url = rule.url
+    let name = rule.name
+    let options = rule.options ? Object.assign({},rule.options) : {}
+
+    options.body = Object.assign({},{[name]:value},options.body)
+
+    if(rule.method && rule.method.toUpperCase() === 'GET'){
+      url = [url, stringify(options.body)].join("?");
+      delete options.body
+    }else{
+      options.body = JSON.stringify(options.body);
+    }
+
+    FetchUtils.fetchRequest(url,{
+      method:rule.method||"POST",
+      ...options,
+    }).then(res=>{
+      if(rule.callback){
+        rule.callback(res,callback)
+      }else{
+        if(res.code == 0){
+          callback()
+        }else{
+          callback(res.message)
+        }
+      }
+    })
+
+  //   new FetchAPI().fetchRequest(rule.value,{
+  //     body:params,
+  //     method: rule.method||"POST"
+  //     // method:/\/listJson?$/.test(fetchUrl)?'POST':'GET' //兼容listJSON 使用POST请求处理
+  //   }).then((json) => {
+  //     // console.log(json)
+  //     if(json.status){
+  //       if(json.msg){
+  //         callback(json.msg)
+  //       }else{
+  //         callback('该字段系统内已存在！')
+  //       }
+  //     }else {
+  //       callback()
+  //     }
+  //   });
+  // }else {
+  //   callback()
+  // }
+}
+
 export const rules = {
   validateSpecialCharacters,
   checkIP,
@@ -436,7 +503,8 @@ export const rules = {
   maxLength,
   tagMaxLength,
   dateRangePicked,
-  dateCompare
+  dateCompare,
+  remote
   /*
    remote:(rule,value,callback)=>{
      // console.log(rule,value,callback,aa,bb,cc)
