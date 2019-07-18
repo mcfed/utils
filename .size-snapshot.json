@@ -17,5 +17,24 @@
     "bundled": 29522,
     "minified": 7927,
     "gzipped": 3293
+  },
+  "cjs/mcf-utils.js": {
+    "bundled": 27173,
+    "minified": 9233,
+    "gzipped": 3448
+  },
+  "es/mcf-utils.js": {
+    "bundled": 24861,
+    "minified": 7940,
+    "gzipped": 3084,
+    "treeshaked": {
+      "rollup": {
+        "code": 201,
+        "import_statements": 201
+      },
+      "webpack": {
+        "code": 1243
+      }
+    }
   }
 }

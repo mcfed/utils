@@ -209,7 +209,6 @@ describe("FetchUtils使用 Post 请求", () => {
       options
     );
     fetchPost(url, options).then(result => {
-      console.log(result);
       expect(result).toEqual(mockResult);
       done();
     });

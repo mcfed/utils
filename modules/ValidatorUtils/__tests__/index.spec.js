@@ -1,5 +1,6 @@
 import {rules} from '../index';
 import moment from 'moment';
+import fetchMock from "fetch-mock";
 
 describe('验证方法测试validateSpecialCharacters', () => {
   it('validateSpecialCharacters 正确字符 123456', done => {
@@ -919,5 +920,143 @@ describe('验证方法测试正确性', () => {
         }
       );
     });
+  });
+  describe("remote", () => {
+    beforeEach(() => {
+      // fetch.resetMocks();
+    });
+
+    it(" get请求校验 出错", () => {
+      let mockResult = {
+        code:2,
+        message:'ceshishibai1'
+      };
+      fetchMock.mock(
+        '/test?test=123',
+        JSON.stringify(mockResult));
+
+      rules.remote(
+        {
+          method:'get',
+          url:'/test',
+          field:'test'
+        },
+        123,
+        res=>{
+          expect(res).toEqual(mockResult.message)
+        }
+      )
+    });
+
+    it(" get请求校验 测试成功", () => {
+      let mockResult = {
+        code:0,
+        message:'ceshishibai2'
+      };
+      fetchMock.mock(
+        '/tests?test=123',
+        JSON.stringify(mockResult));
+
+      rules.remote(
+        {
+          method:'get',
+          field:'test',
+          url:'/tests',
+        },
+        123,
+        res=>{
+          expect(res).toEqual(undefined)
+        }
+      )
+    });
+
+    it(" post请求校验 出错并且params 以json格式传入", () => {
+      let mockResult = {
+        code:2,
+        message:'ceshishibai3'
+      };
+      let options = {
+        body: {
+          test: 123,
+          a:4
+        }
+      };
+      fetchMock.mock(
+        '/testa',
+        JSON.stringify(mockResult),
+        options
+      );
+
+      rules.remote(
+        {
+          url:'/testa',
+          field:'test',
+          params:{
+            a: 4
+          }
+        },
+        123,
+        res=>{
+          expect(res).toEqual(mockResult.message)
+        }
+      )
+    });
+
+    it(" post请求校验 测试成功并且params以回调函数形式传入", () => {
+      let mockResult = {
+        code:0,
+        message:'ceshishibai4'
+      };
+      let options = {
+        body: {
+          test: 123,
+          a:1
+        }
+      };
+      fetchMock.mock(
+        '/testb',
+        JSON.stringify(mockResult),
+        options
+      );
+
+      rules.remote(
+        {
+          url:'/testb',
+          field:'test',
+          params:() => ({a:1})
+        },
+        123,
+        res=>{
+          conosle.log(res)
+          expect(res).toEqual(undefined)
+        }
+      )
+    });
+
+    it.skip(" post请求校验 测试成功", () => {
+      let mockResult = {
+        code:0,
+        message:'ceshishibai'
+      };
+      let callback = jest.fn()
+      let options = {
+        body: {
+          test: 123
+        }
+      };
+
+      rules.remote(
+        {
+          method:'post',
+          url:'/testb',
+          name:'test',
+          callback:callback
+        },
+        123)
+      console.log(fetchMock)
+        expect(callback.mock.calls.length).toEqual(1)
+    });
+
+
   });
 });

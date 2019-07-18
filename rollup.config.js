@@ -5,18 +5,18 @@ import json from 'rollup-plugin-json'
 import nodeResolve from "rollup-plugin-node-resolve"
 import localResolve from 'rollup-plugin-local-resolve'
 import { sizeSnapshot } from "rollup-plugin-size-snapshot"
+import notify from 'rollup-plugin-notify'
 
 import pkg from "./package.json"
-const name = "CRUD";
+const name = "crud";
 const input = "./modules/index"
 
 
 const globals = {
-  react: "React",
-  "prop-types":"PropTypes",
   "qs":"qs"
 };
 const babelOptionsCJS = {
+  runtimeHelpers: true,
   exclude: /node_modules/
 };
 const babelOptionsESM = {
@@ -31,25 +31,24 @@ const external = id => !id.startsWith(".") && !id.startsWith("\/");
 
 export default [{
   input,
-  output: { file: `esm/${pkg.name}.js`, format: "esm" },
+  output: { file: `cjs/${pkg.name}.js`, format: "cjs" },
   external:Object.keys(globals),
   plugins: [
-    localResolve(),
     nodeResolve(),
-    json(),
+    // json(),
     babel(babelOptionsESM),
-    sizeSnapshot()
+    sizeSnapshot(),
+    notify()
   ]
 },{
    input,
-   output: { file: `umd/${pkg.name}.js`, format: "umd", name },
+   output: { file: `es/${pkg.name}.js`, format: "es", name },
    external: Object.keys(globals),
    plugins: [
-     localResolve(),
-     nodeResolve(),
      babel(babelOptionsESM),
      commonjs(commonjsOptions),
      replace({ "process.env.NODE_ENV": JSON.stringify("production") }),
-     sizeSnapshot()
+     sizeSnapshot(),
+     notify()
    ]
 }]

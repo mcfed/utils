@@ -1,7 +1,8 @@
 /**
  * @module ValidatorUtils
  */
-
+import * as FetchUtils from '../FetchUtils'
+import { stringify } from "qs";
 /**
  * 验证非法字符串
  *
@@ -419,6 +420,73 @@ function dateCompare(rule, value, callback) {
   }
 }
 
+/*
+<Input name='realName' label='测试下' defaultValue={realName} rules={[{
+  validator:ValidatorUtils.rules.remote,
+  url:'/test/validate',
+  method:'get',
+  params:{a:1,b:2} || ()=>{
+    return {a:1,b:2}
+  },
+  callback:(res,cal) => cal(111)
+}]}/>
+*/
+
+function fetchWhich(isGet,url,options){
+  return isGet ? FetchUtils.fetchGet(url,options) : FetchUtils.fetchPost(url,options)
+}
+
+/**
+ * remote - 远程校验方法 （默认post 请求 ）
+ *
+ * @param  {json} rule     校验参数{ - url - params(选填) - method -options(选填) -callback(选填)}
+ * @param  {type} value    description
+ * @param  {type} callback antd 校验回调函数
+ * @return {null}          
+ */
+function remote(rule, value, callback){
+    let url = rule.url
+    let name = rule.field
+    let params = (typeof rule.params) === 'function' ? rule.params() : rule.params
+    params = Object.assign({},{[name]:value},params)
+    let isGet = rule.method && rule.method.toUpperCase() === 'GET'
+    let options = rule.options ? Object.assign({},rule.options) : {}
+
+    options.body = Object.assign({},{[name]:value},params)
+
+    fetchWhich(isGet,url,options).then(res=>{
+      if(rule.callback){
+        rule.callback(res,callback)
+      }else{
+        if(res.code == 0){
+          callback()
+        }else{
+          callback(res.message)
+        }
+      }
+    })
+
+  //   new FetchAPI().fetchRequest(rule.value,{
+  //     body:params,
+  //     method: rule.method||"POST"
+  //     // method:/\/listJson?$/.test(fetchUrl)?'POST':'GET' //兼容listJSON 使用POST请求处理
+  //   }).then((json) => {
+  //     // console.log(json)
+  //     if(json.status){
+  //       if(json.msg){
+  //         callback(json.msg)
+  //       }else{
+  //         callback('该字段系统内已存在！')
+  //       }
+  //     }else {
+  //       callback()
+  //     }
+  //   });
+  // }else {
+  //   callback()
+  // }
+}
+
 export const rules = {
   validateSpecialCharacters,
   checkIP,
@@ -436,7 +504,8 @@ export const rules = {
   maxLength,
   tagMaxLength,
   dateRangePicked,
-  dateCompare
+  dateCompare,
+  remote
   /*
    remote:(rule,value,callback)=>{
      // console.log(rule,value,callback,aa,bb,cc)
