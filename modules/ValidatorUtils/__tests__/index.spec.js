@@ -929,7 +929,7 @@ describe('验证方法测试正确性', () => {
     it(" get请求校验 出错", () => {
       let mockResult = {
         code:2,
-        message:'ceshishibai'
+        message:'ceshishibai1'
       };
       fetchMock.mock(
         '/test?test=123',
@@ -943,7 +943,7 @@ describe('验证方法测试正确性', () => {
         },
         123,
         res=>{
-          expect(res.message).toEqual(mockResult.message)
+          expect(res).toEqual(mockResult.message)
         }
       )
     });
@@ -951,7 +951,7 @@ describe('验证方法测试正确性', () => {
     it(" get请求校验 测试成功", () => {
       let mockResult = {
         code:0,
-        message:'ceshishibai'
+        message:'ceshishibai2'
       };
       fetchMock.mock(
         '/tests?test=123',
@@ -973,7 +973,7 @@ describe('验证方法测试正确性', () => {
     it(" post请求校验 出错并且params 以json格式传入", () => {
       let mockResult = {
         code:2,
-        message:'ceshishibai'
+        message:'ceshishibai3'
       };
       let options = {
         body: {
@@ -989,16 +989,15 @@ describe('验证方法测试正确性', () => {
 
       rules.remote(
         {
-          method:'post',
           url:'/testa',
-          name:'test',
+          field:'test',
           params:{
             a: 4
           }
         },
         123,
         res=>{
-          expect(res.message).toEqual(mockResult.message)
+          expect(res).toEqual(mockResult.message)
         }
       )
     });
@@ -1006,7 +1005,7 @@ describe('验证方法测试正确性', () => {
     it(" post请求校验 测试成功并且params以回调函数形式传入", () => {
       let mockResult = {
         code:0,
-        message:'ceshishibai'
+        message:'ceshishibai4'
       };
       let options = {
         body: {
@@ -1022,13 +1021,13 @@ describe('验证方法测试正确性', () => {
 
       rules.remote(
         {
-          method:'post',
           url:'/testb',
-          name:'test',
+          field:'test',
           params:() => ({a:1})
         },
         123,
         res=>{
+          conosle.log(res)
           expect(res).toEqual(undefined)
         }
       )
