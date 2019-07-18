@@ -939,7 +939,7 @@ describe('验证方法测试正确性', () => {
         {
           method:'get',
           url:'/test',
-          name:'test'
+          field:'test'
         },
         123,
         res=>{
@@ -960,8 +960,8 @@ describe('验证方法测试正确性', () => {
       rules.remote(
         {
           method:'get',
+          field:'test',
           url:'/tests',
-          name:'test'
         },
         123,
         res=>{
@@ -970,14 +970,15 @@ describe('验证方法测试正确性', () => {
       )
     });
 
-    it(" post请求校验 出错", () => {
+    it(" post请求校验 出错并且params 以json格式传入", () => {
       let mockResult = {
         code:2,
         message:'ceshishibai'
       };
       let options = {
         body: {
-          test: 123
+          test: 123,
+          a:4
         }
       };
       fetchMock.mock(
@@ -990,7 +991,10 @@ describe('验证方法测试正确性', () => {
         {
           method:'post',
           url:'/testa',
-          name:'test'
+          name:'test',
+          params:{
+            a: 4
+          }
         },
         123,
         res=>{
@@ -999,14 +1003,15 @@ describe('验证方法测试正确性', () => {
       )
     });
 
-    it(" post请求校验 测试成功", () => {
+    it(" post请求校验 测试成功并且params以回调函数形式传入", () => {
       let mockResult = {
         code:0,
         message:'ceshishibai'
       };
       let options = {
         body: {
-          test: 123
+          test: 123,
+          a:1
         }
       };
       fetchMock.mock(
@@ -1019,7 +1024,8 @@ describe('验证方法测试正确性', () => {
         {
           method:'post',
           url:'/testb',
-          name:'test'
+          name:'test',
+          params:() => ({a:1})
         },
         123,
         res=>{

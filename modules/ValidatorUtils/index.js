@@ -423,37 +423,38 @@ function dateCompare(rule, value, callback) {
 /*
 <Input name='realName' label='测试下' defaultValue={realName} rules={[{
   validator:ValidatorUtils.rules.remote,
-  name:'realname',
   url:'/test/validate',
   method:'get',
-  options:{
-    body:{
-      a:1,
-      b:2
-    }
+  params:{a:1,b:2} || ()=>{
+    return {a:1,b:2}
   },
-  callback:(res,callback)=>{callback('zijide jiaoyan')}
+  callback:(res,cal) => cal(111)
 }]}/>
 */
 
+function fetchWhich(isGet,url,options){
+  return isGet ? FetchUtils.fetchGet(url,options) : FetchUtils.fetchPost(url,options)
+}
+
+/**
+ * remote - 远程校验方法 （默认post 请求 ）
+ *
+ * @param  {json} rule     校验参数{ - url - params(选填) - method -options(选填) -callback(选填)}
+ * @param  {type} value    description
+ * @param  {type} callback antd 校验回调函数
+ * @return {null}          
+ */
 function remote(rule, value, callback){
     let url = rule.url
-    let name = rule.name
+    let name = rule.field
+    let params = (typeof rule.params) === 'function' ? rule.params() : rule.params
+    params = Object.assign({},{[name]:value},params)
+    let isGet = rule.method && rule.method.toUpperCase() === 'GET'
     let options = rule.options ? Object.assign({},rule.options) : {}
 
-    options.body = Object.assign({},{[name]:value},options.body)
+    options.body = Object.assign({},{[name]:value},params)
 
-    if(rule.method && rule.method.toUpperCase() === 'GET'){
-      url = [url, stringify(options.body)].join("?");
-      delete options.body
-    }else{
-      options.body = JSON.stringify(options.body);
-    }
-
-    FetchUtils.fetchRequest(url,{
-      method:rule.method||"POST",
-      ...options,
-    }).then(res=>{
+    fetchWhich(isGet,url,options).then(res=>{
       if(rule.callback){
         rule.callback(res,callback)
       }else{
