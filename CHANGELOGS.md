@@ -23,5 +23,7 @@
 # 1.3.1
 
 - 修正 CI 打包脚本问题，造布发布没进行编译代码 [@zhouhuan]
-- 调整取消umd发布方式 改用 cjs、es 两种模式
-- 增加 rules -> remote 远程验证规则
+
+# 1.3.2
+- 调整取消umd发布方式 改用 cjs、es 两种模式 [@zhouhuan]
+- 增加 rules -> remote 远程验证规则 [@shibo]
