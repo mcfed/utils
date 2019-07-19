@@ -6,10 +6,12 @@ import nodeResolve from "rollup-plugin-node-resolve"
 import localResolve from 'rollup-plugin-local-resolve'
 import { sizeSnapshot } from "rollup-plugin-size-snapshot"
 import notify from 'rollup-plugin-notify'
+import tscompile from 'typescript';
+import typescript from 'rollup-plugin-typescript'
 
 import pkg from "./package.json"
 const name = "crud";
-const input = "./modules/index"
+const input = "./modules/DictUtils/index.ts"
 
 
 const globals = {
@@ -35,20 +37,10 @@ export default [{
   external:Object.keys(globals),
   plugins: [
     nodeResolve(),
-    // json(),
-    babel(babelOptionsESM),
+    // typescript({module: 'CommonJS'}),
+     typescript({typescript: tscompile}),
+    // babel(babelOptionsESM),
     sizeSnapshot(),
     notify()
   ]
-},{
-   input,
-   output: { file: `es/${pkg.name}.js`, format: "es", name },
-   external: Object.keys(globals),
-   plugins: [
-     babel(babelOptionsESM),
-     commonjs(commonjsOptions),
-     replace({ "process.env.NODE_ENV": JSON.stringify("production") }),
-     sizeSnapshot(),
-     notify()
-   ]
 }]
