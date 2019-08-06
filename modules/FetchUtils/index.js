@@ -1,489 +1,398 @@
-/**
- * @Date:   2017-09-07T09:45:33+08:00
- * @Email:  jaxchow@gmail.com
- * @Last modified time: 2018-03-13T11:45:29+08:00
- * @module FetchUtils
- */
-import { stringify } from "qs";
-
-/**
- * 处理url，将url中带有:key的字符串替换成options中属性key的真值
- *
- * @example http://.../user/:id -> http://.../user/1 (如果options对象中存在属性id=1，不存在则报错)
- *
- * @param {string} str URL字符串
- * @param {object} options 替换URL中:key的值的对象
- * @return {string} Desc: 返回处理过的字符串
- * @throws 如果匹配到:key,但是options中options[key]为假值，则抛出 "Could not find url parameter key in passed options object"的错误
- */
-export function stringifyURL(str, options) {
-  if (!str) {
-    return str;
-  }
-
-  return str.replace(/:([A-Z|a-z]+)/gi, function(match, p1) {
-    var replacement = options[p1];
-    if (replacement === undefined) {
-      throw new Error(
-        "Could not find url parameter " + p1 + " in passed options object"
-      );
-    }
-
-    return replacement;
-  });
-}
-
-/**
- * 处理对象返回Graphql中请求变量的字符串
- *
- * @example {
- *  key1: 'value1',
- *  key2: 'value2'
- * } -> "{\"key1\":\"value1\",\"key2\":\"value2\",\"start\":0,\"end\":9}"
- *
- * @param {object} params 需要处理的对象
- * @return {string} Desc: 处理完成的字符串
- */
-export function processGraphqlParams(params = {}) {
-  const {
-    column,
-    current,
-    showQuickJumper,
-    pageSize,
-    total,
-    field,
-    pageSizeOptions,
-    showSizeChanger,
-    columnKey,
-    order,
-    ...otherParam
-  } = params;
-  return Object.assign(
-    {},
-    otherParam,
-    {
-      start: (current - 1) * pageSize || 0,
-      end: current * pageSize - 1 || 9
-    },
-    order
-      ? {
-          order: order && order.replace(/end$/, "")
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
         }
-      : {},
-    columnKey
-      ? {
-          orderBy: columnKey
-        }
-      : {}
-  );
-}
-
-/**
- * 将参数对象中每一个数组json.stringify,空数组和空字符串变成undefined
- *
- * @example {
- *    key1: 'value1',
- *    key2: [],
- *    key3: [1,2,3]
- * } -> {
- *    key1: 'value1',
- *    key2: undefined,
- *    key3: '[1,2,3]'
- * }
- *
- * @param {object} object
- * @return {object} Desc: 返回处理后的对象
- */
-export function processPraramItem(object) {
-  for (var key in object) {
-    if (object[key] instanceof Array) {
-      if (object[key].length !== 0) {
-        object[key] = JSON.stringify(object[key]);
-      } else {
-        object[key] = undefined;
-      }
-    } else {
-      if (object[key] === "") {
-        object[key] = undefined;
-      }
-    }
-  }
-  return object;
-}
-
-/**
- * 处理参数
- *
- * @example {
- *    column: {},
- *    current: 1,
- *    showQuickJumper: true,
- *    pageSize: 20,
- *    total: 1123,
- *    field: 'field',
- *    pageSizeOptions: {},
- *    showSizeChanger: false,
- *    key1: 'value1',
- *    key2: [],
- *    key3: [ 1, 2, 3 ]
- *  } -> {
- *    column: {},
- *    current: 1,
- *    showQuickJumper: true,
- *    pageSize: 20,
- *    total: 1123,
- *    field: 'field',
- *    pageSizeOptions: {},
- *    showSizeChanger: false,
- *    key1: 'value1',
- *    key2: [],
- *    key3: [ 1, 2, 3 ]
- *  }
- *
- * @private
- * @param {object} object
- * @return {object} Desc: 返回处理后的对象
- */
-function processParams(object) {
-  let {
-    column,
-    current,
-    showQuickJumper,
-    pageSize,
-    total,
-    field,
-    pageSizeOptions,
-    showSizeChanger,
-    ...other
-  } = object;
-  var body = {
-    currentPage: current,
-    totalCount: total,
-    pageSize,
-    ...other
-  };
-  return processPraramItem(body);
-}
-
-/**
- * HTTP HEADER 的默认值
- *
- * @constant
- * @default
- * @example {
- *    credentials: "include",
- *    mode: "cors",
- *    headers: {
- *      "Content-Type": "application/json; charset=UTF-8",
- *      "X-Requested-With": "XMLHttpRequest",
- *      "Access-Control-Allow-Origin": "*",
- *      "Pragma": "no-cache"
- *    }
- * }
- */
-const defaults = {
-  credentials: "include",
-  mode: "cors",
-  headers: {
-    "Content-Type": "application/json; charset=UTF-8",
-    "X-Requested-With": "XMLHttpRequest",
-    "Access-Control-Allow-Origin": "*",
-    Pragma: "no-cache"
-  }
+        return t;
+    };
+    return __assign.apply(this, arguments);
 };
-export const defaultsHeaders = defaults;
-
-/**
- * 返回传入的错误
- *
- * @param {object} error
- * @return {object} Desc: error
- */
-export function fetchCatch(error) {
-  return error;
-}
-
-/**
- * 获取请求处理结果
- *    返回数据中ok=true，则返回全部数据，如果返回的状态status是401或601且全局的dispatchEvent存在还发送登出事件，返回结果结构为 { code, message }
- *
- * @param {string} url 请求链接
- * @param {object} options 请求选项参数
- * @return {object} Desc: 请求结果
- * @throws  如果全局的fetch 不存在则抛出措施 import fetch from 'cross-fetch'  // import you fetch utils global.fetch = fetch
- */
-export function fetchRequest(url, options) {
-  if (global.fetch) {
-    if (global.fetch.responseProcess) {
-      return fetch(url, Object.assign({}, defaults, options)).then(
-        global.fetch.responseProcess
-      );
-    } else {
-      return fetch(url, Object.assign({}, defaults, options))
-        .then(res => {
-          if (res.ok === true) {
-            return res;
-          } else if (res.status == 601 || res.status == 401) {
-            global.dispatchEvent &&
-              global.dispatchEvent(new CustomEvent("login_out"));
-            return {
-              code: res.status,
-              message: res.statusText
-            };
-          } else {
-            // var err = new Error(res.statusText)
-            // err.response = res
-            // throw err
-            return {
-              code: res.status,
-              message: res.statusText
-            };
-          }
-        })
-        .then(res => {
-          if (options.responseType === "arraybuffer") {
-            return res;
-          } else if (res.code) {
-            return res;
-          } else {
-            return res.json();
-          }
-        })
-        .catch(e => {
-          return {
-            code: -1,
-            message: "request aborted"
-          };
-          console.log(e);
-        });
-    }
-  } else {
-    console.error(`
-      import fetch from 'cross-fetch'  // import you fetch utils
-      global.fetch = fetch
-    `);
-  }
-}
-
-/**
- * 处理请求体
- *
- * @param {object} options
- * @param {object} options.body
- * @return {object} Desc: 返回处理过body的options
- */
-export function processBody(options, format) {
-  if (options && typeof options.body === "object") {
-    options.body = processParams(options.body);
-  }
-  return options;
-}
-
-/**
- * 获取列表数据（GET）
- *
- * @param {string} url 请求链接
- * @param {object} options 请求选项参数
- */
-export function fetchList(url, options) {
-  return fetchGet(url, options);
-}
-
-/**
- * 获取数据（GET）
- *
- * @param {string} url 请求链接
- * @param {object} options 请求选项参数
- */
-export function fetchGet(url, options) {
-  options = processBody(options);
-  if (options && options.body && options.body !== "") {
-    url = [stringifyURL(url, options.body), stringify(options.body)].join(
-      url.indexOf("?") > 0 ? "&" : "?"
-    );
-  }
-  options && delete options.body;
-  return fetchRequest(
-    url,
-    Object.assign(
-      {},
-      {
-        method: "GET"
-      },
-      options
-    )
-  );
-}
-
-/**
- * 更新数据（POST）
- *
- * @param {string} url 请求链接
- * @param {object} options 请求选项参数
- */
-export function fetchPost(url, options) {
-  url = stringifyURL(url, options.body);
-  // options=processBody(options)
-  if (options && options.body && options.body !== "") {
-    options.body = JSON.stringify(options.body);
-  }
-  // console.log(options)
-  return fetchRequest(
-    url,
-    Object.assign(
-      {
-        headers: {
-          "Content-Type": "application/json; charset=UTF-8",
-          Pragma: "no-cache"
-        },
-        method: "POST"
-      },
-      options
-    )
-  );
-}
-
-/**
- * 更新数据（PUT）
- *
- * @param {string} url 请求链接
- * @param {object} options 请求选项参数
- */
-export function fetchPut(url, options) {
-  return fetchPost(
-    url,
-    Object.assign({}, options, {
-      method: "PUT"
-    })
-  );
-}
-
-/**
- * 删除数据（DELETE）
- *
- * @param {string} url 请求链接
- * @param {object} options 请求选项参数
- */
-export function fetchDelete(url, options) {
-  return fetchPost(
-    url,
-    Object.assign({}, options, {
-      method: "DELETE"
-    })
-  );
-}
-
-/**
- * 获取数据（Graphql接口）
- *
- * @param {string} url 请求链接
- * @param {object} options 请求选项参数
- */
-export function fetchGraphql(url, options, querys) {
-  return fetchPost(
-    url,
-    Object.assign({}, options, {
-      body:
-        options && options.body
-          ? {
-              operationName: options.body.operationName,
-              query: options.body.query,
-              variables: options.body.variables
-            }
-          : {},
-      credentials: "include", // include, same-origin, *omit
-      headers: {
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var qs_1 = require("qs");
+var fs_1 = __importDefault(require("fs"));
+var path_1 = __importDefault(require("path"));
+var lodash_1 = __importDefault(require("lodash"));
+var defaultPathFetchConfigJS = path_1.default.join(__filename, '.fetch-config.js');
+var defaultPathFetchConfigJSON = path_1.default.join(__filename, '.fetch-config.json');
+var defaults = {
+    credentials: "include",
+    mode: "cors",
+    headers: {
         "Content-Type": "application/json; charset=UTF-8",
+        "X-Requested-With": "XMLHttpRequest",
+        "Access-Control-Allow-Origin": "*",
         Pragma: "no-cache"
-      },
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      mode: "cors" // no-cors, cors, *same-origin
-    })
-  );
-}
-
-/**
- * 获取数据（Graphql接口，返回去掉data.result的外包装）
- *
- * @param {string} url 请求链接
- * @param {object} options 请求选项参数
- */
-export function fetchGraphqlAsResult(url, options, querys) {
-  return fetchGraphql(url, options, querys).then(result => result.data.result);
-}
-
-/**
- * 获取数据(Graphql列表接口，返回去掉data.result的外包装)
- *
- * @param {string} url 请求链接
- * @param {object} options 请求选项参数
- */
-export function fetchGraphqlList(url, options, querys) {
-  options.body.variables = processGraphqlParams(options.body.variables);
-  return fetchGraphqlAsResult(url, options, querys);
-}
-
-/**
- * 上传数据
- *
- * @param {string} url 请求链接
- * @param {object} options 请求选项参数
- */
-export function fetchUpload(url, options) {
-  url = stringifyURL(url,options.body)
-  let params = new FormData()
-  for(let i in options.body){
-    params.append(i,options.body[i])
-  }
-  // options.body = params
-  return fetchRequest(
-    url,
-    Object.assign({}, options, {
-      method :"POST",
-      headers: {},
-      body:params
-    })
-  );
-
-}
-
-/**
- * 下载文件流
- *
- * @param {string} url 请求链接
- * @param {object} options 请求选项参数
- */
-export function fetchDownload(url, options) {
-  return fetchGet(
-    url,
-    Object.assign({}, options, {
-      responseType: "arraybuffer",
-      headers: {
-        "Content-Type": "multipart/form-data;charset=UTF-8",
-        Pragma: "no-cache"
-      }
-    })
-  ).then(res =>
-    res.blob().then(blob => {
-      if (blob) {
-        var a = document.createElement("a");
-        var url = window.URL.createObjectURL(blob);
-        var filename = res.headers.get("Content-Disposition") || "";
-        document.body.appendChild(a);
-        a.href = url;
-        a.download = decodeURI(filename.replace("attachment;filename=", ""));
-        a.click();
-        //修正Firefox 无法下载问题
-        setTimeout(function() {
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);
-        }, 100);
-
-        return true;
-      } else {
-        console.error("no data!");
+    }
+};
+// notes: 所有自定义的的对象或常规对象上自定义挂载，都使用(<any>object)强制转换 不做校验
+var FetchUtilsBase = /** @class */ (function () {
+    function FetchUtilsBase() {
+    }
+    FetchUtilsBase.fetchRequest = function (url, options) {
+        if (!this.checkFetch()) {
+            return;
+        }
+        var fetch = this.getFetch();
+        var fetchResponseProcess = this.getFetchResponseProcess();
+        var responseProcessFunction = this.defauleFetchResponseProcess(options);
+        if (fetchResponseProcess) {
+            responseProcessFunction = fetchResponseProcess;
+        }
+        return fetch(url, Object.assign({}, defaults, options), responseProcessFunction);
+    };
+    // 默认的处理返回数据函数
+    FetchUtilsBase.defauleFetchResponseProcess = function (options) {
+        return function (res) { return Promise.resolve(res)
+            .then(function (res) {
+            if (res.ok === true) {
+                return res;
+            }
+            if (res.status == 601 || res.status == 401) {
+                global.dispatchEvent && global.dispatchEvent(new CustomEvent("login_out"));
+            }
+            return {
+                code: res.status,
+                message: res.statusText
+            };
+        })
+            .then(function (res) {
+            if (options.responseType === "arraybuffer") {
+                return res;
+            }
+            else if (res.code) {
+                return res;
+            }
+            else {
+                return res.json();
+            }
+        })
+            .catch(function (e) {
+            return {
+                code: -1,
+                message: "request aborted"
+            };
+        }); };
+    };
+    // 获取配置信息
+    FetchUtilsBase.getFetchConfig = function () {
+        if (this.config) {
+            return this.config;
+        }
+        if (fs_1.default.existsSync(defaultPathFetchConfigJS)) {
+            this.config = require(defaultPathFetchConfigJS);
+        }
+        else if (fs_1.default.existsSync(defaultPathFetchConfigJSON)) {
+            try {
+                var configString = fs_1.default.readFileSync(defaultPathFetchConfigJSON, 'utf8');
+                if (!configString || typeof configString !== 'object') {
+                    this.config = JSON.parse(configString);
+                }
+                else {
+                    this.config = configString;
+                }
+            }
+            catch (error) {
+                console.error('解析fetchConfig.json文件出错');
+            }
+        }
+        return this.config;
+    };
+    // 检验fetch 是否存在
+    FetchUtilsBase.checkFetch = function () {
+        // 获取配置文件
+        var fetchCopnfig = this.getFetchConfig();
+        // 配置文件判断-优先
+        if (fetchCopnfig && fetchCopnfig.fetch && typeof fetchCopnfig.fetch === 'function') {
+            return true;
+        }
+        // global绑定判断-兼容判断
+        if (global.fetch && typeof global.fetch === 'function') {
+            return true;
+        }
+        // 抛错
+        console.error("\n        import fetch from 'cross-fetch'  // import you fetch utils\n        global.fetch = fetch\n    ");
         return false;
-      }
-    })
-  );
-}
+    };
+    // 获取fetch
+    FetchUtilsBase.getFetch = function () {
+        // 获取配置文件
+        var fetchCopnfig = this.getFetchConfig();
+        // 配置文件-优先
+        if (fetchCopnfig && fetchCopnfig.fetch && typeof fetchCopnfig.fetch === 'function') {
+            return fetchCopnfig.fetch;
+        }
+        // global绑定-兼容
+        if (global.fetch && typeof global.fetch === 'function') {
+            return global.fetch;
+        }
+        // 抛错-可以用自己的fetch
+        throw new Error("fetch is not found");
+    };
+    // 获取请求的特殊处理函数
+    FetchUtilsBase.getFetchResponseProcess = function () {
+        // 获取配置文件
+        var fetchCopnfig = this.getFetchConfig();
+        // 配置文件-优先
+        if (fetchCopnfig && fetchCopnfig.responseProcess && typeof fetchCopnfig.responseProcess === 'function') {
+            return fetchCopnfig.responseProcess;
+        }
+        // global绑定-兼容
+        if (global.fetch && global.fetch.responseProcess && typeof global.fetch.responseProcess === 'function') {
+            return global.fetch.responseProcess;
+        }
+        // 返回-undefined
+        return;
+    };
+    FetchUtilsBase.config = undefined;
+    return FetchUtilsBase;
+}());
+var FetchUtils = /** @class */ (function (_super) {
+    __extends(FetchUtils, _super);
+    function FetchUtils() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    // 返回错误
+    FetchUtils.fetchCatch = function (error) {
+        return error;
+    };
+    // 获取Get请求类型资源数据
+    FetchUtils.fetchGet = function (url, options) {
+        options = this.processBody(options);
+        if (options && options.body && options.body !== "") {
+            url = [this.stringifyURL(url, options.body), qs_1.stringify(options.body)].join(url.indexOf("?") > 0 ? "&" : "?");
+        }
+        options && delete options.body;
+        return this.fetchRequest(url, this.combineOptions(options, {
+            method: "GET"
+        }));
+    };
+    // 获取列表
+    FetchUtils.fetchList = function (url, options) {
+        return this.fetchGet(url, options);
+    };
+    // 更新数据（POST）
+    FetchUtils.fetchPost = function (url, options) {
+        url = this.stringifyURL(url, options && options.body || {});
+        if (options && options.body && options.body !== "") {
+            options.body = JSON.stringify(options.body);
+        }
+        return this.fetchRequest(url, this.combineOptions(options, {
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8",
+                Pragma: "no-cache"
+            },
+            method: "POST"
+        }));
+    };
+    // 更新数据（PUT）
+    FetchUtils.fetchPut = function (url, options) {
+        return this.fetchPost(url, this.combineOptions(options, {
+            method: "PUT"
+        }));
+    };
+    // 删除数据（DELETE）
+    FetchUtils.fetchDelete = function (url, options) {
+        return this.fetchPost(url, this.combineOptions(options, {
+            method: "DELETE"
+        }));
+    };
+    // 获取数据（Graphql接口）
+    FetchUtils.fetchGraphql = function (url, options) {
+        return this.fetchPost(url, this.combineOptions(options, {
+            pickBody: ['operationName', 'query', 'variables'],
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8",
+                Pragma: "no-cache"
+            },
+            method: "POST",
+            mode: "cors" // no-cors, cors, *same-origin
+        }));
+    };
+    // 获取数据（Graphql接口，返回去掉data.result的外包装）
+    FetchUtils.fetchGraphqlAsResult = function (url, options) {
+        return this.fetchGraphql(url, options).then(function (result) { return result.data.result; });
+    };
+    // 获取数据(Graphql列表接口，返回去掉data.result的外包装)
+    FetchUtils.fetchGraphqlList = function (url, options) {
+        if (options && options.body) {
+            options.body.variables = this.processGraphqlParams(options.body.variables);
+        }
+        return this.fetchGraphqlAsResult(url, options);
+    };
+    // 上传数据
+    FetchUtils.fetchUpload = function (url, options) {
+        url = this.stringifyURL(url, options.body);
+        var params = new FormData();
+        for (var i in options.body) {
+            params.append(i, options.body[i]);
+        }
+        return this.fetchRequest(url, this.combineOptions(options, {
+            method: "POST",
+            body: params
+        }));
+    };
+    // 下载文件流
+    FetchUtils.fetchDownload = function (url, options) {
+        return this.fetchGet(url, this.combineOptions(options, {
+            responseType: "arraybuffer",
+            headers: {
+                "Content-Type": "multipart/form-data;charset=UTF-8",
+                Pragma: "no-cache"
+            }
+        })).then(function (res) {
+            if (!res.blob || typeof res.blob !== 'function') {
+                return { code: 1, message: res && res.message || 'Server Error' };
+            }
+            res.blob().then(function (blob) {
+                if (blob) {
+                    var a = document.createElement("a");
+                    var url = window.URL.createObjectURL(blob);
+                    var filename = res.headers.get("Content-Disposition") || "";
+                    document.body.appendChild(a);
+                    a.href = url;
+                    a.download = decodeURI(filename.replace("attachment;filename=", ""));
+                    a.click();
+                    //修正Firefox 无法下载问题
+                    setTimeout(function () {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 100);
+                    return true;
+                }
+                else {
+                    console.error("no data!");
+                    return false;
+                }
+            });
+        });
+    };
+    // 获取Options的 Headers, 应该找到一个声明类型的，但是没找到
+    FetchUtils.getOptionsHeaders = function (options) {
+        if (options === void 0) { options = {}; }
+        return Object.assign({}, { headers: options.headers || {} });
+    };
+    // 获取Options的 Body
+    FetchUtils.getOptionsBody = function (options) {
+        if (options === void 0) { options = {}; }
+        if (!options.body) {
+            options.body = {};
+        }
+        if (options.pickBody && options.pickBody.length) {
+            options.body = lodash_1.default.pick(options.body, options.pickBody);
+        }
+        return Object.assign({}, { body: options.body });
+    };
+    // 删除多余的参数
+    FetchUtils.deleteParams = function (newOptions) {
+        delete newOptions.headers;
+        delete newOptions.body;
+        delete newOptions.pickBody;
+        return newOptions;
+    };
+    // 合并Options
+    FetchUtils.combineOptions = function (options, newOptions) {
+        if (options === void 0) { options = {}; }
+        if (newOptions === void 0) { newOptions = {}; }
+        return Object.assign.apply(Object, [{},
+            options,
+            this.getOptionsHeaders(newOptions),
+            this.getOptionsBody(newOptions),
+            this.deleteParams(newOptions)].concat(newOptions));
+    };
+    // 格式字符串Url重的/:id=>/1,用body={ id: 1 }
+    FetchUtils.stringifyURL = function (str, options) {
+        if (!str) {
+            return str;
+        }
+        return str.replace(/:([A-Z|a-z]+)/gi, function (match, p1) {
+            var replacement = options[p1];
+            if (replacement === undefined) {
+                throw new Error("Could not find url parameter " + p1 + " in passed options object");
+            }
+            return replacement;
+        });
+    };
+    // 处理graphql参数
+    FetchUtils.processGraphqlParams = function (params) {
+        if (params === void 0) { params = {}; }
+        var column = params.column, _a = params.current, current = _a === void 0 ? 0 : _a, showQuickJumper = params.showQuickJumper, _b = params.pageSize, pageSize = _b === void 0 ? 10 : _b, total = params.total, field = params.field, pageSizeOptions = params.pageSizeOptions, showSizeChanger = params.showSizeChanger, columnKey = params.columnKey, order = params.order, otherParam = __rest(params, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "pageSizeOptions", "showSizeChanger", "columnKey", "order"]);
+        return Object.assign({}, otherParam, {
+            start: (current - 1) * pageSize || 0,
+            end: current * pageSize - 1 || 9
+        }, order
+            ? {
+                order: order && order.replace(/end$/, "")
+            }
+            : {}, columnKey
+            ? {
+                orderBy: columnKey
+            }
+            : {});
+    };
+    // 处理每个参数
+    FetchUtils.processPraramItem = function (object) {
+        for (var key in object) {
+            if (object[key] instanceof Array) {
+                if (object[key].length !== 0) {
+                    object[key] = JSON.stringify(object[key]);
+                }
+                else {
+                    object[key] = undefined;
+                }
+            }
+            else {
+                if (object[key] === "") {
+                    object[key] = undefined;
+                }
+            }
+        }
+        return object;
+    };
+    // 处理参数
+    FetchUtils.processParams = function (object) {
+        var column = object.column, current = object.current, showQuickJumper = object.showQuickJumper, pageSize = object.pageSize, total = object.total, field = object.field, pageSizeOptions = object.pageSizeOptions, showSizeChanger = object.showSizeChanger, other = __rest(object, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "pageSizeOptions", "showSizeChanger"]);
+        var body = __assign({ currentPage: current, totalCount: total, pageSize: pageSize }, other);
+        return this.processPraramItem(body);
+    };
+    // 处理参数
+    FetchUtils.processBody = function (options) {
+        if (options && typeof options.body === "object") {
+            options.body = this.processParams(options.body);
+        }
+        return options;
+    };
+    FetchUtils.defaultsHeaders = Object.assign({}, defaults);
+    return FetchUtils;
+}(FetchUtilsBase));
+exports.default = FetchUtils;
