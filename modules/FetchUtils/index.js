@@ -42,8 +42,8 @@ var qs_1 = require("qs");
 var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
 var lodash_1 = __importDefault(require("lodash"));
-var defaultPathFetchConfigJS = path_1.default.join(__filename, '.fetch-config.js');
-var defaultPathFetchConfigJSON = path_1.default.join(__filename, '.fetch-config.json');
+var defaultPathFetchConfigJS = path_1.default.join(process.cwd(), '.fetch-config.js');
+var defaultPathFetchConfigJSON = path_1.default.join(process.cwd(), '.fetch-config.json');
 var defaults = {
     credentials: "include",
     mode: "cors",
@@ -68,40 +68,33 @@ var FetchUtilsBase = /** @class */ (function () {
         if (fetchResponseProcess) {
             responseProcessFunction = fetchResponseProcess;
         }
-        return fetch(url, Object.assign({}, defaults, options), responseProcessFunction);
+        return fetch(url, Object.assign({}, defaults, options)).then(responseProcessFunction).catch(function (e) {
+            console.error('error: ', e);
+            return {
+                code: -1,
+                message: "request aborted"
+            };
+        });
     };
     // 默认的处理返回数据函数
     FetchUtilsBase.defauleFetchResponseProcess = function (options) {
-        return function (res) { return Promise.resolve(res)
-            .then(function (res) {
+        console.log('-----1-----');
+        return function (res) {
+            console.log('-----2-----');
             if (res.ok === true) {
-                return res;
+                if (options.responseType === "arraybuffer" || res.code) {
+                    return res;
+                }
+                return res.json();
             }
             if (res.status == 601 || res.status == 401) {
                 global.dispatchEvent && global.dispatchEvent(new CustomEvent("login_out"));
             }
             return {
                 code: res.status,
-                message: res.statusText
+                message: res.statusText,
             };
-        })
-            .then(function (res) {
-            if (options.responseType === "arraybuffer") {
-                return res;
-            }
-            else if (res.code) {
-                return res;
-            }
-            else {
-                return res.json();
-            }
-        })
-            .catch(function (e) {
-            return {
-                code: -1,
-                message: "request aborted"
-            };
-        }); };
+        };
     };
     // 获取配置信息
     FetchUtilsBase.getFetchConfig = function () {
@@ -191,9 +184,12 @@ var FetchUtils = /** @class */ (function (_super) {
         if (options && options.body && options.body !== "") {
             url = [this.stringifyURL(url, options.body), qs_1.stringify(options.body)].join(url.indexOf("?") > 0 ? "&" : "?");
         }
-        options && delete options.body;
         return this.fetchRequest(url, this.combineOptions(options, {
             method: "GET"
+        }, function (o) {
+            // GET方法请求不包含body，默认是{}, 所以使用自定义处理方法删除该属性
+            delete o.body;
+            return o;
         }));
     };
     // 获取列表
@@ -321,14 +317,19 @@ var FetchUtils = /** @class */ (function (_super) {
         return newOptions;
     };
     // 合并Options
-    FetchUtils.combineOptions = function (options, newOptions) {
+    FetchUtils.combineOptions = function (options, newOptions, handleOptions) {
         if (options === void 0) { options = {}; }
         if (newOptions === void 0) { newOptions = {}; }
-        return Object.assign.apply(Object, [{},
+        var result = Object.assign.apply(Object, [{},
             options,
             this.getOptionsHeaders(newOptions),
             this.getOptionsBody(newOptions),
             this.deleteParams(newOptions)].concat(newOptions));
+        // 自定义处理函数
+        if (handleOptions && typeof handleOptions === 'function') {
+            result = handleOptions(result);
+        }
+        return result;
     };
     // 格式字符串Url重的/:id=>/1,用body={ id: 1 }
     FetchUtils.stringifyURL = function (str, options) {
@@ -346,7 +347,7 @@ var FetchUtils = /** @class */ (function (_super) {
     // 处理graphql参数
     FetchUtils.processGraphqlParams = function (params) {
         if (params === void 0) { params = {}; }
-        var column = params.column, _a = params.current, current = _a === void 0 ? 0 : _a, showQuickJumper = params.showQuickJumper, _b = params.pageSize, pageSize = _b === void 0 ? 10 : _b, total = params.total, field = params.field, pageSizeOptions = params.pageSizeOptions, showSizeChanger = params.showSizeChanger, columnKey = params.columnKey, order = params.order, otherParam = __rest(params, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "pageSizeOptions", "showSizeChanger", "columnKey", "order"]);
+        var column = params.column, _a = params.current, current = _a === void 0 ? 1 : _a, showQuickJumper = params.showQuickJumper, _b = params.pageSize, pageSize = _b === void 0 ? 10 : _b, total = params.total, field = params.field, pageSizeOptions = params.pageSizeOptions, showSizeChanger = params.showSizeChanger, columnKey = params.columnKey, order = params.order, otherParam = __rest(params, ["column", "current", "showQuickJumper", "pageSize", "total", "field", "pageSizeOptions", "showSizeChanger", "columnKey", "order"]);
         return Object.assign({}, otherParam, {
             start: (current - 1) * pageSize || 0,
             end: current * pageSize - 1 || 9

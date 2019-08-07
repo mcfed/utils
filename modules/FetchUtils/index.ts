@@ -3,8 +3,8 @@ import fs from "fs";
 import path from "path";
 import _ from "lodash";
 
-const defaultPathFetchConfigJS = path.join(__filename, '.fetch-config.js')
-const defaultPathFetchConfigJSON = path.join(__filename, '.fetch-config.json')
+const defaultPathFetchConfigJS = path.join(process.cwd(), '.fetch-config.js')
+const defaultPathFetchConfigJSON = path.join(process.cwd(), '.fetch-config.json')
 const defaults = {
   credentials: "include",
   mode: "cors",
@@ -30,37 +30,38 @@ class FetchUtilsBase {
     if (fetchResponseProcess) {
       responseProcessFunction = fetchResponseProcess;
     }
-    return fetch(url, (<any>Object).assign({}, defaults, options), responseProcessFunction);
+    return fetch(
+      url, 
+      (<any>Object).assign({}, defaults, options)
+    ).then(responseProcessFunction).catch((e:Error) => {
+      console.error('error: ', e)
+      return {
+        code: -1,
+        message: "request aborted"
+      };
+    });
   }
   
   // 默认的处理返回数据函数
   protected static defauleFetchResponseProcess(options:RequestInit):Function {
-    return (res:Response) => Promise.resolve(res)
-      .then((res:Response):any => {
-        if (res.ok === true) { return res; } 
+    console.log('-----1-----')
+    return (res:Response):any => {
+      console.log('-----2-----')
+
+        if (res.ok === true) {
+          if (options.responseType === "arraybuffer" || res.code ) {
+            return res;
+          }
+          return res.json();
+        }
         if (res.status == 601 || res.status == 401) {
           (<any>global).dispatchEvent && (<any>global).dispatchEvent(new CustomEvent("login_out"));
         }
         return {
           code: res.status,
-          message: res.statusText
+          message: res.statusText,
         };
-      })
-      .then((res:Response):any => {
-        if (options.responseType === "arraybuffer") {
-          return res;
-        } else if (res.code) {
-          return res;
-        } else {
-          return res.json();
-        }
-      })
-      .catch((e:Error) => {
-        return {
-          code: -1,
-          message: "request aborted"
-        };
-      });
+      };
   }
 
   // 获取配置信息
@@ -83,7 +84,6 @@ class FetchUtilsBase {
 
   // 检验fetch 是否存在
   protected static checkFetch():boolean {
-
     // 获取配置文件
     const fetchCopnfig = this.getFetchConfig();
 
@@ -108,7 +108,7 @@ class FetchUtilsBase {
 
     // 配置文件-优先
     if (fetchCopnfig && fetchCopnfig.fetch && typeof fetchCopnfig.fetch === 'function' ) { return fetchCopnfig.fetch; }
-    
+
     // global绑定-兼容
     if ((<any>global).fetch && typeof (<any>global).fetch === 'function') { return (<any>global).fetch; }
 
@@ -133,7 +133,6 @@ class FetchUtilsBase {
 }
 
 export default class FetchUtils extends FetchUtilsBase {
-
   // 返回错误
   static fetchCatch(error:Error):Error {
     return error;
@@ -147,11 +146,15 @@ export default class FetchUtils extends FetchUtilsBase {
         url.indexOf("?") > 0 ? "&" : "?"
       );
     }
-    options && delete options.body;
     return this.fetchRequest(
       url,
       this.combineOptions(options, {
         method: "GET"
+      }, (o:any) => {
+
+        // GET方法请求不包含body，默认是{}, 所以使用自定义处理方法删除该属性
+        delete o.body;
+        return o;
       })
     );
   }
@@ -309,8 +312,8 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 合并Options
-  protected static combineOptions(options:any={}, newOptions:any={}):any {
-    return Object.assign(
+  protected static combineOptions(options:any={}, newOptions:any={}, handleOptions?:Function):any {
+    let result =  Object.assign(
       {}, 
       options,
       this.getOptionsHeaders(newOptions),
@@ -318,6 +321,13 @@ export default class FetchUtils extends FetchUtilsBase {
       this.deleteParams(newOptions),
       ...newOptions
     );
+    
+    // 自定义处理函数
+    if (handleOptions && typeof handleOptions === 'function') {
+      result = handleOptions(result);
+    }
+
+    return result;
   }
 
   // 格式字符串Url重的/:id=>/1,用body={ id: 1 }
@@ -338,7 +348,7 @@ export default class FetchUtils extends FetchUtilsBase {
   protected static processGraphqlParams(params:GraphqlParams = {}) {
     const {
       column,
-      current=0,
+      current=1,
       showQuickJumper,
       pageSize=10,
       total,
