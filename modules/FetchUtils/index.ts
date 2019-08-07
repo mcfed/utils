@@ -44,10 +44,7 @@ class FetchUtilsBase {
   
   // 默认的处理返回数据函数
   protected static defauleFetchResponseProcess(options:RequestInit):Function {
-    console.log('-----1-----')
     return (res:Response):any => {
-      console.log('-----2-----')
-
         if (res.ok === true) {
           if (options.responseType === "arraybuffer" || res.code ) {
             return res;

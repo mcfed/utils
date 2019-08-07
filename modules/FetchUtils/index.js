@@ -78,9 +78,7 @@ var FetchUtilsBase = /** @class */ (function () {
     };
     // 默认的处理返回数据函数
     FetchUtilsBase.defauleFetchResponseProcess = function (options) {
-        console.log('-----1-----');
         return function (res) {
-            console.log('-----2-----');
             if (res.ok === true) {
                 if (options.responseType === "arraybuffer" || res.code) {
                     return res;

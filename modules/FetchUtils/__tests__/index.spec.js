@@ -22,7 +22,7 @@ class testFetch extends FetchUtils {
 const Response = ponyfill.Response;
 jest.autoMockOff();
 
-describe.skip("FetchUtils使用 Get 请求", () => {
+describe("FetchUtils使用 Get 请求", () => {
   beforeEach(() => {
     // fetch.resetMocks()
   });
@@ -124,7 +124,7 @@ describe.skip("FetchUtils使用 Get 请求", () => {
   });
 });
 
-describe.skip("FetchUtils使用 upload 请求", () => {
+describe("FetchUtils使用 upload 请求", () => {
 
   it("upload 请求200", (done) => {
     let mockResult = {
@@ -157,7 +157,7 @@ describe.skip("FetchUtils使用 upload 请求", () => {
   });
 });
 describe("FetchUtils使用 Post 请求", () => {
-  it.skip("post 请求200", done => {
+  it("post 请求200", done => {
     let mockResult = {
       code: 0
     };
@@ -172,7 +172,7 @@ describe("FetchUtils使用 Post 请求", () => {
     });
   });
 
-  it.skip("post 请求500", done => {
+  it("post 请求500", done => {
     let mockResult = {
       code: 500
     };
@@ -225,7 +225,7 @@ describe.skip("FetchUtils使用 fetchDownload 请求", () => {
   });
 });
 
-describe.skip("FetchUtils使用 fetchGraphql请求", () => {
+describe("FetchUtils使用 fetchGraphql请求", () => {
   it("fetchGraphql请求200", done => {
     let mockResult = {
       data: {
@@ -282,7 +282,7 @@ describe.skip("FetchUtils使用 fetchGraphql请求", () => {
   });
 });
 
-describe.skip("stringifyURL 方法", () => {
+describe("stringifyURL 方法", () => {
   it("是否可以将对应url中的变量替换", () => {
     const url = "http://localhost/:id";
     const options = {
@@ -331,7 +331,7 @@ describe.skip("stringifyURL 方法", () => {
   });
 });
 
-describe.skip("FetchUtils使用 processBody 方法", () => {
+describe("FetchUtils使用 processBody 方法", () => {
   it("processBody", done => {
     const options = {
       body: {
