@@ -3,8 +3,11 @@ import fs from "fs";
 import path from "path";
 import _ from "lodash";
 
+// 配置文件路径-该文件存放fetch和responseProcess(fetch的返回处理函数）等，代替将fetch绑定在global上
 const defaultPathFetchConfigJS = path.join(process.cwd(), '.fetch-config.js')
 const defaultPathFetchConfigJSON = path.join(process.cwd(), '.fetch-config.json')
+
+// 默认的Headers
 const defaults = {
   credentials: "include",
   mode: "cors",
@@ -21,6 +24,7 @@ const defaults = {
 class FetchUtilsBase {
   protected static config:FetchConfig|undefined = undefined;
 
+  // 获取请求
   static fetchRequest(url:string, options:RequestInit):any {
     if (!this.checkFetch()) { return; }
 
@@ -130,6 +134,8 @@ class FetchUtilsBase {
 }
 
 export default class FetchUtils extends FetchUtilsBase {
+  static readonly defaultsHeaders = defaults;
+
   // 返回错误
   static fetchCatch(error:Error):Error {
     return error;
@@ -415,7 +421,6 @@ export default class FetchUtils extends FetchUtilsBase {
     };
     return this.processPraramItem(body);
   }
-  public static readonly defaultsHeaders = (<any>Object).assign({}, defaults);
 
   // 处理参数
   protected static processBody(options?:RequestInit):any {

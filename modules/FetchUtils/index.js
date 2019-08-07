@@ -42,8 +42,10 @@ var qs_1 = require("qs");
 var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
 var lodash_1 = __importDefault(require("lodash"));
+// 配置文件路径-该文件存放fetch和responseProcess(fetch的返回处理函数）等，代替将fetch绑定在global上
 var defaultPathFetchConfigJS = path_1.default.join(process.cwd(), '.fetch-config.js');
 var defaultPathFetchConfigJSON = path_1.default.join(process.cwd(), '.fetch-config.json');
+// 默认的Headers
 var defaults = {
     credentials: "include",
     mode: "cors",
@@ -58,6 +60,7 @@ var defaults = {
 var FetchUtilsBase = /** @class */ (function () {
     function FetchUtilsBase() {
     }
+    // 获取请求
     FetchUtilsBase.fetchRequest = function (url, options) {
         if (!this.checkFetch()) {
             return;
@@ -391,7 +394,7 @@ var FetchUtils = /** @class */ (function (_super) {
         }
         return options;
     };
-    FetchUtils.defaultsHeaders = Object.assign({}, defaults);
+    FetchUtils.defaultsHeaders = defaults;
     return FetchUtils;
 }(FetchUtilsBase));
 exports.default = FetchUtils;
