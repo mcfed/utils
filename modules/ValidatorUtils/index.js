@@ -1,8 +1,9 @@
 /**
  * @module ValidatorUtils
  */
-import * as FetchUtils from '../FetchUtils'
+import FetchUtils from '../FetchUtils'
 import { stringify } from "qs";
+
 /**
  * 验证非法字符串
  *

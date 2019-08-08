@@ -1,11 +1,5 @@
 import { stringify } from "qs";
-import fs from "fs";
-import path from "path";
 import _ from "lodash";
-
-// 配置文件路径-该文件存放fetch和responseProcess(fetch的返回处理函数）等，代替将fetch绑定在global上
-const defaultPathFetchConfigJS = path.join(process.cwd(), '.fetch-config.js')
-const defaultPathFetchConfigJSON = path.join(process.cwd(), '.fetch-config.json')
 
 // 默认的Headers
 const defaults = {
@@ -28,17 +22,16 @@ class FetchUtilsBase {
   static fetchRequest(url:string, options:RequestInit):any {
     if (!this.checkFetch()) { return; }
 
-    const fetch:Function = this.getFetch();
     const fetchResponseProcess:Function|undefined = this.getFetchResponseProcess();
-    let responseProcessFunction:Function = this.defauleFetchResponseProcess(options);
+    let responseProcessFunction:any = this.defauleFetchResponseProcess(options);
     if (fetchResponseProcess) {
       responseProcessFunction = fetchResponseProcess;
     }
     return fetch(
       url, 
       (<any>Object).assign({}, defaults, options)
-    ).then(responseProcessFunction).catch((e:Error) => {
-      console.error('error: ', e)
+    ).then(responseProcessFunction)
+    .catch((e:Error) => {
       return {
         code: -1,
         message: "request aborted"
@@ -48,7 +41,7 @@ class FetchUtilsBase {
   
   // 默认的处理返回数据函数
   protected static defauleFetchResponseProcess(options:RequestInit):Function {
-    return (res:Response):any => {
+    return (res:Response):any => {     
         if (res.ok === true) {
           if (options.responseType === "arraybuffer" || res.code ) {
             return res;
@@ -65,32 +58,8 @@ class FetchUtilsBase {
       };
   }
 
-  // 获取配置信息
-  protected static getFetchConfig():FetchConfig|undefined {
-    if (this.config) { return this.config; }
-    if (fs.existsSync(defaultPathFetchConfigJS)){
-       this.config = require(defaultPathFetchConfigJS);
-    } else if (fs.existsSync(defaultPathFetchConfigJSON)){
-      try {
-        let configString = fs.readFileSync(defaultPathFetchConfigJSON, 'utf8');
-        if (!configString || typeof configString !== 'object') { this.config = JSON.parse(configString); } else {
-          this.config = configString;
-        }
-      } catch (error) {
-        console.error('解析fetchConfig.json文件出错');
-      }
-    }
-    return this.config;
-  }
-
   // 检验fetch 是否存在
   protected static checkFetch():boolean {
-    // 获取配置文件
-    const fetchCopnfig = this.getFetchConfig();
-
-    // 配置文件判断-优先
-    if (fetchCopnfig && fetchCopnfig.fetch && typeof fetchCopnfig.fetch === 'function' ) { return true; }
-
     // global绑定判断-兼容判断
     if ((<any>global).fetch && typeof (<any>global).fetch === 'function') { return true; }
 
@@ -102,29 +71,8 @@ class FetchUtilsBase {
     return false;
   }
 
-  // 获取fetch
-  protected static getFetch():Function {
-    // 获取配置文件
-    const fetchCopnfig = this.getFetchConfig();
-
-    // 配置文件-优先
-    if (fetchCopnfig && fetchCopnfig.fetch && typeof fetchCopnfig.fetch === 'function' ) { return fetchCopnfig.fetch; }
-
-    // global绑定-兼容
-    if ((<any>global).fetch && typeof (<any>global).fetch === 'function') { return (<any>global).fetch; }
-
-    // 抛错-可以用自己的fetch
-    throw new Error(`fetch is not found`);
-  }
-
   // 获取请求的特殊处理函数
   protected static getFetchResponseProcess():Function|undefined {
-    // 获取配置文件
-    const fetchCopnfig = this.getFetchConfig();
-
-    // 配置文件-优先
-    if (fetchCopnfig && fetchCopnfig.responseProcess && typeof fetchCopnfig.responseProcess === 'function') { return fetchCopnfig.responseProcess; }
-
     // global绑定-兼容
     if ((<any>global).fetch && (<any>global).fetch.responseProcess && typeof (<any>global).fetch.responseProcess === 'function') { return (<any>global).fetch.responseProcess; }
 
@@ -132,7 +80,6 @@ class FetchUtilsBase {
     return;
   }
 }
-
 export default class FetchUtils extends FetchUtilsBase {
   static readonly defaultsHeaders = defaults;
 
@@ -148,6 +95,7 @@ export default class FetchUtils extends FetchUtilsBase {
       url = [this.stringifyURL(url, options.body), stringify(options.body)].join(
         url.indexOf("?") > 0 ? "&" : "?"
       );
+      url = url.replace(/\?$/, '');
     }
     return this.fetchRequest(
       url,
@@ -264,11 +212,8 @@ export default class FetchUtils extends FetchUtilsBase {
           }
         }
       )
-    ).then((res:Response) => {
-      if (!res.blob || typeof res.blob !== 'function') {
-        return { code: 1, message: res && (<any>res).message || 'Server Error' }
-      }
-      res.blob().then(blob => {
+    ).then((res:any) => {     
+      return res.blob().then((blob:any) => {
         if (blob) {
           var a = document.createElement("a");
           var url = window.URL.createObjectURL(blob);
@@ -283,10 +228,7 @@ export default class FetchUtils extends FetchUtilsBase {
             window.URL.revokeObjectURL(url);
           }, 100);
   
-          return true;
-        } else {
-          console.error("no data!");
-          return false;
+          return { code: 0, message: 'success' };
         }
       })
     });

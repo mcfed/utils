@@ -1,4 +1,9 @@
 global.fetch = require('cross-fetch')
+global.window.URL={
+  createObjectURL:function(){
+    return "mock/url"
+  }
+}
 global.fetch.responseProcess=function(response){
   // console.log(response)
   console.log(response)
