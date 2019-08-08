@@ -1,5 +1,6 @@
 import { stringify } from "qs";
-import _ from "lodash";
+import lodash from "lodash";
+const { pick } = lodash;
 
 // 默认的Headers
 const defaults = {
@@ -243,7 +244,7 @@ export default class FetchUtils extends FetchUtilsBase {
   protected static getOptionsBody(options:any={}):any {
     if (!options.body) { options.body = {} }
     if (options.pickBody && options.pickBody.length) {
-      options.body = _.pick(options.body, options.pickBody);
+      options.body = pick(options.body, options.pickBody);
     }
     return Object.assign({}, { body: options.body });
   }
@@ -276,7 +277,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 格式字符串Url重的/:id=>/1,用body={ id: 1 }
-  protected static stringifyURL(str:string, options?:any):string {
+   static stringifyURL(str:string, options?:any):string {
     if (!str) { return str; }
   
     return str.replace(/:([A-Z|a-z]+)/gi, function(match, p1) {

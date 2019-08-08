@@ -8,10 +8,11 @@ import { sizeSnapshot } from "rollup-plugin-size-snapshot"
 import notify from 'rollup-plugin-notify'
 import tscompile from 'typescript';
 import typescript from 'rollup-plugin-typescript'
+import extensions from 'rollup-plugin-extensions'
 
 import pkg from "./package.json"
 const name = "crud";
-const input = "./modules/DictUtils/index.ts"
+const input = "./modules/index.ts"
 
 
 const globals = {
@@ -37,10 +38,12 @@ export default [{
   external:Object.keys(globals),
   plugins: [
     nodeResolve(),
+    commonjs(commonjsOptions),
     // typescript({module: 'CommonJS'}),
      typescript({typescript: tscompile}),
     // babel(babelOptionsESM),
     sizeSnapshot(),
-    notify()
+    notify(),
+    extensions({ extensions: ['.ts', '.js'], }),
   ]
 }]
