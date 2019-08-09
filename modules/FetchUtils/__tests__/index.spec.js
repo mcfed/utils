@@ -1,22 +1,7 @@
-import {
-  fetchDownload,
-  fetchGet,
-  fetchList,
-  fetchPost,
-  fetchCatch,
-  fetchGraphql,
-  fetchGraphqlList,
-  fetchGraphqlAsResult,
-  stringifyURL,
-  processPraramItem,
-  processGraphqlParams,
-  processBody
-} from "../index";
-// import { ServerResponse as Response } from "http";
-
-import fetchMock from "fetch-mock";
 import { stringify } from "qs";
-// import Headers from 'headers'
+import fetchMock from "fetch-mock";
+import FetchUtils from "../index.ts";
+import "../../../setupTests";
 const ponyfill = require("fetch-ponyfill")();
 fetchMock.config = Object.assign(fetchMock.config, {
   Headers: ponyfill.Headers,
@@ -24,6 +9,12 @@ fetchMock.config = Object.assign(fetchMock.config, {
   Response: ponyfill.Response,
   fetch: ponyfill
 });
+
+class childFetchUtils extends FetchUtils {
+   static getProtectedFun(name) {
+    return this[name]();
+   }
+}
 
 const Response = ponyfill.Response;
 jest.autoMockOff();
@@ -39,7 +30,7 @@ describe("FetchUtils使用 Get 请求", () => {
     let url = "http://localhost/200";
     let options = {};
     let mock = fetchMock.mock(url, JSON.stringify(mockResult), options);
-    fetchGet(url).then(result => {
+    FetchUtils.fetchGet(url).then(result => {
       expect(result).toEqual(mockResult);
       mock.lastOptions(true, { headers: {} });
       done();
@@ -52,7 +43,7 @@ describe("FetchUtils使用 Get 请求", () => {
     let url = "http://localhost/500";
     let options = {};
     fetchMock.mock(url, 500, options);
-    fetchGet(url).then(result => {
+    FetchUtils.fetchGet(url).then(result => {
       expect(result.code).toEqual(mockResult.code);
       done();
     });
@@ -71,7 +62,7 @@ describe("FetchUtils使用 Get 请求", () => {
       JSON.stringify(mockResult),
       options
     );
-    fetchGet(url, options).then(result => {
+    FetchUtils.fetchGet(url, options).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -89,7 +80,7 @@ describe("FetchUtils使用 Get 请求", () => {
       JSON.stringify(mockResult),
       options
     );
-    fetchGet(url, options).then(result => {
+    FetchUtils.fetchGet(url, options).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -103,13 +94,13 @@ describe("FetchUtils使用 Get 请求", () => {
         a: ["2018", "2019"]
       }
     };
-    options = processBody(options);
+    options = FetchUtils.processBody(options);
     fetchMock.mock(
       [url, stringify(options.body)].join("?"),
       JSON.stringify(mockResult),
       options
     );
-    fetchGet(url, options).then(result => {
+    FetchUtils.fetchGet(url, options).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -123,7 +114,7 @@ describe("FetchUtils使用 Get 请求", () => {
     };
     let url = "http://localhost/fetchList/200";
     fetchMock.mock(url, JSON.stringify(mockResult));
-    fetchList(url).then(result => {
+    FetchUtils.fetchList(url).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -141,7 +132,7 @@ describe("FetchUtils使用 upload 请求", () => {
       body: {}
     };
     fetchMock.mock(url, JSON.stringify(mockResult), options);
-    fetchPost(url, options).then(result => {
+    FetchUtils.fetchUpload(url, options).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -156,7 +147,7 @@ describe("FetchUtils使用 upload 请求", () => {
       body: {}
     };
     fetchMock.mock(url, JSON.stringify(mockResult), options);
-    fetchPost(url, options).then(result => {
+    FetchUtils.fetchUpload(url, options).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -172,7 +163,7 @@ describe("FetchUtils使用 Post 请求", () => {
       body: {}
     };
     fetchMock.mock(url, JSON.stringify(mockResult), options);
-    fetchPost(url, options).then(result => {
+    FetchUtils.fetchPost(url, options).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -187,7 +178,7 @@ describe("FetchUtils使用 Post 请求", () => {
       body: {}
     };
     fetchMock.mock(url, JSON.stringify(mockResult), options);
-    fetchPost(url, options).then(result => {
+    FetchUtils.fetchPost(url, options).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -208,22 +199,22 @@ describe("FetchUtils使用 Post 请求", () => {
       new Response({ throws: new TypeError("Failed to fetch") }),
       options
     );
-    fetchPost(url, options).then(result => {
+    FetchUtils.fetchPost(url, options).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
   });
 });
 
-describe.skip("FetchUtils使用 fetchDownload 请求", () => {
-  it.skip("fetchDownload 请求200", done => {
-    let mockResult = {};
-    let url = "http://localhost/download/200";
+describe("FetchUtils使用 fetchDownload 请求", () => {
+  it("fetchDownload 请求200", done => {
+    let mockResult = { code:0, message: 'success' };
+    let url = "http://localhost/200";
     let options = {
-      body: {}
+      method: 'GET'
     };
     fetchMock.mock(url, JSON.stringify(mockResult), options);
-    fetchDownload(url).then(result => {
+    FetchUtils.fetchDownload(url).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -242,7 +233,7 @@ describe("FetchUtils使用 fetchGraphql请求", () => {
       body: {}
     };
     fetchMock.mock(url, JSON.stringify(mockResult), options);
-    fetchGraphql(url).then(result => {
+    FetchUtils.fetchGraphql(url).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -261,7 +252,7 @@ describe("FetchUtils使用 fetchGraphql请求", () => {
       body: {}
     };
     fetchMock.mock(url, JSON.stringify(mockResult), options);
-    fetchGraphqlList(url, options).then(result => {
+    FetchUtils.fetchGraphqlList(url, options).then(result => {
       expect(result).toEqual(mockResult.data.result);
       done();
     });
@@ -280,7 +271,7 @@ describe("FetchUtils使用 fetchGraphql请求", () => {
       body: {}
     };
     fetchMock.mock(url, JSON.stringify(mockResult), options);
-    fetchGraphqlAsResult(url).then(result => {
+    FetchUtils.fetchGraphqlAsResult(url).then(result => {
       expect(result).toEqual(mockResult.data.result);
       done();
     });
@@ -295,16 +286,21 @@ describe("stringifyURL 方法", () => {
     };
     const result = "http://localhost/123";
 
-    expect(stringifyURL(url, options)).toBe(result);
+    expect(FetchUtils.stringifyURL(url, options)).toBe(result);
   });
 
-  it.skip("如果变量不同则不替换", () => {
+  it("如果变量不同则报错", () => {
     const url = "http://localhost/:id";
     const options = {
       member: 213
     };
-
-    expect(stringifyURL(url, options)).toBe(url);
+    let errorMessage = null;
+    try {
+      FetchUtils.stringifyURL(url, options)
+    } catch (error) {
+      errorMessage = error;
+    }
+    expect(errorMessage.message).toBe('Could not find url parameter id in passed options object');
   });
 
   it("替换值为0的时候，不报错", () => {
@@ -315,7 +311,7 @@ describe("stringifyURL 方法", () => {
     }
     const result = "http://localhost/0";
 
-    expect(stringifyURL(url,options)).toBe(result);
+    expect(FetchUtils.stringifyURL(url,options)).toBe(result);
 
   });
 
@@ -327,13 +323,9 @@ describe("stringifyURL 方法", () => {
     }
     const result = "http://localhost/null";
 
-    expect(stringifyURL(url,options)).toBe(result);
+    expect(FetchUtils.stringifyURL(url,options)).toBe(result);
   });
 });
-
-// describe("", () => {
-//
-// });
 
 describe("FetchUtils使用 processBody 方法", () => {
   it("processBody", done => {
@@ -350,7 +342,7 @@ describe("FetchUtils使用 processBody 方法", () => {
         pageSize: undefined
       })
     };
-    expect(result).toEqual(processBody(options));
+    expect(result).toEqual(FetchUtils.processBody(options));
     done();
   });
 
@@ -360,7 +352,7 @@ describe("FetchUtils使用 processBody 方法", () => {
       b: 2,
       c: 3
     };
-    expect(processPraramItem(obj)).toEqual(obj);
+    expect(FetchUtils.processPraramItem(obj)).toEqual(obj);
   });
 
   it("processPraramItem 如果对象值为空则转为undefined", () => {
@@ -368,7 +360,15 @@ describe("FetchUtils使用 processBody 方法", () => {
       a: ""
     };
 
-    expect(processPraramItem(obj).a).toBe(undefined);
+    expect(FetchUtils.processPraramItem(obj).a).toBe(undefined);
+  });
+
+  it("processPraramItem 如果对象值为[]则转为undefined", () => {
+    const obj = {
+      a: []
+    };
+
+    expect(FetchUtils.processPraramItem(obj).a).toBe(undefined);
   });
 
   it("processPraramItem 如果值为数组则转为字符串", () => {
@@ -376,7 +376,7 @@ describe("FetchUtils使用 processBody 方法", () => {
       a: [1, 2, 3]
     };
 
-    expect(processPraramItem(obj).a).toBe(JSON.stringify([1, 2, 3]));
+    expect(FetchUtils.processPraramItem(obj).a).toBe(JSON.stringify([1, 2, 3]));
   });
 
   it("processPraramItem 如果值为json则不处理", () => {
@@ -388,7 +388,7 @@ describe("FetchUtils使用 processBody 方法", () => {
     const result = {
       b: 1
     };
-    expect(processPraramItem(obj).a).toEqual(result);
+    expect(FetchUtils.processPraramItem(obj).a).toEqual(result);
   });
 
   it("processGraphqlParams undefined", () => {
@@ -396,23 +396,59 @@ describe("FetchUtils使用 processBody 方法", () => {
       start: 0,
       end: 9
     };
-    expect(processGraphqlParams(undefined)).toEqual(result);
+    expect(FetchUtils.processGraphqlParams(undefined)).toEqual(result);
   });
 
   it("processGraphqlParams {current:1,pageSize:10}", () => {
     let params = { current: 1, pageSize: 10 };
     let result = { start: 0, end: 9 };
-    expect(processGraphqlParams(params)).toEqual(result);
+    expect(FetchUtils.processGraphqlParams(params)).toEqual(result);
   });
 
   it("processGraphqlParams {order:'descend',columnKey:'aa'} 别名转换 ", () => {
     let params = { order: "descend", columnKey: "aa" };
     let result = { order: "desc", orderBy: "aa", start: 0, end: 9 };
-    expect(processGraphqlParams(params)).toEqual(result);
+    expect(FetchUtils.processGraphqlParams(params)).toEqual(result);
   });
   it("processGraphqlParams {order:'descend',columnKey:'aa'} 非别名不转换 ", () => {
     let params = { order: "descend", columnKey: "aa", name: "11" };
     let result = { order: "desc", orderBy: "aa", name: "11", start: 0, end: 9 };
-    expect(processGraphqlParams(params)).toEqual(result);
+    expect(FetchUtils.processGraphqlParams(params)).toEqual(result);
+  });
+});
+describe("FetchUtils使用 processBody 方法", () => {
+  it("processBody", done => {
+    const options = {
+      body: {
+        aa: 123,
+        bb: 456
+      }
+    };
+    const result = {
+      body: Object.assign({}, options.body, {
+        currentPage: undefined,
+        totalCount: undefined,
+        pageSize: undefined
+      })
+    };
+    expect(result).toEqual(FetchUtils.processBody(options));
+    done();
+  });
+
+  it("processPraramItem 如果正常传入值没有空和数组则不转化", () => {
+    const obj = {
+      a: 1,
+      b: 2,
+      c: 3
+    };
+    expect(FetchUtils.processPraramItem(obj)).toEqual(obj);
+  });
+
+  it("processPraramItem 如果对象值为空则转为undefined", () => {
+    const obj = {
+      a: ""
+    };
+
+    expect(FetchUtils.processPraramItem(obj).a).toBe(undefined);
   });
 });
