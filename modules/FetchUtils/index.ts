@@ -1,6 +1,5 @@
 import { stringify } from "qs";
-import lodash from "lodash";
-const { pick } = lodash;
+import * as lodash from "lodash";
 
 // 默认的Headers
 const defaults = {
@@ -20,17 +19,17 @@ class FetchUtilsBase {
   protected static config:FetchConfig|undefined = undefined;
 
   // 获取请求
-  static fetchRequest(url:string, options:RequestInit):any {
-    if (!this.checkFetch()) { return; }
+  static fetchRequest(url:string, options:RequestInit): PromiseResponse {
+    if (!this.checkFetch()) { return Promise.resolve({ code: -1, message: 'fetch not found' }); }
 
-    const fetchResponseProcess:Function|undefined = this.getFetchResponseProcess();
-    let responseProcessFunction:any = this.defauleFetchResponseProcess(options);
+    const fetchResponseProcess:ResponseProcess|undefined = this.getFetchResponseProcess();
+    let responseProcessFunction:ResponseProcess = this.defauleFetchResponseProcess(options);
     if (fetchResponseProcess) {
       responseProcessFunction = fetchResponseProcess;
     }
     return fetch(
       url, 
-      (<any>Object).assign({}, defaults, options)
+      Object.assign({}, defaults, options)
     ).then(responseProcessFunction)
     .catch((e:Error) => {
       return {
@@ -41,22 +40,19 @@ class FetchUtilsBase {
   }
   
   // 默认的处理返回数据函数
-  protected static defauleFetchResponseProcess(options:RequestInit):Function {
-    return (res:Response):any => {     
+  protected static defauleFetchResponseProcess(options:RequestInit):ResponseProcess {
+    return (res:Response):PromiseResponse => {     
         if (res.ok === true) {
           if (options.responseType === "arraybuffer" || res.code ) {
-            return res;
+            return Promise.resolve(res);
           }
           return res.json();
         }
-        if (res.status == 601 || res.status == 401) {
-          (<any>global).dispatchEvent && (<any>global).dispatchEvent(new CustomEvent("login_out"));
-        }
-        return {
+        return Promise.resolve({
           code: res.status,
           message: res.statusText,
-        };
-      };
+        });
+    };
   }
 
   // 检验fetch 是否存在
@@ -73,7 +69,7 @@ class FetchUtilsBase {
   }
 
   // 获取请求的特殊处理函数
-  protected static getFetchResponseProcess():Function|undefined {
+  protected static getFetchResponseProcess():ResponseProcess|undefined {
     // global绑定-兼容
     if ((<any>global).fetch && (<any>global).fetch.responseProcess && typeof (<any>global).fetch.responseProcess === 'function') { return (<any>global).fetch.responseProcess; }
 
@@ -90,7 +86,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 获取Get请求类型资源数据
-  static fetchGet(url:string, options?:RequestInit):any {
+  static fetchGet(url:string, options?:RequestInit):PromiseResponse {
     options = this.processBody(options);
     if (options && options.body && options.body !== "") {
       url = [this.stringifyURL(url, options.body), stringify(options.body)].join(
@@ -102,23 +98,20 @@ export default class FetchUtils extends FetchUtilsBase {
       url,
       this.combineOptions(options, {
         method: "GET"
-      }, (o:any) => {
-
-        // GET方法请求不包含body，默认是{}, 所以使用自定义处理方法删除该属性
-        delete o.body;
-        return o;
       })
     );
   }
 
   // 获取列表
-  static fetchList(url:string, options?:RequestInit):any {
+  static fetchList(url:string, options?:RequestInit):PromiseResponse {
     return this.fetchGet(url, options);
   }
 
   // 更新数据（POST）
-  static fetchPost(url:string, options?:RequestInit):any {
-    url = this.stringifyURL(url, options && options.body || {});
+  static fetchPost(url:string, options?:RequestInit):PromiseResponse {
+    if (options && options.body) {
+      url = this.stringifyURL(url, options.body);
+    }
     if (options && options.body && options.body !== "") {
       options.body = JSON.stringify(options.body);
     }
@@ -135,7 +128,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 更新数据（PUT）
-  static fetchPut(url:string, options?:RequestInit):any {
+  static fetchPut(url:string, options?:RequestInit):PromiseResponse {
     return this.fetchPost(
       url,
       this.combineOptions(options, {
@@ -145,7 +138,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 删除数据（DELETE）
-  static fetchDelete(url:string, options?:RequestInit):any {
+  static fetchDelete(url:string, options?:RequestInit):PromiseResponse {
     return this.fetchPost(
       url,
       this.combineOptions(options, {
@@ -155,29 +148,32 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 获取数据（Graphql接口）
-  static fetchGraphql(url:string, options?:RequestInit):any {
-    return this.fetchPost(
-      url,
-      this.combineOptions(options, {
-        pickBody: ['operationName', 'query', 'variables'],
-        credentials: "include", // include, same-origin, *omit
-        headers: {
-          "Content-Type": "application/json; charset=UTF-8",
-          Pragma: "no-cache"
-        },
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors" // no-cors, cors, *same-origin
-      })
-    );
+  static fetchGraphql(url:string, options?:RequestInit):PromiseResponse {
+    
+    options = this.combineOptions(options, {
+      credentials: "include", // include, same-origin, *omit
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+        Pragma: "no-cache"
+      },
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      mode: "cors" // no-cors, cors, *same-origin
+    });
+
+    if (options && options.body) {
+      (<any>options).body = lodash.pick(options.body, ['operationName', 'query', 'variables']);
+    }
+    
+    return this.fetchPost(url, options);
   }
 
   // 获取数据（Graphql接口，返回去掉data.result的外包装）
-  static fetchGraphqlAsResult(url:string, options?:RequestInit):any {
-    return this.fetchGraphql(url, options).then((result:GraphqlResponseASResult) => result.data.result);
+  static fetchGraphqlAsResult(url:string, options?:RequestInit):PromiseResponse {
+    return this.fetchGraphql(url, options).then((res:CommonResponseJson|Response):PromiseResponse => (<any>res).data.result);// 无法确定是哪种类型的数据，需要根据数据类型处理
   }
 
   // 获取数据(Graphql列表接口，返回去掉data.result的外包装)
-  static fetchGraphqlList(url:string, options?:RequestInit):any {
+  static fetchGraphqlList(url:string, options?:RequestInit):PromiseResponse {
     if (options && options.body) {
       (<any>options.body).variables = this.processGraphqlParams((<any>options.body).variables);
     }
@@ -185,11 +181,13 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 上传数据
-  static fetchUpload(url:string, options:RequestInit):any {
-    url = this.stringifyURL(url, options.body);
+  static fetchUpload(url:string, options?:RequestInit):PromiseResponse {
+    if (options && options.body) {
+      url = this.stringifyURL(url, options.body);
+    }
     let params = new FormData();
-    for(let i in (<any>options.body)) {
-      params.append(i,(<any>options.body)[i])
+    for(let i in (<any>options).body) {
+      params.append(i,(<any>options).body[i])
     }
 
     return this.fetchRequest(
@@ -202,7 +200,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 下载文件流
-  static fetchDownload(url:string, options?:RequestInit):any {
+  static fetchDownload(url:string, options?:RequestInit):PromiseResponse {
     return this.fetchGet(
       url,
       this.combineOptions(options, {
@@ -213,74 +211,50 @@ export default class FetchUtils extends FetchUtilsBase {
           }
         }
       )
-    ).then((res:any) => {     
-      return res.blob().then((blob:any) => {
-        if (blob) {
-          var a = document.createElement("a");
-          var url = window.URL.createObjectURL(blob);
-          var filename = res.headers.get("Content-Disposition") || "";
-          document.body.appendChild(a);
-          a.href = url;
-          a.download = decodeURI(filename.replace("attachment;filename=", ""));
-          a.click();
-          //修正Firefox 无法下载问题
-          setTimeout(function() {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-          }, 100);
-  
-          return { code: 0, message: 'success' };
-        }
-      })
+    ).then((res:any):PromiseResponse => {
+      if (res.blob && typeof res.blob === 'function') {
+        return res.blob().then((blob:Blob):PromiseResponse => {
+          if (blob) {
+            var a = document.createElement("a");
+            var url = window.URL.createObjectURL(blob);
+            var filename = res.headers.get("Content-Disposition") || "";
+            document.body.appendChild(a);
+            a.href = url;
+            a.download = decodeURI(filename.replace("attachment;filename=", ""));
+            a.click();
+            //修正Firefox 无法下载问题
+            setTimeout(function() {
+              document.body.removeChild(a);
+              window.URL.revokeObjectURL(url);
+            }, 100);
+    
+            return Promise.resolve({ code: 0, message: 'success' });
+          } else {
+            return Promise.resolve({ code: 1, message: 'fetch download fail' });
+          }
+        })
+      }
+      return Promise.resolve({ code: 1, message: 'fetch download fail' });
     });
   }
 
-  // 获取Options的 Headers, 应该找到一个声明类型的，但是没找到
-  protected static getOptionsHeaders(options:any={}):any {
-    return Object.assign({}, { headers: options.headers || {} });
-  }
-
-  // 获取Options的 Body
-  protected static getOptionsBody(options:any={}):any {
-    if (!options.body) { options.body = {} }
-    if (options.pickBody && options.pickBody.length) {
-      options.body = pick(options.body, options.pickBody);
-    }
-    return Object.assign({}, { body: options.body });
-  }
-
-  // 删除多余的参数
-  protected static deleteParams(newOptions:any):any {
-    delete newOptions.headers;
-    delete newOptions.body;
-    delete newOptions.pickBody;
-    return newOptions;
-  }
-
   // 合并Options
-  protected static combineOptions(options:any={}, newOptions:any={}, handleOptions?:Function):any {
-    let result =  Object.assign(
+  protected static combineOptions(options:RequestInit={}, newOptions:RequestInit={}):RequestInit {
+    let result = lodash.merge(
       {}, 
       options,
-      this.getOptionsHeaders(newOptions),
-      this.getOptionsBody(newOptions),
-      this.deleteParams(newOptions),
-      ...newOptions
+      newOptions
     );
-    
-    // 自定义处理函数
-    if (handleOptions && typeof handleOptions === 'function') {
-      result = handleOptions(result);
-    }
 
     return result;
   }
 
   // 格式字符串Url重的/:id=>/1,用body={ id: 1 }
-   static stringifyURL(str:string, options?:any):string {
+   static stringifyURL(str:string, options?:BodyInit):string {
     if (!str) { return str; }
   
     return str.replace(/:([A-Z|a-z]+)/gi, function(match, p1) {
+      // @ts-ignore
       var replacement = options[p1];
       if (replacement === undefined) {
         throw new Error("Could not find url parameter " + p1 + " in passed options object");
@@ -326,16 +300,22 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 处理每个参数
-  protected static processPraramItem(object:any):any {
+  protected static processPraramItem(object:object):object {
     for (var key in object) {
+      // @ts-ignore
       if (object[key] instanceof Array) {
+        // @ts-ignore
         if (object[key].length !== 0) {
+          // @ts-ignore
           object[key] = JSON.stringify(object[key]);
         } else {
+          // @ts-ignore
           object[key] = undefined;
         }
       } else {
+        // @ts-ignore
         if (object[key] === "") {
+          // @ts-ignore
           object[key] = undefined;
         }
       }
@@ -344,7 +324,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 处理参数
-  protected static processParams(object:any):any {
+  protected static processParams(object:defaultPageParams):object {
     let {
       column,
       current,
@@ -366,9 +346,9 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 处理参数
-  protected static processBody(options?:RequestInit):any {
+  protected static processBody(options?:RequestInit):RequestInit|undefined {
     if (options && typeof options.body === "object") {
-      options.body = this.processParams(options.body);
+      (<object>options.body) = this.processParams((<any>options.body));
     }
     return options;
   }

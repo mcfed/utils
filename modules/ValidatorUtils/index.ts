@@ -1,7 +1,7 @@
 /**
  * @module ValidatorUtils
  */
-import * as FetchUtils from '../FetchUtils'
+import { FetchUtils } from '../index'
 interface ruleObj {
     field: string
 }
@@ -450,7 +450,7 @@ function dateCompare(rule: ruleDateObj, value:any, callback:Function) {
 }]}/>
 */
 
-function fetchWhich(isGet:Boolean,url:string,options:object){
+function fetchWhich(isGet:Boolean,url:string,options:RequestInit){
   return isGet ? FetchUtils.fetchGet(url,options) : FetchUtils.fetchPost(url,options)
 }
 
@@ -465,7 +465,7 @@ function fetchWhich(isGet:Boolean,url:string,options:object){
 interface ruleRemoteObj extends ruleObj {
     url: string,
     method?: string,
-    options?: object,
+    options?: RequestInit,
     callback?: Function,
     params: any
 }
@@ -477,14 +477,14 @@ function remote(rule: ruleRemoteObj, value:any, callback:Function){
     let isGet = rule.method ? rule.method.toUpperCase() === 'GET': false
     let options = rule.options ? {...rule.options} : {}
     options = {body:{[name]:value,...params}}
-    fetchWhich(isGet,url,options).then((res: { code: number; message: string; })=>{
+    fetchWhich(isGet,url,options).then((res: Response | CommonResponseJson)=>{
       if(rule.callback){
         rule.callback(res,callback)
       }else{
         if(res.code == 0){
           callback()
         }else{
-          callback(res.message)
+          callback((<CommonResponseJson>res).message)
         }
       }
     })
