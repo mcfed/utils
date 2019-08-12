@@ -55,3 +55,11 @@ interface defaultPageParams{
     pageSizeOptions:object,
     showSizeChanger:boolean,
 }
+declare namespace NodeJS {
+    interface Global {
+        fetch: {
+            (url: string, options?: RequestInit):  Promise<Response>;
+            responseProcess: ResponseProcess;
+        }
+    }
+} 

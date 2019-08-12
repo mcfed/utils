@@ -29,7 +29,7 @@ class FetchUtilsBase {
     }
     return fetch(
       url, 
-      Object.assign({}, defaults, options)
+      lodash.merge({}, defaults, options)
     ).then(responseProcessFunction)
     .catch((e:Error) => {
       return {
@@ -58,7 +58,7 @@ class FetchUtilsBase {
   // 检验fetch 是否存在
   protected static checkFetch():boolean {
     // global绑定判断-兼容判断
-    if ((<any>global).fetch && typeof (<any>global).fetch === 'function') { return true; }
+    if (global.fetch && typeof global.fetch === 'function') { return true; }
 
     // 抛错
     console.error(`
@@ -71,7 +71,7 @@ class FetchUtilsBase {
   // 获取请求的特殊处理函数
   protected static getFetchResponseProcess():ResponseProcess|undefined {
     // global绑定-兼容
-    if ((<any>global).fetch && (<any>global).fetch.responseProcess && typeof (<any>global).fetch.responseProcess === 'function') { return (<any>global).fetch.responseProcess; }
+    if (global.fetch && global.fetch.responseProcess && typeof global.fetch.responseProcess === 'function') { return global.fetch.responseProcess; }
 
     // 返回-undefined
     return;
