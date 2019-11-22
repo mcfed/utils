@@ -1,7 +1,7 @@
+import "../../../setupTests";
 import { stringify } from "qs";
 import fetchMock from "fetch-mock";
 import FetchUtils from "../index.ts";
-import "../../../setupTests";
 const ponyfill = require("fetch-ponyfill")();
 fetchMock.config = Object.assign(fetchMock.config, {
   Headers: ponyfill.Headers,
@@ -20,22 +20,24 @@ const Response = ponyfill.Response;
 jest.autoMockOff();
 
 describe("FetchUtils使用 Get 请求", () => {
-  beforeEach(() => {
-    // fetch.resetMocks()
-  });
   it("fetch Get 请求200 不带参数", done => {
     let mockResult = {
-      code: 0
+      body: { code: 0 },
+      headers: {
+        'Content-Type': 'application/json'
+      }
     };
-    let url = "http://localhost/200";
-    let options = {};
-    let mock = fetchMock.mock(url, JSON.stringify(mockResult), options);
+    let url = "http://localhost/201";
+    let options = { body: { a:1 } };
+    let mock = fetchMock.mock(url, mockResult, options);
     FetchUtils.fetchGet(url).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockResult.body);
+      expect(FetchUtils.options.body).toEqual(undefined);
       mock.lastOptions(true, { headers: {} });
       done();
     });
   });
+
   it("fetch Get 请求500 不带参数", done => {
     let mockResult = {
       code: 500
@@ -50,7 +52,12 @@ describe("FetchUtils使用 Get 请求", () => {
   });
 
   it("fetch Get 请求200 带参数 a=1", done => {
-    let mockResult = {};
+    let mockResult = {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: {}
+    };
     let url = "http://localhost/";
     let options = {
       body: {
@@ -59,16 +66,21 @@ describe("FetchUtils使用 Get 请求", () => {
     };
     fetchMock.mock(
       [url, stringify(options.body)].join("?"),
-      JSON.stringify(mockResult),
+      mockResult,
       options
     );
     FetchUtils.fetchGet(url, options).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockResult.body);
       done();
     });
   });
   it("fetch Get 请求200 url带参数 a=1 body b:1", done => {
-    let mockResult = {};
+    let mockResult = {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: {}
+    };
     let url = "http://localhost/?a=1";
     let options = {
       body: {
@@ -77,17 +89,22 @@ describe("FetchUtils使用 Get 请求", () => {
     };
     fetchMock.mock(
       [url, stringify(options.body)].join("&"),
-      JSON.stringify(mockResult),
+      mockResult,
       options
     );
     FetchUtils.fetchGet(url, options).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockResult.body);
       done();
     });
   });
 
   it('fetch Get 请求200 带参数 array a=["2018","2019"]', done => {
-    let mockResult = {};
+    let mockResult = {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: {}
+    };
     let url = "http://localhost/withParam/array";
     let options = {
       body: {
@@ -97,58 +114,71 @@ describe("FetchUtils使用 Get 请求", () => {
     options = FetchUtils.processBody(options);
     fetchMock.mock(
       [url, stringify(options.body)].join("?"),
-      JSON.stringify(mockResult),
+      mockResult,
       options
     );
     FetchUtils.fetchGet(url, options).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockResult.body);
       done();
     });
   });
   it("fetchList 请求200", done => {
     const mockResult = {
-      code: 0,
-      data: {
-        item: []
+      body: {
+        code: 0,
+        data: {
+          item: []
+        }
+      },
+      headers: {
+        'Content-Type': 'application/json'
       }
     };
     let url = "http://localhost/fetchList/200";
-    fetchMock.mock(url, JSON.stringify(mockResult));
+    fetchMock.mock(url, mockResult, {});
     FetchUtils.fetchList(url).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockResult.body);
       done();
     });
   });
 });
-
 describe("FetchUtils使用 upload 请求", () => {
-
   it("upload 请求200", (done) => {
     let mockResult = {
-      code: 0
+      body: {
+        code: 0
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
     };
     let url = "http://localhost/upload/200";
     let options = {
       body: {}
     };
-    fetchMock.mock(url, JSON.stringify(mockResult), options);
+    fetchMock.mock(url, mockResult, options);
     FetchUtils.fetchUpload(url, options).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockResult.body);
       done();
     });
   });
 
   it("upload 请求500", done => {
     let mockResult = {
-      code: 500
+      body: {
+        code: 500
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
     };
     let url = "http://localhost/upload/500";
     let options = {
       body: {}
     };
-    fetchMock.mock(url, JSON.stringify(mockResult), options);
+    fetchMock.mock(url, mockResult, options);
     FetchUtils.fetchUpload(url, options).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockResult.body);
       done();
     });
   });
@@ -156,38 +186,53 @@ describe("FetchUtils使用 upload 请求", () => {
 describe("FetchUtils使用 Post 请求", () => {
   it("post 请求200", done => {
     let mockResult = {
-      code: 0
+      body: {
+        code: 0
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
     };
     let url = "http://localhost/post/200";
     let options = {
       body: {}
     };
-    fetchMock.mock(url, JSON.stringify(mockResult), options);
+    fetchMock.mock(url, mockResult, options);
     FetchUtils.fetchPost(url, options).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockResult.body);
       done();
     });
   });
 
   it("post 请求500", done => {
     let mockResult = {
-      code: 500
+      body: {
+        code: 500
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
     };
     let url = "http://localhost/post/500";
     let options = {
       body: {}
     };
-    fetchMock.mock(url, JSON.stringify(mockResult), options);
+    fetchMock.mock(url, mockResult, options);
     FetchUtils.fetchPost(url, options).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockResult.body);
       done();
     });
   });
 
   it("fetch aborted throw error ", done => {
     let mockResult = {
-      code: -1,
-      message: "request aborted"
+      body: {
+        code: -1,
+        message: "Failed to fetch"
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
     };
     let url = "http://localhost/post/500/throw";
     let options = {
@@ -200,84 +245,106 @@ describe("FetchUtils使用 Post 请求", () => {
       options
     );
     FetchUtils.fetchPost(url, options).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result.code).toEqual(mockResult.body.code);
       done();
     });
   });
 });
-
 describe("FetchUtils使用 fetchDownload 请求", () => {
   it("fetchDownload 请求200", done => {
-    let mockResult = { code:0, message: 'success' };
+    let mockResult = { 
+      body: { 
+        code:0, 
+        message: 'success' 
+      }, 
+      headers: { 
+        'Content-Type': 'text/xml' 
+      } 
+    };
     let url = "http://localhost/200";
     let options = {
       method: 'GET'
     };
-    fetchMock.mock(url, JSON.stringify(mockResult), options);
+
+    fetchMock.mock(url, mockResult, options);
     FetchUtils.fetchDownload(url).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockResult.body);
       done();
     });
   });
 });
-
 describe("FetchUtils使用 fetchGraphql请求", () => {
   it("fetchGraphql请求200", done => {
     let mockResult = {
-      data: {
-        a: 1
+      body: {
+        data: {
+          a: 1
+        }
+      },
+      headers: {
+        'Content-Type': 'application/json'
       }
     };
     let url = "http://localhost/graphql";
     let options = {
       body: {}
     };
-    fetchMock.mock(url, JSON.stringify(mockResult), options);
+    fetchMock.mock(url, mockResult, options);
     FetchUtils.fetchGraphql(url).then(result => {
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockResult.body);
       done();
     });
   });
 
   it("fetchGraphqlList请求200", done => {
     let mockResult = {
-      data: {
-        result: {
-          a: 1
-        }
+      body: {
+        data: {
+          result: {
+            a: 1
+          }
+        },
+      },
+      headers: {
+        'Content-Type': 'application/json'
       }
     };
     let url = "http://localhost/graphql/graphqlList";
     let options = {
       body: {}
     };
-    fetchMock.mock(url, JSON.stringify(mockResult), options);
+    fetchMock.mock(url, mockResult, options);
     FetchUtils.fetchGraphqlList(url, options).then(result => {
-      expect(result).toEqual(mockResult.data.result);
+      expect(result).toEqual(mockResult.body.data.result);
       done();
     });
   });
 
   it("fetchGraphqlAsResult请求200", done => {
     let mockResult = {
-      data: {
-        result: {
-          a: 1
-        }
+
+      body: {
+        data: {
+          result: {
+            a: 1
+          }
+        },
+      },
+      headers: {
+        'Content-Type': 'application/json'
       }
     };
     let url = "http://localhost/graphql/graphqlListAsResult";
     let options = {
       body: {}
     };
-    fetchMock.mock(url, JSON.stringify(mockResult), options);
+    fetchMock.mock(url, mockResult, options);
     FetchUtils.fetchGraphqlAsResult(url).then(result => {
-      expect(result).toEqual(mockResult.data.result);
+      expect(result).toEqual(mockResult.body.data.result);
       done();
     });
   });
 });
-
 describe("stringifyURL 方法", () => {
   it("是否可以将对应url中的变量替换", () => {
     const url = "http://localhost/:id";
@@ -326,7 +393,6 @@ describe("stringifyURL 方法", () => {
     expect(FetchUtils.stringifyURL(url,options)).toBe(result);
   });
 });
-
 describe("FetchUtils使用 processBody 方法", () => {
   it("processBody", done => {
     const options = {
@@ -452,3 +518,5 @@ describe("FetchUtils使用 processBody 方法", () => {
     expect(FetchUtils.processPraramItem(obj).a).toBe(undefined);
   });
 });
+
+

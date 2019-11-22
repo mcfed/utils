@@ -2,6 +2,11 @@ interface RequestInit {
     responseType?:string;
 }
 
+interface GraphqlBodyObject {
+    operationName?: string,
+    query: string,
+    variables?: Object,
+}
  interface Response {
     code?: number|string;
 }

@@ -1027,7 +1027,7 @@ describe('验证方法测试正确性', () => {
         },
         123,
         res=>{
-          conosle.log(res)
+          console.log(res)
           expect(res).toEqual(undefined)
         }
       )

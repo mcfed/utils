@@ -19,9 +19,9 @@
     "gzipped": 3293
   },
   "cjs/mcf-utils.js": {
-    "bundled": 554127,
-    "minified": 77043,
-    "gzipped": 26780
+    "bundled": 25365,
+    "minified": 9979,
+    "gzipped": 3712
   },
   "es/mcf-utils.js": {
     "bundled": 24861,
@@ -36,5 +36,15 @@
         "code": 1243
       }
     }
+  },
+  "cjs/mcf-utils-test.js": {
+    "bundled": 25776,
+    "minified": 9751,
+    "gzipped": 3695
+  },
+  "cjs/index.js": {
+    "bundled": 25776,
+    "minified": 9751,
+    "gzipped": 3695
   }
 }

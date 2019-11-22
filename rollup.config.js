@@ -34,7 +34,7 @@ const external = id => !id.startsWith(".") && !id.startsWith("\/");
 
 export default [{
   input,
-  output: { file: `cjs/${pkg.name}.js`, format: "cjs" },
+  output: { file: `cjs/index.js`, format: "cjs" },
   external:Object.keys(globals),
   plugins: [
     nodeResolve(),
