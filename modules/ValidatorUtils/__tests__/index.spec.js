@@ -1,6 +1,8 @@
-import {rules} from '../index';
+import { ValidatorUtils } from '../../index';
 import moment from 'moment';
 import fetchMock from "fetch-mock";
+
+const rules = ValidatorUtils;
 
 describe('验证方法测试validateSpecialCharacters', () => {
   it('validateSpecialCharacters 正确字符 123456', done => {
@@ -1027,7 +1029,6 @@ describe('验证方法测试正确性', () => {
         },
         123,
         res=>{
-          console.log(res)
           expect(res).toEqual(undefined)
         }
       )

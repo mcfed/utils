@@ -59,8 +59,6 @@ class FetchUtilsBase {
         if (res.ok === true) {
           const contentType = res.headers.get('Content-Type') || 'application/json'
           const isJsonType = contentType && contentType.indexOf('application/json') !== -1
-          console.log('---', res.headers)
-          console.log('-contentType--', contentType)
           if (!isJsonType) {
             return Promise.resolve(res);
           } else {
