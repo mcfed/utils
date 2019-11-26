@@ -491,7 +491,7 @@ function remote(rule: ruleRemoteObj, value:any, callback:Function){
 
 }
 
-export const rules = {
+export default {
   validateSpecialCharacters,
   checkIP,
   validatePort,

@@ -1,8 +1,7 @@
 import { stringify } from "qs";
-import * as lodash from "lodash";
 
 // 默认的Headers
-const defaults = {
+const defaults:RequestInit = {
   credentials: "include",
   mode: "cors",
   headers: {
@@ -17,36 +16,54 @@ const defaults = {
 
 class FetchUtilsBase {
   protected static config:FetchConfig|undefined = undefined;
+  protected static options:RequestInit = {};
+  protected static responseProcessFunction:ResponseProcess;
 
   // 获取请求
   static fetchRequest(url:string, options:RequestInit): PromiseResponse {
-    if (!this.checkFetch()) { return Promise.resolve({ code: -1, message: 'fetch not found' }); }
+    if (!this.checkFetch()) { return Promise.resolve({ code: -2, message: 'fetch not found' }); }
 
-    const fetchResponseProcess:ResponseProcess|undefined = this.getFetchResponseProcess();
-    let responseProcessFunction:ResponseProcess = this.defauleFetchResponseProcess(options);
-    if (fetchResponseProcess) {
-      responseProcessFunction = fetchResponseProcess;
+    this.initFetchResponseFunction(options)
+
+    if (options.method === 'GET' || options.method === 'HEAD') {
+      delete options.body
     }
+
+    this.options = this.combineOptions(defaults, options)
+
     return fetch(
       url, 
-      lodash.merge({}, defaults, options)
-    ).then(responseProcessFunction)
-    .catch((e:Error) => {
+      this.options
+    ).then(this.responseProcessFunction).catch((e:Error) => {
       return {
         code: -1,
-        message: "request aborted"
+        message: e.message
       };
     });
+  }
+
+  // 初始化fetch的response处理函数
+  protected static initFetchResponseFunction(options:RequestInit):void {
+    if (!this.responseProcessFunction) {
+      const fetchResponseProcess:ResponseProcess|undefined = this.getFetchResponseProcess();
+      this.responseProcessFunction = this.defauleFetchResponseProcess(options);
+      if (fetchResponseProcess) {
+        this.responseProcessFunction = fetchResponseProcess;
+      }
+    }
   }
   
   // 默认的处理返回数据函数
   protected static defauleFetchResponseProcess(options:RequestInit):ResponseProcess {
-    return (res:Response):PromiseResponse => {     
+    return (res:Response):PromiseResponse => {   
         if (res.ok === true) {
-          if (options.responseType === "arraybuffer" || res.code ) {
+          const contentType = res.headers.get('Content-Type') || 'application/json'
+          const isJsonType = contentType && contentType.indexOf('application/json') !== -1
+          if (!isJsonType) {
             return Promise.resolve(res);
+          } else {
+            return res.json();
           }
-          return res.json();
         }
         return Promise.resolve({
           code: res.status,
@@ -75,6 +92,11 @@ class FetchUtilsBase {
 
     // 返回-undefined
     return;
+  }
+
+  // 合并Options
+  protected static combineOptions(options:RequestInit={}, newOptions:RequestInit={}):RequestInit {
+    return Object.assign({}, defaults, options, newOptions, { headers: Object.assign({}, options.headers, newOptions.headers ) })
   }
 }
 export default class FetchUtils extends FetchUtilsBase {
@@ -111,9 +133,9 @@ export default class FetchUtils extends FetchUtilsBase {
   static fetchPost(url:string, options?:RequestInit):PromiseResponse {
     if (options && options.body) {
       url = this.stringifyURL(url, options.body);
-    }
-    if (options && options.body && options.body !== "") {
-      options.body = JSON.stringify(options.body);
+      if (options.body !== "" && typeof options.body !== 'string') {
+        options.body = JSON.stringify(options.body);
+      }
     }
     return this.fetchRequest(
       url,
@@ -158,13 +180,20 @@ export default class FetchUtils extends FetchUtilsBase {
       },
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "cors" // no-cors, cors, *same-origin
-    });
-
+    }); 
     if (options && options.body) {
-      (<any>options).body = lodash.pick(options.body, ['operationName', 'query', 'variables']);
+      this.pickObject(<any>options.body)
     }
     
     return this.fetchPost(url, options);
+  }
+
+  static pickObject(body:GraphqlBodyObject, keys:Array<string>=[]):GraphqlBodyObject {
+    return {
+      operationName: body.operationName,
+      query: body.query,
+      variables: body.variables
+    }
   }
 
   // 获取数据（Graphql接口，返回去掉data.result的外包装）
@@ -230,23 +259,12 @@ export default class FetchUtils extends FetchUtilsBase {
     
             return Promise.resolve({ code: 0, message: 'success' });
           } else {
-            return Promise.resolve({ code: 1, message: 'fetch download fail' });
+            return Promise.resolve({ code: 1, message: 'fetch download fail, blob is not found' });
           }
         })
       }
-      return Promise.resolve({ code: 1, message: 'fetch download fail' });
+      return Promise.resolve({ code: 2, message: 'fetch download fail, response blob is not function' });
     });
-  }
-
-  // 合并Options
-  protected static combineOptions(options:RequestInit={}, newOptions:RequestInit={}):RequestInit {
-    let result = lodash.merge(
-      {}, 
-      options,
-      newOptions
-    );
-
-    return result;
   }
 
   // 格式字符串Url重的/:id=>/1,用body={ id: 1 }

@@ -1,6 +1,9 @@
-import FetchUtils from "./FetchUtils";
-import DictUtils from './DictUtils';
+import FetchUtils from "./FetchUtils/index";
+import DictUtils from './DictUtils/index';
+import * as v from './ValidatorUtils/index';
 
-export { FetchUtils, DictUtils };
+const ValidatorUtils = v.default
+
+export { FetchUtils, DictUtils, ValidatorUtils };
 
 

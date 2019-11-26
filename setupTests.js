@@ -6,7 +6,6 @@ global.window.URL={
 }
 global.fetch.responseProcess=function(response){
   // console.log(response)
-  console.log(response)
   if(response.ok === true){
     return response.json()
   }else{
