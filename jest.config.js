@@ -14,6 +14,7 @@ module.exports = {
   // setupTestFrameworkScriptFile: "<rootDir>/setupTests.js",
   coveragePathIgnorePatterns: [ //该路径下的测试，忽略在测试覆盖率上
     'build',
+    '<rootDir>/setupTests.js',
     '<rootDir>/src/shared/libs/url/',
   ],
   testURL: "http://localhost/",
@@ -26,7 +27,8 @@ module.exports = {
     '<rootDir>/dist',
     '<rootDir>/scripts/',
     '<rootDir>/api/',
-    '<rootDir>/test/setup.js',
+    '<rootDir>/api/',
+    '<rootDir>/setupTests.js',
     '__mocks__',
 
   ],
