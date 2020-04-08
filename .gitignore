@@ -9,6 +9,8 @@
 
 # production
 /build
+/dist
+/dist/*
 /.vagrant
 # misc
 .DS_Store

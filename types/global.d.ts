@@ -67,4 +67,4 @@ declare namespace NodeJS {
             responseProcess: ResponseProcess;
         }
     }
-} 
+}
