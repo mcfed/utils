@@ -32,7 +32,7 @@ class FetchUtilsBase {
     this.options = this.combineOptions(defaults, options)
 
     return fetch(
-      url, 
+      url,
       this.options
     ).then(this.responseProcessFunction).catch((e:Error) => {
       return {
@@ -52,10 +52,10 @@ class FetchUtilsBase {
       }
     }
   }
-  
+
   // 默认的处理返回数据函数
   protected static defauleFetchResponseProcess(options:RequestInit):ResponseProcess {
-    return (res:Response):PromiseResponse => {   
+    return (res:Response):PromiseResponse => {
         if (res.ok === true) {
           const contentType = res.headers.get('Content-Type') || 'application/json'
           const isJsonType = contentType && contentType.indexOf('application/json') !== -1
@@ -171,7 +171,7 @@ export default class FetchUtils extends FetchUtilsBase {
 
   // 获取数据（Graphql接口）
   static fetchGraphql(url:string, options?:RequestInit):PromiseResponse {
-    
+
     options = this.combineOptions(options, {
       credentials: "include", // include, same-origin, *omit
       headers: {
@@ -180,11 +180,11 @@ export default class FetchUtils extends FetchUtilsBase {
       },
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "cors" // no-cors, cors, *same-origin
-    }); 
+    });
     if (options && options.body) {
       this.pickObject(<any>options.body)
     }
-    
+
     return this.fetchPost(url, options);
   }
 
@@ -256,7 +256,7 @@ export default class FetchUtils extends FetchUtilsBase {
               document.body.removeChild(a);
               window.URL.revokeObjectURL(url);
             }, 100);
-    
+
             return Promise.resolve({ code: 0, message: 'success' });
           } else {
             return Promise.resolve({ code: 1, message: 'fetch download fail, blob is not found' });
@@ -270,14 +270,14 @@ export default class FetchUtils extends FetchUtilsBase {
   // 格式字符串Url重的/:id=>/1,用body={ id: 1 }
    static stringifyURL(str:string, options?:BodyInit):string {
     if (!str) { return str; }
-  
+
     return str.replace(/:([A-Z|a-z]+)/gi, function(match, p1) {
       // @ts-ignore
       var replacement = options[p1];
       if (replacement === undefined) {
         throw new Error("Could not find url parameter " + p1 + " in passed options object");
       }
-  
+
       return replacement;
     });
   }
