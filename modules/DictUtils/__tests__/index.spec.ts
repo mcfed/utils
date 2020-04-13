@@ -24,7 +24,7 @@ describe('DictUtils',() => {
     })
 
     it('getDictList 异常获取',(done) =>{
-        const demoObj = []
+        const demoObj: any[] = []
         const result = DictUtils.getDictList(dictData,'noEqual')
         expect(result).toEqual(demoObj)
         done()
