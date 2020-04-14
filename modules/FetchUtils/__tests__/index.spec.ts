@@ -21,7 +21,7 @@ class childFetchUtils extends FetchUtils {
 const Response = ponyfill.Response;
 jest.autoMockOff();
 
-describe.skip("FetchUtils使用 Get 请求", () => {
+describe("FetchUtils使用 Get 请求", () => {
   it("fetch Get 请求200 不带参数", done => {
     let mockResult = {
       body: { code: 0 },
@@ -151,87 +151,69 @@ describe.skip("FetchUtils使用 Get 请求", () => {
     });
   });
 });
-describe.skip("FetchUtils使用 upload 请求", () => {
+describe("FetchUtils使用 upload 请求", () => {
   it("upload 请求200", (done) => {
-    let mockResult = {
-      body: {
-        code: 0
-      },
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+    let mockResult = { code: 0 };
     let url = "http://localhost/upload/200";
     let options = {
       body: {}
     };
-    fetchMock.mock(url, mockResult, options);
-    FetchUtils.fetchUpload(url, options).then(result => {
-      expect(result).toEqual(mockResult.body);
+    const response = new Response(JSON.stringify(mockResult))
+    response.headers.set('Content-Type', 'application/json')
+    fetchMock.mock(url, response);
+    FetchUtils.fetchUpload(url, {}).then(result => {
+      expect(result).toEqual(mockResult);
       done();
     });
   });
 
   it("upload 请求500", done => {
     let mockResult = {
-      body: {
-        code: 500
-      },
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      code: 500
     };
     let url = "http://localhost/upload/500";
-    let options = {
-      body: {}
-    };
-    fetchMock.mock(url, mockResult, options);
+    const response = new Response(JSON.stringify(mockResult))
+    response.headers.set('Content-Type', 'application/json')
+
+    fetchMock.mock(url, response);
     //@ts-ignore
-    FetchUtils.fetchUpload(url, options).then(result => {
-      expect(result).toEqual(mockResult.body);
+    FetchUtils.fetchUpload(url, {}).then(result => {
+      expect(result).toEqual(mockResult);
       done();
     });
   });
 });
-describe.skip("FetchUtils使用 Post 请求", () => {
+describe("FetchUtils使用 Post 请求", () => {
   it("post 请求200", done => {
-    let mockResult = {
-      body: {
-        code: 0
-      },
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+    let mockResult = {code: 0};
     let url = "http://localhost/post/200";
     let options = {
       body: {}
     };
-    fetchMock.mock(url, mockResult, options);
+    const response = new Response(JSON.stringify(mockResult))
+    response.headers.set('Content-Type', 'application/json')
+
+    fetchMock.mock(url, response, options);
     //@ts-ignore
     FetchUtils.fetchPost(url, options).then(result => {
-      expect(result).toEqual(mockResult.body);
+      expect(result).toEqual(mockResult);
       done();
     });
   });
 
   it("post 请求500", done => {
-    let mockResult = {
-      body: {
-        code: 500
-      },
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+    let mockResult = {code: 500};
     let url = "http://localhost/post/500";
     let options = {
       body: {}
     };
-    fetchMock.mock(url, mockResult, options);
+    const response = new Response(JSON.stringify(mockResult))
+    response.headers.set('Content-Type', 'application/json')
+
+    fetchMock.mock(url, response, options);
     //@ts-ignore
     FetchUtils.fetchPost(url, options).then(result => {
-      expect(result).toEqual(mockResult.body);
+      expect(result).toEqual(mockResult);
       done();
     });
   });
@@ -241,125 +223,92 @@ describe.skip("FetchUtils使用 Post 请求", () => {
       body: {
         code: -1,
         message: "Failed to fetch"
-      },
-      headers: {
-        'Content-Type': 'application/json'
       }
     };
     let url = "http://localhost/post/500/throw";
     let options = {
       body: {}
     };
+    const response = new Response(JSON.stringify(mockResult))
+    response.headers.set('Content-Type', 'application/json')
+
     fetchMock.config.fallbackToNetwork = false;
-    fetchMock.mock(
-      url,
-      new Response({ throws: new TypeError("Failed to fetch") }),
-      options
-    );
+    fetchMock.mock(url, response, options);
+
     //@ts-ignore
     FetchUtils.fetchPost(url, options).then(result => {
-      expect(result.code).toEqual(mockResult.body.code);
+      expect(result).toEqual(mockResult);
       done();
     });
   });
 });
-describe.skip("FetchUtils使用 fetchDownload 请求", () => {
+describe("FetchUtils使用 fetchDownload 请求", () => {
   it("fetchDownload 请求200", done => {
     let mockResult = {
       body: {
         code:0,
         message: 'success'
-      },
-      headers: {
-        'Content-Type': 'text/xml'
       }
     };
     let url = "http://localhost/200";
-    let options = {
-      method: 'GET'
-    };
-
-    fetchMock.mock(url, mockResult, options);
+    const response = new Response(JSON.stringify(mockResult))
+    response.headers.set('Content-Type', 'text/xml')
+    fetchMock.mock(url, response, {method: 'GET'});
     FetchUtils.fetchDownload(url).then(result => {
       expect(result).toEqual(mockResult.body);
       done();
     });
   });
 });
-describe.skip("FetchUtils使用 fetchGraphql请求", () => {
+describe("FetchUtils使用 fetchGraphql请求", () => {
   it("fetchGraphql请求200", done => {
-    let mockResult = {
-      body: {
-        data: {
-          a: 1
-        }
-      },
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
-    let url = "http://localhost/graphql";
-    let options = {
-      body: {}
-    };
-    fetchMock.mock(url, mockResult, options);
-    FetchUtils.fetchGraphql(url).then(result => {
-      expect(result).toEqual(mockResult.body);
+    let mockResult = { data: {}};
+    let url = "http://localhost/graphql/base";
+    const response = new Response(JSON.stringify(mockResult))
+    response.headers.set('Content-Type', 'application/json')
+
+    fetchMock.mock(url, response);
+    FetchUtils.fetchGraphql(url, {}).then(result => {
+      expect(result).toEqual(mockResult);
       done();
     });
   });
 
   it("fetchGraphqlList请求200", done => {
     let mockResult = {
-      body: {
-        data: {
-          result: {
-            a: 1
-          }
-        },
+      data: {
+        result: {}
       },
-      headers: {
-        'Content-Type': 'application/json'
-      }
     };
     let url = "http://localhost/graphql/graphqlList";
-    let options = {
-      body: {}
-    };
-    fetchMock.mock(url, mockResult, options);
-    //@ts-ignore
-    FetchUtils.fetchGraphqlList(url, options).then(result => {
-      expect(result).toEqual(mockResult.body.data.result);
+    const response = new Response(JSON.stringify(mockResult))
+    response.headers.set('Content-Type', 'application/json')
+
+    fetchMock.mock(url, response);
+
+    FetchUtils.fetchGraphqlList(url, {}).then(result => {
+      expect(result).toEqual(mockResult.data.result);
       done();
     });
   });
 
   it("fetchGraphqlAsResult请求200", done => {
     let mockResult = {
-
-      body: {
-        data: {
-          result: {
-            a: 1
-          }
-        },
-      },
-      headers: {
-        'Content-Type': 'application/json'
+      data: {
+        result: {}
       }
     };
     let url = "http://localhost/graphql/graphqlListAsResult";
-    let options = {
-      body: {}
-    };
-    fetchMock.mock(url, mockResult, options);
-    FetchUtils.fetchGraphqlAsResult(url).then(result => {
-      expect(result).toEqual(mockResult.body.data.result);
+    const response = new Response(JSON.stringify(mockResult))
+    response.headers.set('Content-Type', 'application/json')
+    fetchMock.mock(url, response);
+    FetchUtils.fetchGraphqlAsResult(url, {}).then(result => {
+      expect(result).toEqual(mockResult.data.result);
       done();
     });
   });
 });
-describe.skip("stringifyURL 方法", () => {
+describe("stringifyURL 方法", () => {
   it("是否可以将对应url中的变量替换", () => {
     const url = "http://localhost/:id";
     const options = {
@@ -376,10 +325,11 @@ describe.skip("stringifyURL 方法", () => {
     const options = {
       member: 213
     };
-    let errorMessage = null;
+    let errorMessage = { message: '' };
     try {
     //@ts-ignore
       FetchUtils.stringifyURL(url, options)
+
     } catch (error) {
       errorMessage = error;
     }
@@ -411,7 +361,7 @@ describe.skip("stringifyURL 方法", () => {
     expect(FetchUtils.stringifyURL(url,options)).toBe(result);
   });
 });
-describe.skip("FetchUtils使用 processBody 方法", () => {
+describe("FetchUtils使用 processBody 方法", () => {
   it("processBody", done => {
     const options = {
       body: {
@@ -510,7 +460,7 @@ describe.skip("FetchUtils使用 processBody 方法", () => {
     expect(FetchUtils.processGraphqlParams(params)).toEqual(result);
   });
 });
-describe.skip("FetchUtils使用 processBody 方法", () => {
+describe("FetchUtils使用 processBody 方法", () => {
   it("processBody", done => {
     const options = {
       body: {

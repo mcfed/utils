@@ -198,7 +198,8 @@ export default class FetchUtils extends FetchUtilsBase {
 
   // 获取数据（Graphql接口，返回去掉data.result的外包装）
   static fetchGraphqlAsResult(url:string, options?:RequestInit):PromiseResponse {
-    return this.fetchGraphql(url, options).then((res:CommonResponseJson|Response):PromiseResponse => (<any>res).data.result);// 无法确定是哪种类型的数据，需要根据数据类型处理
+    return this.fetchGraphql(url, options)
+      .then((res:CommonResponseJson|Response):PromiseResponse => (<any>res)?.data?.result);// 无法确定是哪种类型的数据，需要根据数据类型处理
   }
 
   // 获取数据(Graphql列表接口，返回去掉data.result的外包装)

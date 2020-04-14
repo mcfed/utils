@@ -1,4 +1,4 @@
-import DictUtils from '../index.ts'
+import DictUtils from '../index'
 // const {getDictLabel,getDictList} = DictUtils
 
 describe('DictUtils',() => {

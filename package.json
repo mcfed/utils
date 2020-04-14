@@ -11,6 +11,7 @@
   },
   "scripts": {
     "test": "jest",
+    "testOnly": "jest ./modules/ValidatorUtils/__tests__",
     "dev": "rollup -c --watch",
     "build": "rollup -c",
     "version": "PACKAGE_VERSION=$(node -p -e \"require('./package.json').version\")",
@@ -36,6 +37,7 @@
     "jest-fetch-mock": "^2.0.1",
     "jsdoc": "3.5.5",
     "minami": "^1.2.3",
+    "moment": "^2.24.0",
     "ts-jest": "^24.0.2",
     "tslib": "^1.10.0",
     "typescript": "^3.5.3"
