@@ -1,4 +1,4 @@
-import { ValidatorUtils } from '../../index';
+import * as ValidatorUtils from '../index';
 import moment from 'moment';
 import fetchMock from "fetch-mock";
 const ponyfill = require("fetch-ponyfill")();
@@ -15,14 +15,14 @@ const Response = ponyfill.Response;
 describe('验证方法测试validateSpecialCharacters', () => {
   it('validateSpecialCharacters 正确字符 123456', done => {
     const string = '123456';
-    rules.validateSpecialCharacters({}, string, args => {
+    rules.validateSpecialCharacters({}, string, (args: any) => {
       expect(args).toEqual(undefined);
       done();
     });
   });
   it('validateSpecialCharacters 正确字符大小写 abcdA', done => {
     const string = 'abcdA';
-    rules.validateSpecialCharacters({}, string, args => {
+    rules.validateSpecialCharacters({}, string, (args: any) => {
       expect(args).toEqual(undefined);
       done();
     });
@@ -30,7 +30,7 @@ describe('验证方法测试validateSpecialCharacters', () => {
 
   it('validateSpecialCharacters 正确字符中文字符', done => {
     const string = '正确字符中文字符';
-    rules.validateSpecialCharacters({}, string, args => {
+    rules.validateSpecialCharacters({}, string, (args: any) => {
       expect(args).toEqual(undefined);
       done();
     });
@@ -38,7 +38,7 @@ describe('验证方法测试validateSpecialCharacters', () => {
 
   it('validateSpecialCharacters 允许字符_#$', done => {
     const string = '_#$';
-    rules.validateSpecialCharacters({}, string, args => {
+    rules.validateSpecialCharacters({}, string, (args: any) => {
       expect(args).toEqual(undefined);
       done();
     });
@@ -46,7 +46,7 @@ describe('验证方法测试validateSpecialCharacters', () => {
 
   it('validateSpecialCharacters 其他非法字符 (),.?', done => {
     const string = '(),.?';
-    rules.validateSpecialCharacters({}, string, args => {
+    rules.validateSpecialCharacters({}, string, (args: any) => {
       expect(args).toEqual('请不要输入非法字符');
       done();
     });
@@ -54,7 +54,7 @@ describe('验证方法测试validateSpecialCharacters', () => {
 
   it('validateSpecialCharacters 部分包含非法字符 abdf"@"123"."com', done => {
     const string = 'abdf@123.com';
-    rules.validateSpecialCharacters({}, string, args => {
+    rules.validateSpecialCharacters({}, string, (args: any) => {
       expect(args).toEqual('请不要输入非法字符');
       done();
     });
@@ -82,25 +82,25 @@ describe('验证方法测试正确性', () => {
       }
     ];
     it(`checkIP[${testData[0].ip}]`, done => {
-      rules.checkIP({}, testData[0].ip, args => {
+      rules.checkIP({}, testData[0].ip, (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`checkIP[${testData[1].ip}]`, done => {
-      rules.checkIP({}, testData[1].ip, args => {
+      rules.checkIP({}, testData[1].ip, (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`checkIP[${testData[2].ip}]`, done => {
-      rules.checkIP({}, testData[2].ip, args => {
+      rules.checkIP({}, testData[2].ip, (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
     });
     it(`checkIP[${testData[3].ip}]`, done => {
-      rules.checkIP({}, testData[3].ip, args => {
+      rules.checkIP({}, testData[3].ip, (args: any) => {
         expect(args).toEqual(testData[3].result);
         done();
       });
@@ -151,50 +151,50 @@ describe('验证方法测试正确性', () => {
     //     })
     // }
     it(`validatePort[${testData[0].port}]`, done => {
-      rules.validatePort({}, testData[0].port, args => {
+      rules.validatePort({}, testData[0].port, (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`validatePort[${testData[1].port}]`, done => {
-      rules.validatePort({}, testData[1].port, args => {
+      rules.validatePort({}, testData[1].port, (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`validatePort[${testData[2].port}]`, done => {
-      rules.validatePort({}, testData[2].port, args => {
+      rules.validatePort({}, testData[2].port, (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
     });
     it(`validatePort[${testData[3].port}]`, done => {
-      rules.validatePort({}, testData[3].port, args => {
+      rules.validatePort({}, testData[3].port, (args: any) => {
         expect(args).toEqual(testData[3].result);
         done();
       });
     });
     it(`validatePort[${testData[4].port}]`, done => {
-      rules.validatePort({}, testData[4].port, args => {
+      rules.validatePort({}, testData[4].port, (args: any) => {
         expect(args).toEqual(testData[4].result);
         done();
       });
     });
     it(`validatePort[${testData[5].port}]`, done => {
-      rules.validatePort({}, testData[5].port, args => {
+      rules.validatePort({}, testData[5].port, (args: any) => {
         expect(args).toEqual(testData[5].result);
         done();
       });
     });
     it(`validatePort[${testData[6].port}]`, done => {
-      rules.validatePort({}, testData[6].port, args => {
+      rules.validatePort({}, testData[6].port, (args: any) => {
         expect(args).toEqual(testData[6].result);
         done();
       });
     });
 
     it(`validatePort[${testData[7].port}]`, done => {
-      rules.validatePort({}, testData[7].port, args => {
+      rules.validatePort({}, testData[7].port, (args: any) => {
         expect(args).toEqual(testData[7].result);
         done();
       });
@@ -221,25 +221,25 @@ describe('验证方法测试正确性', () => {
       }
     ];
     it(`checkIPCust[${testData[0].ip}]`, done => {
-      rules.checkIPCust({}, testData[0].ip, args => {
+      rules.checkIPCust({}, testData[0].ip, (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`checkIPCust[${testData[1].ip}]`, done => {
-      rules.checkIPCust({}, testData[1].ip, args => {
+      rules.checkIPCust({}, testData[1].ip, (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`checkIPCust[${testData[2].ip}]`, done => {
-      rules.checkIPCust({}, testData[2].ip, args => {
+      rules.checkIPCust({}, testData[2].ip, (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
     });
     it(`checkIPCust[${testData[3].ip}]`, done => {
-      rules.checkIPCust({}, testData[3].ip, args => {
+      rules.checkIPCust({}, testData[3].ip, (args: any) => {
         expect(args).toEqual(testData[3].result);
         done();
       });
@@ -248,49 +248,49 @@ describe('验证方法测试正确性', () => {
 
   describe('验证 checkIPorDomain正确性', () => {
     it('validate checkipordomain 纯数字', () => {
-      rules.checkIPorDomain({}, '123123', args => {
+      rules.checkIPorDomain({}, '123123', (args: any) => {
         expect(args).toEqual('端口或域名不正确！');
       });
     });
 
     it('validate checkipordomain 字符串', () => {
-      rules.checkIPorDomain({}, 'ddddddwww', args => {
+      rules.checkIPorDomain({}, 'ddddddwww', (args: any) => {
         expect(args).toEqual('端口或域名不正确！');
       });
     });
 
     it('validate checkipordomain 合法ip域名', () => {
-      rules.checkIPorDomain({}, '192.168.1.2', args => {
+      rules.checkIPorDomain({}, '192.168.1.2', (args: any) => {
         expect(args).toEqual(undefined);
       });
     });
 
     it('validate checkipordomain 合法ip域名http', () => {
-      rules.checkIPorDomain({}, 'http://192.168.1.2', args => {
+      rules.checkIPorDomain({}, 'http://192.168.1.2', (args: any) => {
         expect(args).toEqual(undefined);
       });
     });
 
     it('validate checkipordomain 合法ip域名https', () => {
-      rules.checkIPorDomain({}, 'https://192.168.1.2', args => {
+      rules.checkIPorDomain({}, 'https://192.168.1.2', (args: any) => {
         expect(args).toEqual(undefined);
       });
     });
 
     it('validate checkipordomain 合法域名', () => {
-      rules.checkIPorDomain({}, 'www.baidu.com', args => {
+      rules.checkIPorDomain({}, 'www.baidu.com', (args: any) => {
         expect(args).toEqual(undefined);
       });
     });
 
     it('validate checkipordomain 合法域名http', () => {
-      rules.checkIPorDomain({}, 'http://www.baidu.com', args => {
+      rules.checkIPorDomain({}, 'http://www.baidu.com', (args: any) => {
         expect(args).toEqual(undefined);
       });
     });
 
     it('validate checkipordomain 合法域名https', () => {
-      rules.checkIPorDomain({}, 'https://www.baidu.com', args => {
+      rules.checkIPorDomain({}, 'https://www.baidu.com', (args: any) => {
         expect(args).toEqual(undefined);
       });
     });
@@ -316,25 +316,25 @@ describe('验证方法测试正确性', () => {
       }
     ];
     it(`validateToNextPassword[${testData[0].value}]`, done => {
-      rules.validateToNextPassword({}, testData[0].value, args => {
+      rules.validateToNextPassword({}, testData[0].value, (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`validateToNextPassword[${testData[1].value}]`, done => {
-      rules.validateToNextPassword({}, testData[1].value, args => {
+      rules.validateToNextPassword({}, testData[1].value, (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`validateToNextPassword[${testData[2].value}]`, done => {
-      rules.validateToNextPassword({}, testData[2].value, args => {
+      rules.validateToNextPassword({}, testData[2].value, (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
     });
     it(`validateToNextPassword[${testData[3].value}]`, done => {
-      rules.validateToNextPassword({}, testData[3].value, args => {
+      rules.validateToNextPassword({}, testData[3].value, (args: any) => {
         expect(args).toEqual(testData[3].result);
         done();
       });
@@ -365,31 +365,31 @@ describe('验证方法测试正确性', () => {
       }
     ];
     it(`checkWeekPassword[${testData[0].value}]`, done => {
-      rules.checkWeekPassword({}, testData[0].value, args => {
+      rules.checkWeekPassword({}, testData[0].value, (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`checkWeekPassword[${testData[1].value}]`, done => {
-      rules.checkWeekPassword({}, testData[1].value, args => {
+      rules.checkWeekPassword({}, testData[1].value, (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`checkWeekPassword[${testData[2].value}]`, done => {
-      rules.checkWeekPassword({}, testData[2].value, args => {
+      rules.checkWeekPassword({}, testData[2].value, (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
     });
     it(`checkWeekPassword[${testData[3].value}]`, done => {
-      rules.checkWeekPassword({}, testData[3].value, args => {
+      rules.checkWeekPassword({}, testData[3].value, (args: any) => {
         expect(args).toEqual(testData[3].result);
         done();
       });
     });
     it(`checkWeekPassword[${testData[4].value}]`, done => {
-      rules.checkWeekPassword({}, testData[4].value, args => {
+      rules.checkWeekPassword({}, testData[4].value, (args: any) => {
         expect(args).toEqual(testData[4].result);
         done();
       });
@@ -420,31 +420,31 @@ describe('验证方法测试正确性', () => {
       }
     ];
     it(`checkMobile[${testData[0].value}]`, done => {
-      rules.checkMobile({}, testData[0].value, args => {
+      rules.checkMobile({}, testData[0].value, (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`checkMobile[${testData[1].value}]`, done => {
-      rules.checkMobile({}, testData[1].value, args => {
+      rules.checkMobile({}, testData[1].value, (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`checkMobile[${testData[2].value}]`, done => {
-      rules.checkMobile({}, testData[2].value, args => {
+      rules.checkMobile({}, testData[2].value, (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
     });
     it(`checkMobile[${testData[3].value}]`, done => {
-      rules.checkMobile({}, testData[3].value, args => {
+      rules.checkMobile({}, testData[3].value, (args: any) => {
         expect(args).toEqual(testData[3].result);
         done();
       });
     });
     it(`checkMobile[${testData[4].value}]`, done => {
-      rules.checkMobile({}, testData[4].value, args => {
+      rules.checkMobile({}, testData[4].value, (args: any) => {
         expect(args).toEqual(testData[4].result);
         done();
       });
@@ -453,25 +453,31 @@ describe('验证方法测试正确性', () => {
 
   describe('验证 checkEmail 正确性', () => {
     it('checkEmail 传入错误邮箱纯数字', () => {
-      rules.checkEmail({}, '123123', args => {
+      rules.checkEmail({}, '123123', (args: any) => {
         expect(args).toEqual('邮箱格式不正确！');
       });
     });
 
     it('checkEmail 传入错误邮箱 格式错误', () => {
-      rules.checkEmail({}, '1231@23', args => {
+      rules.checkEmail({}, '1231@23', (args: any) => {
         expect(args).toEqual('邮箱格式不正确！');
       });
     });
 
     it('checkEmail 传入正确邮箱格式', () => {
-      rules.checkEmail({}, 'aa123123@163.com', args => {
+      rules.checkEmail({}, 'aa123123@163.com', (args: any) => {
         expect(args).toEqual(undefined);
       });
     });
 
     it('checkEmail 1@163.com传入正确邮箱格式', () => {
-      rules.checkEmail({}, '1@163.com', args => {
+      rules.checkEmail({}, '1@163.com', (args: any) => {
+        expect(args).toEqual(undefined);
+      });
+    });
+
+    it('checkEmail 传入正确邮箱格式aa123123@163.com.cn', () => {
+      rules.checkEmail({}, 'aa123123@163.com.cn', (args: any) => {
         expect(args).toEqual(undefined);
       });
     });
@@ -497,25 +503,25 @@ describe('验证方法测试正确性', () => {
       }
     ];
     it(`checkIDCard[${testData[0].value}]`, done => {
-      rules.checkIDCard({}, testData[0].value, args => {
+      rules.checkIDCard({}, testData[0].value, (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`checkIDCard[${testData[1].value}]`, done => {
-      rules.checkIDCard({}, testData[1].value, args => {
+      rules.checkIDCard({}, testData[1].value, (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`checkIDCard[${testData[2].value}]`, done => {
-      rules.checkIDCard({}, testData[2].value, args => {
+      rules.checkIDCard({}, testData[2].value, (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
     });
     it(`checkIDCard[${testData[3].value}]`, done => {
-      rules.checkIDCard({}, testData[3].value, args => {
+      rules.checkIDCard({}, testData[3].value, (args: any) => {
         expect(args).toEqual(testData[3].result);
         done();
       });
@@ -561,31 +567,31 @@ describe('验证方法测试正确性', () => {
       }
     ];
     it(`ranges[${testData[0].value}]`, done => {
-      rules.ranges(testData[0].range, testData[0].value, args => {
+      rules.ranges(testData[0].range, testData[0].value, (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`ranges[${testData[1].value}]`, done => {
-      rules.ranges(testData[1].range, testData[1].value, args => {
+      rules.ranges(testData[1].range, testData[1].value, (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`ranges[${testData[2].value}]`, done => {
-      rules.ranges(testData[2].range, testData[2].value, args => {
+      rules.ranges(testData[2].range, testData[2].value, (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
     });
 
     it('rangs 不为数组 结果为undefined', () => {
-      rules.ranges(testData[3].range, testData[3].value, args => {
+      rules.ranges(testData[3].range, testData[3].value, (args: any) => {
         expect(args).toEqual(testData[3].result);
       });
     });
     it('rangs 长度不为2 结果为undefined', () => {
-      rules.ranges(testData[4].range, testData[4].value, args => {
+      rules.ranges(testData[4].range, testData[4].value, (args: any) => {
         expect(args).toEqual(testData[4].result);
       });
     });
@@ -631,25 +637,25 @@ describe('验证方法测试正确性', () => {
       }
     ];
     it(`fileSize[${testData[0].file.size}]`, done => {
-      rules.fileSize(testData[0].fileSizeData, testData[0], args => {
+      rules.fileSize(testData[0].fileSizeData, testData[0], (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`fileSize[${testData[1].file.size}]`, done => {
-      rules.fileSize(testData[1].fileSizeData, testData[1], args => {
+      rules.fileSize(testData[1].fileSizeData, testData[1], (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`fileSize[${testData[2].file.size}]`, done => {
-      rules.fileSize(testData[2].fileSizeData, testData[2], args => {
+      rules.fileSize(testData[2].fileSizeData, testData[2], (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
     });
     it(`fileSize[${testData[3].file.size}]`, done => {
-      rules.fileSize(testData[3].fileSizeData, testData[3], args => {
+      rules.fileSize(testData[3].fileSizeData, testData[3], (args: any) => {
         expect(args).toEqual(testData[3].result);
         done();
       });
@@ -684,38 +690,38 @@ describe('验证方法测试正确性', () => {
       }
     ];
     it(`integer[${testData[0].value}]`, done => {
-      rules.integer({}, testData[0].value, args => {
+      rules.integer({}, testData[0].value, (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`integer[${testData[1].value}]`, done => {
-      rules.integer({}, testData[1].value, args => {
+      rules.integer({}, testData[1].value, (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`integer[${testData[2].value}]`, done => {
-      rules.integer({}, testData[2].value, args => {
+      rules.integer({}, testData[2].value, (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
     });
     it(`integer[${testData[3].value}]`, done => {
-      rules.integer({}, testData[3].value, args => {
+      rules.integer({}, testData[3].value, (args: any) => {
         expect(args).toEqual(testData[3].result);
         done();
       });
     });
     it(`integer[${testData[4].value}]`, done => {
-      rules.integer({}, testData[4].value, args => {
+      rules.integer({}, testData[4].value, (args: any) => {
         expect(args).toEqual(testData[4].result);
         done();
       });
     });
 
     it(`integer[${testData[5].value}]`, () => {
-      rules.integer({}, testData[5].value, args => {
+      rules.integer({}, testData[5].value, (args: any) => {
         expect(args).toEqual(testData[5].result);
       });
     });
@@ -753,25 +759,25 @@ describe('验证方法测试正确性', () => {
       }
     ];
     it(`maxLength[${testData[0].value}]`, done => {
-      rules.maxLength(testData[0].rule, testData[0].value, args => {
+      rules.maxLength(testData[0].rule, testData[0].value, (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`maxLength[${testData[1].value}]`, done => {
-      rules.maxLength(testData[0].rule, testData[1].value, args => {
+      rules.maxLength(testData[0].rule, testData[1].value, (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`maxLength[${testData[2].value}]`, done => {
-      rules.maxLength(testData[0].rule, testData[2].value, args => {
+      rules.maxLength(testData[0].rule, testData[2].value, (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
     });
     it(`maxLength[${testData[3].value}]`, done => {
-      rules.maxLength(testData[0].rule, testData[3].value, args => {
+      rules.maxLength(testData[0].rule, testData[3].value, (args: any) => {
         expect(args).toEqual(testData[3].result);
         done();
       });
@@ -794,19 +800,19 @@ describe('验证方法测试正确性', () => {
       }
     ];
     it(`tagMaxLength[${testData[0].value}]`, done => {
-      rules.tagMaxLength({}, testData[0].value, args => {
+      rules.tagMaxLength({}, testData[0].value, (args: any) => {
         expect(args).toEqual(testData[0].result);
         done();
       });
     });
     it(`tagMaxLength[${testData[1].value}]`, done => {
-      rules.tagMaxLength({}, testData[1].value, args => {
+      rules.tagMaxLength({}, testData[1].value, (args: any) => {
         expect(args).toEqual(testData[1].result);
         done();
       });
     });
     it(`tagMaxLength[${testData[2].value}]`, done => {
-      rules.tagMaxLength({}, testData[2].value, args => {
+      rules.tagMaxLength({}, testData[2].value, (args: any) => {
         expect(args).toEqual(testData[2].result);
         done();
       });
@@ -820,7 +826,7 @@ describe('验证方法测试正确性', () => {
           days: 1
         },
         [moment('2019-04-18'), moment('2019-04-20')],
-        args => {
+        (        args: any) => {
           expect(args).toBe('日期差不能超过1天');
         }
       );
@@ -832,7 +838,7 @@ describe('验证方法测试正确性', () => {
           days: 3
         },
         [moment('2019-04-18'), moment('2019-04-20')],
-        args => {
+        (        args: any) => {
           expect(args).toBe(undefined);
         }
       );
@@ -847,7 +853,7 @@ describe('验证方法测试正确性', () => {
           type: 'bigger'
         },
         moment('2019-04-12'),
-        args => {
+        (        args: any) => {
           expect(args).toBe('结束时间必须大于开始时间！');
         }
       );
@@ -860,7 +866,7 @@ describe('验证方法测试正确性', () => {
           type: 'bigger'
         },
         moment('2019-04-20'),
-        args => {
+        (        args: any) => {
           expect(args).toBe(undefined);
         }
       );
@@ -873,7 +879,7 @@ describe('验证方法测试正确性', () => {
           type: 'smaller'
         },
         moment('2019-04-20'),
-        args => {
+        (        args: any) => {
           expect(args).toBe('开始时间必须小于结束时间！');
         }
       );
@@ -886,7 +892,7 @@ describe('验证方法测试正确性', () => {
           type: 'smaller'
         },
         moment('2019-04-16'),
-        args => {
+        (        args: any) => {
           expect(args).toBe(undefined);
         }
       );
@@ -899,7 +905,7 @@ describe('验证方法测试正确性', () => {
           type: 'aaa'
         },
         moment('2019-04-16'),
-        args => {
+        (        args: any) => {
           expect(args).toBe(undefined);
         }
       );
@@ -912,7 +918,7 @@ describe('验证方法测试正确性', () => {
           type: 'smaller'
         },
         moment('2019-04-16'),
-        args => {
+        (        args: any) => {
           expect(args).toBe(undefined);
         }
       );
@@ -925,7 +931,7 @@ describe('验证方法测试正确性', () => {
           type: 'smaller'
         },
         undefined,
-        args => {
+        (        args: any) => {
           expect(args).toBe(undefined);
         }
       );
@@ -955,7 +961,7 @@ describe('验证方法测试正确性', () => {
           field:'test'
         },
         123,
-        res=>{
+        (        res: any)=>{
           expect(res).toEqual(mockResult.message)
         }
       )
@@ -977,7 +983,7 @@ describe('验证方法测试正确性', () => {
           url:'/tests',
         },
         1234,
-        res=>{
+        (        res: any)=>{
           expect(res).toEqual(undefined)
         }
       )
@@ -1009,7 +1015,7 @@ describe('验证方法测试正确性', () => {
           }
         },
         123,
-        res=>{
+        (        res: any)=>{
           expect(res).toEqual(mockResult.message)
         }
       )
@@ -1039,7 +1045,7 @@ describe('验证方法测试正确性', () => {
           params:() => ({a:1})
         },
         123,
-        res=>{
+        (        res: any)=>{
           expect(res).toEqual(undefined)
         }
       )
@@ -1073,5 +1079,141 @@ describe('验证方法测试正确性', () => {
     });
 
 
+  });
+});
+describe('验证validateIpV4V6正确性', () => {
+  const testData = [
+    {
+      ip: '192.168.1.1',
+      result: undefined
+    },
+    {
+      ip: '192.1',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: '1.1.1.1',
+      result: undefined
+    },
+    {
+      ip: '190.168.0.0.0',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: '1080:0:0:0:8:800:200C:417A',
+      result: undefined
+    },
+    {
+      ip: '1080::8:800:200C:417A',
+      result: undefined
+    },
+    {
+      ip: '',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: undefined,
+      result: 'Ip地址不正确'
+    }
+  ];
+  testData.forEach(ipdate => {
+    it(`validateIpV4V6[${ipdate.ip}]`, done => {
+      rules.validateIpV4V6('', ipdate.ip, (args: any) => {
+        expect(args).toEqual(ipdate.result);
+        done();
+      });
+    });
+  });
+});
+describe('验证validateIpV4正确性', () => {
+  const testData = [
+    {
+      ip: '192.168.1.1',
+      result: undefined
+    },
+    {
+      ip: '192.1',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: '1.1.1.1',
+      result: undefined
+    },
+    {
+      ip: '190.168.0.0.0',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: '1080:0:0:0:8:800:200C:417A',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: '1080::8:800:200C:417A',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: '',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: undefined,
+      result: 'Ip地址不正确'
+    }
+  ];
+  testData.forEach(ipdate => {
+    it(`validateIpV4[${ipdate.ip}]`, done => {
+      rules.validateIpV4('', ipdate.ip, (args: any) => {
+        expect(args).toEqual(ipdate.result);
+        done();
+      });
+    });
+  });
+});
+describe('验证validateIpV6正确性', () => {
+  const testData = [
+    {
+      ip: '192.168.1.1',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: '192.1',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: '1.1.1.1',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: '190.168.0.0.0',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: '1080:0:0:0:8:800:200C:417A',
+      result: undefined
+    },
+    {
+      ip: '1080::8:800:200C:417A',
+      result: undefined
+    },
+    {
+      ip: '',
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: undefined,
+      result: 'Ip地址不正确'
+    },
+    {
+      ip: '192',
+      result: 'Ip地址不正确'
+    }
+  ];
+  testData.forEach(ipdate => {
+    it(`validateIpV6[${ipdate.ip}]`, done => {
+      rules.validateIpV6('', ipdate.ip, (args: any) => {
+        expect(args).toEqual(ipdate.result);
+        done();
+      });
+    });
   });
 });

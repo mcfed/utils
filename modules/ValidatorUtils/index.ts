@@ -177,8 +177,8 @@ export function checkMobile(rule: object={}, value:any, callback:Function) {
 /**
  * 验证邮箱格式
  *
- * @example 字符串验证的正则表达式为 /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
- *
+ * @example 字符串验证的正则表达式为 /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 来源 https://emailregex.com/ Javascript
+ * 
  * @inner
  * @param {object} rule 校验规则（暂时无用）
  * @param {string} value 需要验证的字符串
@@ -186,7 +186,7 @@ export function checkMobile(rule: object={}, value:any, callback:Function) {
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回邮箱格式不正确！
  */
 export function checkEmail(rule: object={}, value:any, callback:Function) {
-  var rexp = /^([a-zA-Z]|[0-9])?(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+  var rexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (value && !rexp.test(value)) {
     callback('邮箱格式不正确！');
   } else {
@@ -471,3 +471,79 @@ export function remote(
     })
 }
 
+/**
+ * 同时验证ipv4和ipv6
+ *
+ * Note: 同一个输入框验证分别验证ipv4格式和ipv6格式
+ *
+ * @example [
+ *  rule: 暂时不需要
+ *  value: '192.168.1.1' -> 通过
+ *  value: ‘192.1.1’ ->  不通过
+ * ]
+ * @inner
+ * @param {object} rule 校验规则
+ * @param {string} value 需要验证的字符串
+ * @param {function} callback 完成回调
+ * @return {boolean} Desc: 通过验证返回true，否则返回false
+ */
+export function validateIpV4V6(rule:Object={}, value:string='', callback:Function) {
+  if (!value) {
+    callback('Ip地址不正确');
+  }
+  if (value && value.includes('.')) {
+    validateIpV4(rule, value, callback);
+  } else if (value && value.includes(':')) {
+    validateIpV6(rule, value, callback);
+  } else {
+    callback('Ip地址不正确');
+  }
+}
+
+/**
+ * 只验证ipv4格式
+ * @inner
+ * @param {object} rule 校验规则
+ * @param {string} value 需要验证的字符串
+ * @param {function} callback 完成回调
+ * @return {boolean} Desc: 通过验证返回true，否则返回false
+ */
+export function validateIpV4(rule:Object={}, value:string='', callback:Function) {
+  if (!value) {
+    callback('Ip地址不正确');
+  }
+  if (!ipV4(value)) {
+    callback('Ip地址不正确');
+  } else {
+    callback();
+  }
+}
+
+/**
+ * 只验证ipv6格式
+ * @inner
+ * @param {object} rule 校验规则
+ * @param {string} value 需要验证的字符串
+ * @param {function} callback 完成回调
+ * @return {boolean} Desc: 通过验证返回true，否则返回false
+ */
+export function validateIpV6(rule:Object={}, value: string='', callback: Function) {
+  if (!value) {
+    callback('Ip地址不正确');
+  }
+  if (!ipV6(value)) {
+    callback('Ip地址不正确');
+  } else {
+    callback();
+  }
+}
+
+export function ipV4(value:string='') {
+  var reg:RegExp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+  return reg.test(value);
+}
+
+export function ipV6(value: string='') {
+  var reg:RegExp = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+  return reg.test(value);
+}

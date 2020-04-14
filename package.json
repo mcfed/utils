@@ -4,7 +4,7 @@
   "description": "@mcf for utils",
   "module": "dist/mcf-utils.js",
   "main": "dist/index.js",
-  "typings":"dist/index.d.ts",
+  "typings": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "http://git.mchz.com.cn/mcf/utils.git"
@@ -26,6 +26,7 @@
   "author": "jaxchow",
   "license": "ISC",
   "devDependencies": {
+    "@types/fetch-mock": "^7.3.2",
     "@types/jest": "^24.0.15",
     "@types/node": "^12.6.9",
     "@types/node-fetch": "^2.5.0",
@@ -33,11 +34,15 @@
     "cross-fetch": "^3.0.4",
     "fetch-mock": "^7.3.0",
     "fetch-ponyfill": "^6.0.2",
+    "husky": "^4.2.5",
     "jest": "24.0.0",
     "jest-fetch-mock": "^2.0.1",
     "jsdoc": "3.5.5",
+    "lint-staged": "8.0.0",
     "minami": "^1.2.3",
     "moment": "^2.24.0",
+    "prettier": "^2.0.4",
+    "pretty-quick": "^2.0.1",
     "ts-jest": "^24.0.2",
     "tslib": "^1.10.0",
     "typescript": "^3.5.3"

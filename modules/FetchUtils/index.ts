@@ -31,15 +31,24 @@ class FetchUtilsBase {
 
     this.options = this.combineOptions(defaults, options)
 
+    this.preRequestOptions()
+
     return fetch(
       url,
       this.options
     ).then(this.responseProcessFunction).catch((e:Error) => {
       return {
         code: -1,
+        ok: false,
         message: e.message
       };
     });
+  }
+
+  protected static preRequestOptions():void {
+    if (global.fetch.preRequestOptions && typeof global.fetch.preRequestOptions === 'function') {
+      this.options = global.fetch.preRequestOptions(this.options);
+    }
   }
 
   // 初始化fetch的response处理函数

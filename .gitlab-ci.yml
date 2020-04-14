@@ -34,6 +34,6 @@ deploy_job:
     - npm run build
     - npm publish
   only:
-    - master
+    - tags
   tags:
     - master
