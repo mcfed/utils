@@ -65,6 +65,7 @@ declare namespace NodeJS {
         fetch: {
             (url: string, options?: RequestInit):  Promise<Response>;
             responseProcess: ResponseProcess;
+            preRequestOptions: Function;
         }
     }
 }
