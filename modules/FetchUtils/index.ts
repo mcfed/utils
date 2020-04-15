@@ -111,14 +111,29 @@ class FetchUtilsBase {
 export default class FetchUtils extends FetchUtilsBase {
   static readonly defaultsHeaders = defaults;
 
+  static getOptions() {
+    return this.options
+  }
+
   // 返回错误
   static fetchCatch(error:Error):Error {
     return error;
   }
 
+  static formateOptions (options?: RequestInit):void {
+    if (options && options.body && typeof options.body === 'string') {
+      try {
+        options.body = JSON.parse(options.body)
+      } catch (error) {
+        throw new Error(`parse options is error ${options}`)
+      }
+    }
+  }
+
   // 获取Get请求类型资源数据
   static fetchGet(url:string, options?:RequestInit):PromiseResponse {
     options = this.processBody(options);
+    this.formateOptions(options)
     if (options && options.body && options.body !== "") {
       url = [this.stringifyURL(url, options.body), stringify(options.body)].join(
         url.indexOf("?") > 0 ? "&" : "?"
@@ -140,6 +155,7 @@ export default class FetchUtils extends FetchUtilsBase {
 
   // 更新数据（POST）
   static fetchPost(url:string, options?:RequestInit):PromiseResponse {
+    this.formateOptions(options)
     if (options && options.body) {
       url = this.stringifyURL(url, options.body);
       if (options.body !== "" && typeof options.body !== 'string') {
@@ -190,6 +206,7 @@ export default class FetchUtils extends FetchUtilsBase {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "cors" // no-cors, cors, *same-origin
     });
+    this.formateOptions(options)
     if (options && options.body) {
       this.pickObject(<any>options.body)
     }
@@ -213,6 +230,7 @@ export default class FetchUtils extends FetchUtilsBase {
 
   // 获取数据(Graphql列表接口，返回去掉data.result的外包装)
   static fetchGraphqlList(url:string, options?:RequestInit):PromiseResponse {
+    this.formateOptions(options)
     if (options && options.body) {
       (<any>options.body).variables = this.processGraphqlParams((<any>options.body).variables);
     }
@@ -221,6 +239,7 @@ export default class FetchUtils extends FetchUtilsBase {
 
   // 上传数据
   static fetchUpload(url:string, options?:RequestInit):PromiseResponse {
+    this.formateOptions(options)
     if (options && options.body) {
       url = this.stringifyURL(url, options.body);
     }
@@ -280,10 +299,11 @@ export default class FetchUtils extends FetchUtilsBase {
   // 格式字符串Url重的/:id=>/1,用body={ id: 1 }
    static stringifyURL(str:string, options?:BodyInit):string {
     if (!str) { return str; }
-
+    const optionsTmp = { body: options }
+    this.formateOptions(optionsTmp)
+    const optionsBody  = (<object>optionsTmp.body)
     return str.replace(/:([A-Z|a-z]+)/gi, function(match, p1) {
-      // @ts-ignore
-      var replacement = options[p1];
+      var replacement = optionsBody[p1];
       if (replacement === undefined) {
         throw new Error("Could not find url parameter " + p1 + " in passed options object");
       }
@@ -293,7 +313,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 处理graphql参数
-  protected static processGraphqlParams(params:GraphqlParams = {}) {
+  static processGraphqlParams(params:GraphqlParams = {}) {
     const {
       column,
       current=1,
@@ -326,24 +346,17 @@ export default class FetchUtils extends FetchUtilsBase {
         : {}
     );
   }
-
   // 处理每个参数
-  protected static processPraramItem(object:object):object {
+  static processPraramItem(object:object):object {
     for (var key in object) {
-      // @ts-ignore
       if (object[key] instanceof Array) {
-        // @ts-ignore
         if (object[key].length !== 0) {
-          // @ts-ignore
           object[key] = JSON.stringify(object[key]);
         } else {
-          // @ts-ignore
           object[key] = undefined;
         }
       } else {
-        // @ts-ignore
         if (object[key] === "") {
-          // @ts-ignore
           object[key] = undefined;
         }
       }
@@ -352,7 +365,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 处理参数
-  protected static processParams(object:defaultPageParams):object {
+  static processParams(object:defaultPageParams):object {
     let {
       column,
       current,
@@ -374,7 +387,8 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 处理参数
-  protected static processBody(options?:RequestInit):RequestInit|undefined {
+  static processBody(options?:RequestInit):RequestInit|undefined {
+    this.formateOptions(options)
     if (options && typeof options.body === "object") {
       (<object>options.body) = this.processParams((<any>options.body));
     }

@@ -1,6 +1,5 @@
 import "../../../setupTests";
 import { stringify } from "qs";
-//@ts-ignore
 import fetchMock from "fetch-mock";
 import FetchUtils from "../index";
 const ponyfill = require("fetch-ponyfill")();
@@ -11,15 +10,12 @@ fetchMock.config = Object.assign(fetchMock.config, {
   fetch: ponyfill
 });
 
-class childFetchUtils extends FetchUtils {
-   static getProtectedFun(name:string) {
-     //@ts-ignore
-    return this[name]();
-   }
-}
-
 const Response = ponyfill.Response;
 jest.autoMockOff();
+
+function getFormatRequestInit(op:{ body: Object }):RequestInit {
+  return Object.assign(op, { body: JSON.stringify(op.body) })
+} 
 
 describe("FetchUtils使用 Get 请求", () => {
   it("fetch Get 请求200 不带参数", done => {
@@ -34,8 +30,7 @@ describe("FetchUtils使用 Get 请求", () => {
     let mock = fetchMock.mock(url, mockResult, options);
     FetchUtils.fetchGet(url).then(result => {
       expect(result).toEqual(mockResult.body);
-      //@ts-ignore
-      expect(FetchUtils.options.body).toEqual(undefined);
+      expect(FetchUtils.getOptions().body).toEqual(undefined);
       mock.lastOptions(true, { headers: {} });
       done();
     });
@@ -62,7 +57,7 @@ describe("FetchUtils使用 Get 请求", () => {
       body: {}
     };
     let url = "http://localhost/";
-    let options = {
+    let options:{body: Object} = {
       body: {
         a: 1
       }
@@ -73,8 +68,7 @@ describe("FetchUtils使用 Get 请求", () => {
       options
     );
 
-    //@ts-ignore
-    FetchUtils.fetchGet(url, options).then(result => {
+    FetchUtils.fetchGet(url, getFormatRequestInit(options)).then(result => {
       expect(result).toEqual(mockResult.body);
       done();
     });
@@ -98,8 +92,7 @@ describe("FetchUtils使用 Get 请求", () => {
       options
     );
 
-    //@ts-ignore
-    FetchUtils.fetchGet(url, options).then(result => {
+    FetchUtils.fetchGet(url, getFormatRequestInit(options)).then(result => {
       expect(result).toEqual(mockResult.body);
       done();
     });
@@ -118,15 +111,13 @@ describe("FetchUtils使用 Get 请求", () => {
         a: ["2018", "2019"]
       }
     };
-    //@ts-ignore
-    options = FetchUtils.processBody(options);
     fetchMock.mock(
-      [url, stringify(options.body)].join("?"),
+      url.concat('?a=%5B%222018%22%2C%222019%22%5D'),
       mockResult,
       options
     );
-    //@ts-ignore
-    FetchUtils.fetchGet(url, options).then(result => {
+
+    FetchUtils.fetchGet(url, getFormatRequestInit(options)).then(result => {
       expect(result).toEqual(mockResult.body);
       done();
     });
@@ -155,9 +146,6 @@ describe("FetchUtils使用 upload 请求", () => {
   it("upload 请求200", (done) => {
     let mockResult = { code: 0 };
     let url = "http://localhost/upload/200";
-    let options = {
-      body: {}
-    };
     const response = new Response(JSON.stringify(mockResult))
     response.headers.set('Content-Type', 'application/json')
     fetchMock.mock(url, response);
@@ -176,7 +164,6 @@ describe("FetchUtils使用 upload 请求", () => {
     response.headers.set('Content-Type', 'application/json')
 
     fetchMock.mock(url, response);
-    //@ts-ignore
     FetchUtils.fetchUpload(url, {}).then(result => {
       expect(result).toEqual(mockResult);
       done();
@@ -194,8 +181,7 @@ describe("FetchUtils使用 Post 请求", () => {
     response.headers.set('Content-Type', 'application/json')
 
     fetchMock.mock(url, response, options);
-    //@ts-ignore
-    FetchUtils.fetchPost(url, options).then(result => {
+    FetchUtils.fetchPost(url, getFormatRequestInit(options)).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -211,8 +197,7 @@ describe("FetchUtils使用 Post 请求", () => {
     response.headers.set('Content-Type', 'application/json')
 
     fetchMock.mock(url, response, options);
-    //@ts-ignore
-    FetchUtils.fetchPost(url, options).then(result => {
+    FetchUtils.fetchPost(url, getFormatRequestInit(options)).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -234,9 +219,7 @@ describe("FetchUtils使用 Post 请求", () => {
 
     fetchMock.config.fallbackToNetwork = false;
     fetchMock.mock(url, response, options);
-
-    //@ts-ignore
-    FetchUtils.fetchPost(url, options).then(result => {
+    FetchUtils.fetchPost(url, getFormatRequestInit(options)).then(result => {
       expect(result).toEqual(mockResult);
       done();
     });
@@ -316,8 +299,7 @@ describe("stringifyURL 方法", () => {
     };
     const result = "http://localhost/123";
 
-    //@ts-ignore
-    expect(FetchUtils.stringifyURL(url, options)).toBe(result);
+    expect(FetchUtils.stringifyURL(url, JSON.stringify(options))).toEqual(result);
   });
 
   it("如果变量不同则报错", () => {
@@ -327,9 +309,7 @@ describe("stringifyURL 方法", () => {
     };
     let errorMessage = { message: '' };
     try {
-    //@ts-ignore
-      FetchUtils.stringifyURL(url, options)
-
+      FetchUtils.stringifyURL(url, JSON.stringify(options))
     } catch (error) {
       errorMessage = error;
     }
@@ -344,8 +324,7 @@ describe("stringifyURL 方法", () => {
     }
     const result = "http://localhost/0";
 
-    //@ts-ignore
-    expect(FetchUtils.stringifyURL(url,options)).toBe(result);
+    expect(FetchUtils.stringifyURL(url,JSON.stringify(options))).toEqual(result);
 
   });
 
@@ -357,8 +336,7 @@ describe("stringifyURL 方法", () => {
     }
     const result = "http://localhost/null";
 
-    //@ts-ignore
-    expect(FetchUtils.stringifyURL(url,options)).toBe(result);
+    expect(FetchUtils.stringifyURL(url,JSON.stringify(options))).toEqual(result);
   });
 });
 describe("FetchUtils使用 processBody 方法", () => {
@@ -376,8 +354,8 @@ describe("FetchUtils使用 processBody 方法", () => {
         pageSize: undefined
       })
     };
-    //@ts-ignore
-    expect(result).toEqual(FetchUtils.processBody(options));
+    
+    expect(result).toEqual(FetchUtils.processBody(getFormatRequestInit(options)));
     done();
   });
 
@@ -387,7 +365,6 @@ describe("FetchUtils使用 processBody 方法", () => {
       b: 2,
       c: 3
     };
-    //@ts-ignore
     expect(FetchUtils.processPraramItem(obj)).toEqual(obj);
   });
 
@@ -395,9 +372,7 @@ describe("FetchUtils使用 processBody 方法", () => {
     const obj = {
       a: ""
     };
-
-    //@ts-ignore
-    expect(FetchUtils.processPraramItem(obj).a).toBe(undefined);
+    expect(FetchUtils.processPraramItem(obj)).toEqual({a:undefined});
   });
 
   it("processPraramItem 如果对象值为[]则转为undefined", () => {
@@ -405,8 +380,7 @@ describe("FetchUtils使用 processBody 方法", () => {
       a: []
     };
 
-    //@ts-ignore
-    expect(FetchUtils.processPraramItem(obj).a).toBe(undefined);
+    expect(FetchUtils.processPraramItem(obj)).toEqual({a:undefined});
   });
 
   it("processPraramItem 如果值为数组则转为字符串", () => {
@@ -414,8 +388,7 @@ describe("FetchUtils使用 processBody 方法", () => {
       a: [1, 2, 3]
     };
 
-    //@ts-ignore
-    expect(FetchUtils.processPraramItem(obj).a).toBe(JSON.stringify([1, 2, 3]));
+    expect(FetchUtils.processPraramItem(obj)).toEqual({a: JSON.stringify([1, 2, 3])});
   });
 
   it("processPraramItem 如果值为json则不处理", () => {
@@ -427,8 +400,7 @@ describe("FetchUtils使用 processBody 方法", () => {
     const result = {
       b: 1
     };
-    //@ts-ignore
-    expect(FetchUtils.processPraramItem(obj).a).toEqual(result);
+    expect(FetchUtils.processPraramItem(obj)).toEqual({ a: result });
   });
 
   it("processGraphqlParams undefined", () => {
@@ -436,27 +408,23 @@ describe("FetchUtils使用 processBody 方法", () => {
       start: 0,
       end: 9
     };
-    //@ts-ignore
     expect(FetchUtils.processGraphqlParams(undefined)).toEqual(result);
   });
 
   it("processGraphqlParams {current:1,pageSize:10}", () => {
     let params = { current: 1, pageSize: 10 };
     let result = { start: 0, end: 9 };
-    //@ts-ignore
     expect(FetchUtils.processGraphqlParams(params)).toEqual(result);
   });
 
   it("processGraphqlParams {order:'descend',columnKey:'aa'} 别名转换 ", () => {
     let params = { order: "descend", columnKey: "aa" };
     let result = { order: "desc", orderBy: "aa", start: 0, end: 9 };
-    //@ts-ignore
     expect(FetchUtils.processGraphqlParams(params)).toEqual(result);
   });
   it("processGraphqlParams {order:'descend',columnKey:'aa'} 非别名不转换 ", () => {
     let params = { order: "descend", columnKey: "aa", name: "11" };
     let result = { order: "desc", orderBy: "aa", name: "11", start: 0, end: 9 };
-    //@ts-ignore
     expect(FetchUtils.processGraphqlParams(params)).toEqual(result);
   });
 });
@@ -475,8 +443,7 @@ describe("FetchUtils使用 processBody 方法", () => {
         pageSize: undefined
       })
     };
-    //@ts-ignore
-    expect(result).toEqual(FetchUtils.processBody(options));
+    expect(result).toEqual(FetchUtils.processBody(getFormatRequestInit(options)));
     done();
   });
 
@@ -486,7 +453,6 @@ describe("FetchUtils使用 processBody 方法", () => {
       b: 2,
       c: 3
     };
-    //@ts-ignore
     expect(FetchUtils.processPraramItem(obj)).toEqual(obj);
   });
 
@@ -494,9 +460,7 @@ describe("FetchUtils使用 processBody 方法", () => {
     const obj = {
       a: ""
     };
-
-    //@ts-ignore
-    expect(FetchUtils.processPraramItem(obj).a).toBe(undefined);
+    expect(FetchUtils.processPraramItem(obj)).toEqual({ a: undefined });
   });
 });
 
