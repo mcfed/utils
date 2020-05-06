@@ -1,7 +1,5 @@
-import FetchUtils from "./FetchUtils/index";
+import FetchUtils from './FetchUtils/index';
 import DictUtils from './DictUtils/index';
 import * as ValidatorUtils from './ValidatorUtils/index';
 
-export { FetchUtils, DictUtils, ValidatorUtils };
-
-
+export {FetchUtils, DictUtils, ValidatorUtils};

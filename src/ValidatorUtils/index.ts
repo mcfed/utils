@@ -1,7 +1,7 @@
 /**
  * @module ValidatorUtils
  */
-import { FetchUtils } from '../index'
+import {FetchUtils} from '../index';
 
 /**
  * 验证非法字符串
@@ -14,7 +14,11 @@ import { FetchUtils } from '../index'
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回请不要输入非法字符
  */
-export function validateSpecialCharacters(rule: object={}, value:any, callback:Function) {
+export function validateSpecialCharacters(
+  rule: object = {},
+  value: any,
+  callback: Function
+) {
   let message = '请不要输入非法字符';
   let regEx = /^[A-z0-9\\_\\#\\$\\\u4e00-\u9fa5]*$/;
   if (value && !regEx.test(value)) {
@@ -35,7 +39,7 @@ export function validateSpecialCharacters(rule: object={}, value:any, callback:F
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回IP地址不正确
  */
-export function checkIP(rule: object={}, value:any, callback:Function) {
+export function checkIP(rule: object = {}, value: any, callback: Function) {
   var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
   if (value && !reg.test(value)) {
     callback('IP地址不正确');
@@ -56,7 +60,11 @@ export function checkIP(rule: object={}, value:any, callback:Function) {
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回请输入正确的端口
  */
-export function validatePort(rule: object={}, value:any, callback:Function) {
+export function validatePort(
+  rule: object = {},
+  value: any,
+  callback: Function
+) {
   let message = '请输入正确的端口';
   var parten = /^(\d)+$/g;
   if (!value) {
@@ -81,7 +89,11 @@ export function validatePort(rule: object={}, value:any, callback:Function) {
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回端口或域名不正确！
  */
-export function checkIPorDomain(rule: object={}, value:any, callback:Function) {
+export function checkIPorDomain(
+  rule: object = {},
+  value: any,
+  callback: Function
+) {
   var reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/;
   if (value && !reg.test(value)) {
     callback('端口或域名不正确！');
@@ -102,7 +114,7 @@ export function checkIPorDomain(rule: object={}, value:any, callback:Function) {
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回Ip地址不正确
  */
-export function checkIPCust(rule: object={}, value:any, callback:Function) {
+export function checkIPCust(rule: object = {}, value: any, callback: Function) {
   var reg = /^[0-9a-fA-F\\.\\:////]{2,39}$/;
 
   if (!reg.test(value)) {
@@ -123,7 +135,11 @@ export function checkIPCust(rule: object={}, value:any, callback:Function) {
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回请不要输入非法字符
  */
-export function validateToNextPassword(rule: object={}, value:any, callback:Function) {
+export function validateToNextPassword(
+  rule: object = {},
+  value: any,
+  callback: Function
+) {
   let message = '请不要输入非法字符';
   let regEx = /^[A-z0-9\\\s+\\_\\#\\$\\\u4e00-\u9fa5]*$/;
   if (value && !regEx.test(value)) {
@@ -144,7 +160,11 @@ export function validateToNextPassword(rule: object={}, value:any, callback:Func
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回密码为弱密码！
  */
-export function checkWeekPassword(rule: object={}, value:any, callback:Function) {
+export function checkWeekPassword(
+  rule: object = {},
+  value: any,
+  callback: Function
+) {
   if (/^\d{1,6}$/.test(value)) {
     callback('密码为弱密码！');
   } else {
@@ -164,7 +184,7 @@ export function checkWeekPassword(rule: object={}, value:any, callback:Function)
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回手机号码格式不正确！
  */
-export function checkMobile(rule: object={}, value:any, callback:Function) {
+export function checkMobile(rule: object = {}, value: any, callback: Function) {
   var rexp = /^(0?1[123456789]\d{9})$/;
   if (value && !rexp.test(value)) {
     callback('手机号码格式不正确！');
@@ -178,14 +198,14 @@ export function checkMobile(rule: object={}, value:any, callback:Function) {
  * 验证邮箱格式
  *
  * @example 字符串验证的正则表达式为 /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 来源 https://emailregex.com/ Javascript
- * 
+ *
  * @inner
  * @param {object} rule 校验规则（暂时无用）
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回邮箱格式不正确！
  */
-export function checkEmail(rule: object={}, value:any, callback:Function) {
+export function checkEmail(rule: object = {}, value: any, callback: Function) {
   var rexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (value && !rexp.test(value)) {
     callback('邮箱格式不正确！');
@@ -205,7 +225,7 @@ export function checkEmail(rule: object={}, value:any, callback:Function) {
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回身份证号码格式不正确！
  */
-export function checkIDCard(rule: object={}, value:any, callback:Function) {
+export function checkIDCard(rule: object = {}, value: any, callback: Function) {
   var rexp = /(^\d{17}(\d|x|X)$)/i;
   if (!rexp.test(value)) {
     callback('身份证号码格式不正确！');
@@ -231,7 +251,11 @@ export function checkIDCard(rule: object={}, value:any, callback:Function) {
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回请输入区间值[min, max]
  */
 
-export function ranges({ ranges }: { ranges: number | number[] }, value:number, callback:Function) {
+export function ranges(
+  {ranges}: {ranges: number | number[]},
+  value: number,
+  callback: Function
+) {
   if (ranges instanceof Array && ranges.length === 2) {
     if (ranges[0] > value || ranges[1] < value) {
       callback(`请输入区间值${JSON.stringify(ranges)}`);
@@ -261,7 +285,11 @@ export function ranges({ ranges }: { ranges: number | number[] }, value:number, 
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回文件大小不超过fileSize
  */
 
-export function fileSize(rule: { fileSize: number }, value:any, callback:Function) {
+export function fileSize(
+  rule: {fileSize: number},
+  value: any,
+  callback: Function
+) {
   if (value.file && value.file.size > rule.fileSize) {
     callback(`文件大小不超过 ${rule.fileSize}`);
   } else {
@@ -282,7 +310,7 @@ export function fileSize(rule: { fileSize: number }, value:any, callback:Functio
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回必须为正整数！
  */
-export function integer(rule: object={}, value:any, callback:Function) {
+export function integer(rule: object = {}, value: any, callback: Function) {
   var rexp = /^([1-9]\d*|[0]{0,1})$/;
   if (value instanceof Array) {
     for (let i = 0; i < value.length; i++) {
@@ -319,7 +347,11 @@ export function integer(rule: object={}, value:any, callback:Function) {
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回不能大于（最大长度）项
  */
 
-export function maxLength(rule: { value: number }, value:any, callback:Function) {
+export function maxLength(
+  rule: {value: number},
+  value: any,
+  callback: Function
+) {
   if (value && value.length > rule.value) {
     callback('不能大于' + rule.value + '项');
   } else {
@@ -342,7 +374,11 @@ export function maxLength(rule: { value: number }, value:any, callback:Function)
  * @param {function} callback 完成回调
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回备注标签最多5项
  */
-export function tagMaxLength(rule: object={}, value:string, callback:Function) {
+export function tagMaxLength(
+  rule: object = {},
+  value: string,
+  callback: Function
+) {
   if (value && value.split(',').length > 5) {
     callback('备注标签最多5项');
   } else {
@@ -368,7 +404,11 @@ export function tagMaxLength(rule: object={}, value:string, callback:Function) {
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回日期差不能超过(days)天
  */
 
-export function dateRangePicked(rule: { days: number }, value:any, callback:Function) {
+export function dateRangePicked(
+  rule: {days: number},
+  value: any,
+  callback: Function
+) {
   var days = rule.days;
   let diffDays = value[1].diff(value[0], 'days');
   if (diffDays > days) {
@@ -398,7 +438,11 @@ export function dateRangePicked(rule: { days: number }, value:any, callback:Func
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回日期差不能超过(days)天
  */
 
-export function dateCompare(rule: { date?: object, type: string }, value:any, callback:Function) {
+export function dateCompare(
+  rule: {date?: object; type: string},
+  value: any,
+  callback: Function
+) {
   var date = rule.date;
   var type = rule.type;
   if (value && date) {
@@ -423,10 +467,10 @@ export function dateCompare(rule: { date?: object, type: string }, value:any, ca
   }
 }
 
-
-
-function fetchWhich(isGet:Boolean,url:string,options:RequestInit){
-  return isGet ? FetchUtils.fetchGet(url,options) : FetchUtils.fetchPost(url,options)
+function fetchWhich(isGet: Boolean, url: string, options: RequestInit) {
+  return isGet
+    ? FetchUtils.fetchGet(url, options)
+    : FetchUtils.fetchPost(url, options);
 }
 
 /**
@@ -439,36 +483,39 @@ function fetchWhich(isGet:Boolean,url:string,options:RequestInit){
  */
 
 export function remote(
-  rule: { 
-    field: string, 
-    url: string, 
-    method?: string, 
-    options?: RequestInit, 
-    callback?: Function, 
-    params?: any 
-  }, 
-  value:any, 
-  callback:Function) {
-    let url = rule.url
-    let name = rule.field
-    let params = (typeof rule.params) === 'function' ? rule.params() : rule.params
-    params = {[name]:value,...params}
-    let isGet = rule.method ? rule.method.toUpperCase() === 'GET': false
-    let options = rule.options ? {...rule.options} : {}
-    options = {body:{[name]:value,...params}}
-    fetchWhich(isGet,url,options).then((res: Response | CommonResponseJson)=>{
-      if(rule.callback){
-        rule.callback(res,callback)
-      }else{
-        if(res.code == 0){
-          callback()
-        }else{
-          callback((<CommonResponseJson>res).message)
+  rule: {
+    field: string;
+    url: string;
+    method?: string;
+    options?: RequestInit;
+    callback?: Function;
+    params?: any;
+  },
+  value: any,
+  callback: Function
+) {
+  let url = rule.url;
+  let name = rule.field;
+  let params = typeof rule.params === 'function' ? rule.params() : rule.params;
+  params = {[name]: value, ...params};
+  let isGet = rule.method ? rule.method.toUpperCase() === 'GET' : false;
+  let options = rule.options ? {...rule.options} : {};
+  options = {body: {[name]: value, ...params}};
+  fetchWhich(isGet, url, options)
+    .then((res: Response | CommonResponseJson) => {
+      if (rule.callback) {
+        rule.callback(res, callback);
+      } else {
+        if (res.code == 0) {
+          callback();
+        } else {
+          callback((<CommonResponseJson>res).message);
         }
       }
-    }).catch(err => {
-      // console.error('fetch error', err.message)
     })
+    .catch((err) => {
+      // console.error('fetch error', err.message)
+    });
 }
 
 /**
@@ -487,7 +534,11 @@ export function remote(
  * @param {function} callback 完成回调
  * @return {boolean} Desc: 通过验证返回true，否则返回false
  */
-export function validateIpV4V6(rule:Object={}, value:string='', callback:Function) {
+export function validateIpV4V6(
+  rule: Object = {},
+  value: string = '',
+  callback: Function
+) {
   if (!value) {
     callback('Ip地址不正确');
   }
@@ -508,7 +559,11 @@ export function validateIpV4V6(rule:Object={}, value:string='', callback:Functio
  * @param {function} callback 完成回调
  * @return {boolean} Desc: 通过验证返回true，否则返回false
  */
-export function validateIpV4(rule:Object={}, value:string='', callback:Function) {
+export function validateIpV4(
+  rule: Object = {},
+  value: string = '',
+  callback: Function
+) {
   if (!value) {
     callback('Ip地址不正确');
   }
@@ -527,7 +582,11 @@ export function validateIpV4(rule:Object={}, value:string='', callback:Function)
  * @param {function} callback 完成回调
  * @return {boolean} Desc: 通过验证返回true，否则返回false
  */
-export function validateIpV6(rule:Object={}, value: string='', callback: Function) {
+export function validateIpV6(
+  rule: Object = {},
+  value: string = '',
+  callback: Function
+) {
   if (!value) {
     callback('Ip地址不正确');
   }
@@ -538,12 +597,12 @@ export function validateIpV6(rule:Object={}, value: string='', callback: Functio
   }
 }
 
-export function ipV4(value:string='') {
-  var reg:RegExp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+export function ipV4(value: string = '') {
+  var reg: RegExp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
   return reg.test(value);
 }
 
-export function ipV6(value: string='') {
-  var reg:RegExp = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+export function ipV6(value: string = '') {
+  var reg: RegExp = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
   return reg.test(value);
 }
