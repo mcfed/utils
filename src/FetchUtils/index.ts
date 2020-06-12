@@ -37,13 +37,23 @@ class FetchUtilsBase {
 
     return fetch(url, this.options)
       .then(this.responseProcessFunction)
-      .catch((e: Error) => {
-        return {
-          code: -1,
-          ok: false,
-          message: e.message,
-        };
-      });
+      .catch((e: Error) => this.catchFetchError(e));
+  }
+
+  protected static catchFetchError(e: Error) {
+    const resError = {
+      code: -1,
+      ok: false,
+      message: e.message,
+    };
+    if (
+      global.fetch &&
+      global.fetch.catchGlobalErrorProcess &&
+      typeof global.fetch.catchGlobalErrorProcess === 'function'
+    ) {
+      return global.fetch.catchGlobalErrorProcess(resError, e);
+    }
+    return resError;
   }
 
   protected static preRequestOptions(): void {

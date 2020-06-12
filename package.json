@@ -1,6 +1,6 @@
 {
   "name": "@mcfed/utils",
-  "version": "0.2.0-rc5",
+  "version": "0.2.0-rc6",
   "description": "@mcfed for utils",
   "module": "dist/index.js",
   "main": "dist/index.js",
