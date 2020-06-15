@@ -198,13 +198,16 @@ export default class FetchUtils extends FetchUtilsBase {
     }
     return this.fetchRequest(
       url,
-      this.combineOptions(options, {
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          Pragma: 'no-cache',
+      this.combineOptions(
+        {
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            Pragma: 'no-cache',
+          },
+          method: 'POST',
         },
-        method: 'POST',
-      })
+        options
+      )
     );
   }
 
