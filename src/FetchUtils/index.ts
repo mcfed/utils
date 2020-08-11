@@ -31,7 +31,9 @@ class FetchUtilsBase {
       delete options.body;
     }
 
-    this.options = this.combineOptions(defaults, options);
+    this.options = this.removeContentType(
+      this.combineOptions(defaults, options)
+    );
 
     this.preRequestOptions();
 
@@ -139,6 +141,24 @@ class FetchUtilsBase {
     return Object.assign({}, defaults, options, newOptions, {
       headers: Object.assign({}, options.headers, newOptions.headers),
     });
+  }
+
+  // 去除options的headers的contenttype
+  protected static removeContentType(options: RequestInit = {}): RequestInit {
+    const FORMDATA_CLEAN = 'multipart/form-data;clean';
+    if (
+      options.headers &&
+      (options.headers['Content-Type'] === FORMDATA_CLEAN ||
+        options.headers['content-type'] === FORMDATA_CLEAN ||
+        options.headers['ContentType'] === FORMDATA_CLEAN ||
+        options.headers['contentType'] === FORMDATA_CLEAN)
+    ) {
+      delete options.headers['Content-Type'];
+      delete options.headers['content-type'];
+      delete options.headers['ContentType'];
+      delete options.headers['contentType'];
+    }
+    return options;
   }
 }
 export default class FetchUtils extends FetchUtilsBase {
@@ -299,6 +319,28 @@ export default class FetchUtils extends FetchUtilsBase {
       this.combineOptions(options, {
         method: 'POST',
         body: params,
+      })
+    );
+  }
+
+  static fetchUploadFile(url: string, options?: RequestInit): PromiseResponse {
+    this.formateOptions(options);
+    if (options && options.body) {
+      url = this.stringifyURL(url, options.body);
+    }
+    let params = new FormData();
+    for (let i in (<any>options).body) {
+      params.append(i, (<any>options).body[i]);
+    }
+
+    return this.fetchRequest(
+      url,
+      this.combineOptions(options, {
+        method: 'POST',
+        body: params,
+        headers: {
+          'Content-Type': 'multipart/form-data;clean',
+        },
       })
     );
   }
