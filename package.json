@@ -10,7 +10,7 @@
     "url": "https://github.com/mcfed/utils.git"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "build": "tsc -d"
   },
   "files": [
