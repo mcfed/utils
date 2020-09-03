@@ -1,4 +1,12 @@
 import {stringify} from 'qs';
+import {
+  FetchConfig,
+  ResponseProcess,
+  PromiseResponse,
+  GraphqlBodyObject,
+  GraphqlParams,
+  defaultPageParams,
+} from './interface';
 
 // 默认的Headers
 const defaults: RequestInit = {
