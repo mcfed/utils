@@ -204,9 +204,7 @@ export default class FetchUtils extends FetchUtilsBase {
     }
     return this.fetchRequest(
       url,
-      this.combineOptions(options, {
-        method: 'GET',
-      })
+      this.combineOptions({method: 'GET'}, options)
     );
   }
 
@@ -243,9 +241,12 @@ export default class FetchUtils extends FetchUtilsBase {
   static fetchPut(url: string, options?: RequestInit): PromiseResponse {
     return this.fetchPost(
       url,
-      this.combineOptions(options, {
-        method: 'PUT',
-      })
+      this.combineOptions(
+        {
+          method: 'PUT',
+        },
+        options
+      )
     );
   }
 
@@ -253,23 +254,29 @@ export default class FetchUtils extends FetchUtilsBase {
   static fetchDelete(url: string, options?: RequestInit): PromiseResponse {
     return this.fetchPost(
       url,
-      this.combineOptions(options, {
-        method: 'DELETE',
-      })
+      this.combineOptions(
+        {
+          method: 'DELETE',
+        },
+        options
+      )
     );
   }
 
   // 获取数据（Graphql接口）
   static fetchGraphql(url: string, options?: RequestInit): PromiseResponse {
-    options = this.combineOptions(options, {
-      credentials: 'include', // include, same-origin, *omit
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        Pragma: 'no-cache',
+    options = this.combineOptions(
+      {
+        credentials: 'include', // include, same-origin, *omit
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          Pragma: 'no-cache',
+        },
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, cors, *same-origin
       },
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors', // no-cors, cors, *same-origin
-    });
+      options
+    );
     this.formateOptions(options);
     if (options && options.body) {
       this.pickObject(<any>options.body);
@@ -324,10 +331,13 @@ export default class FetchUtils extends FetchUtilsBase {
 
     return this.fetchRequest(
       url,
-      this.combineOptions(options, {
-        method: 'POST',
-        body: params,
-      })
+      this.combineOptions(
+        {
+          method: 'POST',
+          body: params,
+        },
+        options
+      )
     );
   }
 
@@ -343,13 +353,16 @@ export default class FetchUtils extends FetchUtilsBase {
 
     return this.fetchRequest(
       url,
-      this.combineOptions(options, {
-        method: 'POST',
-        body: params,
-        headers: {
-          'Content-Type': 'multipart/form-data;clean',
+      this.combineOptions(
+        {
+          method: 'POST',
+          body: params,
+          headers: {
+            'Content-Type': 'multipart/form-data;clean',
+          },
         },
-      })
+        options
+      )
     );
   }
 
@@ -357,13 +370,16 @@ export default class FetchUtils extends FetchUtilsBase {
   static fetchDownload(url: string, options?: RequestInit): PromiseResponse {
     return this.fetchGet(
       url,
-      this.combineOptions(options, {
-        responseType: 'arraybuffer',
-        headers: {
-          'Content-Type': 'multipart/form-data;charset=UTF-8',
-          Pragma: 'no-cache',
+      this.combineOptions(
+        {
+          responseType: 'arraybuffer',
+          headers: {
+            'Content-Type': 'multipart/form-data;charset=UTF-8',
+            Pragma: 'no-cache',
+          },
         },
-      })
+        options
+      )
     ).then(
       (res: any): PromiseResponse => {
         if (res.blob && typeof res.blob === 'function') {
