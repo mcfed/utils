@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "jest --detectOpenHandles",
-    "build": "tsc -d"
+    "build": "tsc -d",
+    "prepublish": "npm run build"
   },
   "files": [
     "dist/",
