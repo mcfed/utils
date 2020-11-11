@@ -8,7 +8,7 @@ interface CommonResponseJson {
   message: string;
   data?: object;
 }
-export type PromiseResponse = Promise<Response>;
+export type PromiseResponse = Promise<Response | Object>;
 export interface ResponseProcess {
   (res: Response): PromiseResponse;
 }

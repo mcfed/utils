@@ -1,8 +1,6 @@
 import {stringify} from 'qs';
 import {
   FetchConfig,
-  ResponseProcess,
-  PromiseResponse,
   GraphqlBodyObject,
   GraphqlParams,
   defaultPageParams,
@@ -25,12 +23,12 @@ const defaults: RequestInit = {
 class FetchUtilsBase {
   protected static config: FetchConfig | undefined = undefined;
   protected static options: RequestInit = {};
-  protected static responseProcessFunction: ResponseProcess;
+  protected static responseProcessFunction: Function;
 
   // 获取请求
-  static fetchRequest(url: string, options: RequestInit): PromiseResponse {
+  static fetchRequest(url: string, options: RequestInit): Promise<any> {
     if (!this.checkFetch()) {
-      return Promise.resolve({code: -2, message: 'fetch not found'} as any);
+      return Promise.resolve({code: -2, message: 'fetch not found'});
     }
 
     this.initFetchResponseFunction(options);
@@ -46,7 +44,7 @@ class FetchUtilsBase {
     this.preRequestOptions();
 
     return fetch(url, this.options)
-      .then(this.responseProcessFunction)
+      .then(this.responseProcessFunction as any)
       .catch((e: Error) => this.catchFetchError(e));
   }
 
@@ -79,7 +77,7 @@ class FetchUtilsBase {
   protected static initFetchResponseFunction(options: RequestInit): void {
     if (!this.responseProcessFunction) {
       const fetchResponseProcess:
-        | ResponseProcess
+        | Function
         | undefined = this.getFetchResponseProcess();
       this.responseProcessFunction = this.defauleFetchResponseProcess(options);
       if (fetchResponseProcess) {
@@ -89,10 +87,8 @@ class FetchUtilsBase {
   }
 
   // 默认的处理返回数据函数
-  protected static defauleFetchResponseProcess(
-    options: RequestInit
-  ): ResponseProcess {
-    return (res: Response): PromiseResponse => {
+  protected static defauleFetchResponseProcess(options: RequestInit): Function {
+    return (res: Response): Promise<any> => {
       if (res.ok === true) {
         const contentType =
           res.headers.get('Content-Type') || 'application/json';
@@ -107,7 +103,7 @@ class FetchUtilsBase {
       return Promise.resolve({
         code: res.status,
         message: res.statusText,
-      } as any);
+      });
     };
   }
 
@@ -127,14 +123,14 @@ class FetchUtilsBase {
   }
 
   // 获取请求的特殊处理函数
-  protected static getFetchResponseProcess(): ResponseProcess | undefined {
+  protected static getFetchResponseProcess(): Function | undefined {
     // global绑定-兼容
     if (
       global.fetch &&
       global.fetch.responseProcess &&
       typeof global.fetch.responseProcess === 'function'
     ) {
-      return global.fetch.responseProcess as ResponseProcess | undefined;
+      return global.fetch.responseProcess;
     }
 
     // 返回-undefined
@@ -192,7 +188,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 获取Get请求类型资源数据
-  static fetchGet(url: string, options?: RequestInit): PromiseResponse {
+  static fetchGet(url: string, options?: RequestInit): Promise<any> {
     options = this.processBody(options);
     this.formateOptions(options);
     if (options && options.body && options.body !== '') {
@@ -209,12 +205,12 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 获取列表
-  static fetchList(url: string, options?: RequestInit): PromiseResponse {
+  static fetchList(url: string, options?: RequestInit): Promise<any> {
     return this.fetchGet(url, options);
   }
 
   // 更新数据（POST）
-  static fetchPost(url: string, options?: RequestInit): PromiseResponse {
+  static fetchPost(url: string, options?: RequestInit): Promise<any> {
     this.formateOptions(options);
     if (options && options.body) {
       url = this.stringifyURL(url, options.body);
@@ -238,7 +234,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 更新数据（PUT）
-  static fetchPut(url: string, options?: RequestInit): PromiseResponse {
+  static fetchPut(url: string, options?: RequestInit): Promise<any> {
     return this.fetchPost(
       url,
       this.combineOptions(
@@ -251,7 +247,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 删除数据（DELETE）
-  static fetchDelete(url: string, options?: RequestInit): PromiseResponse {
+  static fetchDelete(url: string, options?: RequestInit): Promise<any> {
     return this.fetchPost(
       url,
       this.combineOptions(
@@ -264,7 +260,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 获取数据（Graphql接口）
-  static fetchGraphql(url: string, options?: RequestInit): PromiseResponse {
+  static fetchGraphql(url: string, options?: RequestInit): Promise<any> {
     options = this.combineOptions(
       {
         credentials: 'include', // include, same-origin, *omit
@@ -300,15 +296,14 @@ export default class FetchUtils extends FetchUtilsBase {
   static fetchGraphqlAsResult(
     url: string,
     options?: RequestInit
-  ): PromiseResponse {
+  ): Promise<any> {
     return this.fetchGraphql(url, options).then(
-      (res: CommonResponseJson | Response): PromiseResponse =>
-        (<any>res)?.data?.result
+      (res: Object | Response): Promise<any> => (<any>res)?.data?.result
     ); // 无法确定是哪种类型的数据，需要根据数据类型处理
   }
 
   // 获取数据(Graphql列表接口，返回去掉data.result的外包装)
-  static fetchGraphqlList(url: string, options?: RequestInit): PromiseResponse {
+  static fetchGraphqlList(url: string, options?: RequestInit): Promise<any> {
     this.formateOptions(options);
     if (options && options.body) {
       (<any>options.body).variables = this.processGraphqlParams(
@@ -319,7 +314,7 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 上传数据
-  static fetchUpload(url: string, options?: RequestInit): PromiseResponse {
+  static fetchUpload(url: string, options?: RequestInit): Promise<any> {
     this.formateOptions(options);
     if (options && options.body) {
       url = this.stringifyURL(url, options.body);
@@ -341,7 +336,7 @@ export default class FetchUtils extends FetchUtilsBase {
     );
   }
 
-  static fetchUploadFile(url: string, options?: RequestInit): PromiseResponse {
+  static fetchUploadFile(url: string, options?: RequestInit): Promise<any> {
     this.formateOptions(options);
     if (options && options.body) {
       url = this.stringifyURL(url, options.body);
@@ -367,24 +362,24 @@ export default class FetchUtils extends FetchUtilsBase {
   }
 
   // 下载文件流
-  static fetchDownload(url: string, options?: RequestInit): PromiseResponse {
+  static fetchDownload(url: string, options?: RequestInit): Promise<any> {
     return this.fetchGet(
       url,
       this.combineOptions(
         {
           responseType: 'arraybuffer',
           headers: {
-            'Content-Type': 'multipart/form-data;charset=UTF-8',
+            'Content-Type': 'application/json;charset=UTF-8',
             Pragma: 'no-cache',
           },
         },
         options
       )
     ).then(
-      (res: any): PromiseResponse => {
+      (res: any): Promise<any> => {
         if (res.blob && typeof res.blob === 'function') {
           return res.blob().then(
-            (blob: Blob): PromiseResponse => {
+            (blob: Blob): Promise<any> => {
               if (blob) {
                 var a = document.createElement('a');
                 var url = window.URL.createObjectURL(blob);
@@ -401,12 +396,12 @@ export default class FetchUtils extends FetchUtilsBase {
                   window.URL.revokeObjectURL(url);
                 }, 100);
 
-                return Promise.resolve({code: 0, message: 'success'} as any);
+                return Promise.resolve({code: 0, message: 'success'});
               } else {
                 return Promise.resolve({
                   code: 1,
                   message: 'fetch download fail, blob is not found',
-                } as any);
+                });
               }
             }
           );
@@ -414,7 +409,7 @@ export default class FetchUtils extends FetchUtilsBase {
         return Promise.resolve({
           code: 2,
           message: 'fetch download fail, response blob is not function',
-        } as any);
+        });
       }
     );
   }

@@ -43,7 +43,7 @@ describe('FetchUtils使用 Get 请求', () => {
     let url = 'http://localhost/500';
     let options = {};
     fetchMock.mock(url, 500, options);
-    FetchUtils.fetchGet(url).then((result) => {
+    FetchUtils.fetchGet(url).then((result: {code: number; msg: string}) => {
       expect(result.code).toEqual(mockResult.code);
       done();
     });
@@ -68,10 +68,12 @@ describe('FetchUtils使用 Get 请求', () => {
       options
     );
 
-    FetchUtils.fetchGet(url, getFormatRequestInit(options)).then((result) => {
-      expect(result).toEqual(mockResult.body);
-      done();
-    });
+    FetchUtils.fetchGet(url, getFormatRequestInit(options)).then(
+      (result: {code: number; message: string; data: Object}) => {
+        expect(result).toEqual(mockResult.body);
+        done();
+      }
+    );
   });
   it('fetch Get 请求200 url带参数 a=1 body b:1', (done) => {
     let mockResult = {
@@ -241,6 +243,25 @@ describe('FetchUtils使用 fetchDownload 请求', () => {
       expect(result).toEqual(mockResult.body);
       done();
     });
+  });
+  it('fetchDownload 返回类型', (done) => {
+    let mockResult = {
+      blob: (): Promise<any> => {
+        return Promise.resolve();
+      },
+      headers: {},
+      body: {code: 0, message: 'success'},
+    };
+    let url = 'http://localhost/200/down';
+    const response = new Response(JSON.stringify(mockResult));
+    response.headers.set('Content-Type', 'text/xml');
+    fetchMock.mock(url, response, {method: 'GET'});
+    FetchUtils.fetchDownload(url).then(
+      (result: {code: number; msg: string; data: Object}) => {
+        expect(result).toEqual(mockResult.body);
+        done();
+      }
+    );
   });
 });
 describe('FetchUtils使用 fetchGraphql请求', () => {
