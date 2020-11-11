@@ -30,7 +30,7 @@ class FetchUtilsBase {
   // 获取请求
   static fetchRequest(url: string, options: RequestInit): PromiseResponse {
     if (!this.checkFetch()) {
-      return Promise.resolve({code: -2, message: 'fetch not found'});
+      return Promise.resolve({code: -2, message: 'fetch not found'} as any);
     }
 
     this.initFetchResponseFunction(options);
@@ -107,7 +107,7 @@ class FetchUtilsBase {
       return Promise.resolve({
         code: res.status,
         message: res.statusText,
-      });
+      } as any);
     };
   }
 
@@ -134,7 +134,7 @@ class FetchUtilsBase {
       global.fetch.responseProcess &&
       typeof global.fetch.responseProcess === 'function'
     ) {
-      return global.fetch.responseProcess;
+      return global.fetch.responseProcess as ResponseProcess | undefined;
     }
 
     // 返回-undefined
@@ -401,12 +401,12 @@ export default class FetchUtils extends FetchUtilsBase {
                   window.URL.revokeObjectURL(url);
                 }, 100);
 
-                return Promise.resolve({code: 0, message: 'success'});
+                return Promise.resolve({code: 0, message: 'success'} as any);
               } else {
                 return Promise.resolve({
                   code: 1,
                   message: 'fetch download fail, blob is not found',
-                });
+                } as any);
               }
             }
           );
@@ -414,7 +414,7 @@ export default class FetchUtils extends FetchUtilsBase {
         return Promise.resolve({
           code: 2,
           message: 'fetch download fail, response blob is not function',
-        });
+        } as any);
       }
     );
   }
