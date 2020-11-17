@@ -156,7 +156,18 @@ describe('FetchUtils使用 upload 请求', () => {
       done();
     });
   });
-
+  it('upload 请求200 content-type为文件', (done) => {
+    let mockResult = {code: 0};
+    let url = 'http://localhost/upload/file/200';
+    const response = new Response(JSON.stringify(mockResult));
+    response.headers.set('Content-Type', 'multipart/form-data');
+    fetchMock.mock(url, response);
+    FetchUtils.fetchUpload(url, {}).then(async (result) => {
+      expect(result.headers.get('Content-Type')).toEqual('multipart/form-data');
+      expect(await result.json()).toEqual(mockResult);
+      done();
+    });
+  });
   it('upload 请求500', (done) => {
     let mockResult = {
       code: 500,

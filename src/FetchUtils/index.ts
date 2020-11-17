@@ -149,19 +149,21 @@ class FetchUtilsBase {
 
   // 去除options的headers的contenttype
   protected static removeContentType(options: RequestInit = {}): RequestInit {
-    const FORMDATA_CLEAN = 'multipart/form-data;clean';
-    if (
-      options.headers &&
-      (options.headers['Content-Type'] === FORMDATA_CLEAN ||
-        options.headers['content-type'] === FORMDATA_CLEAN ||
-        options.headers['ContentType'] === FORMDATA_CLEAN ||
-        options.headers['contentType'] === FORMDATA_CLEAN)
-    ) {
-      delete options.headers['Content-Type'];
-      delete options.headers['content-type'];
-      delete options.headers['ContentType'];
-      delete options.headers['contentType'];
+    if (options.headers) {
+      for (const key in options.headers) {
+        if (
+          options.headers[key] === undefined ||
+          options.headers[key] === null
+        ) {
+          delete options.headers[key];
+          continue;
+        }
+        if (key === 'clean-content-type' && options.headers[key]) {
+          delete options.headers['Content-Type'];
+        }
+      }
     }
+
     return options;
   }
 }
@@ -323,6 +325,7 @@ export default class FetchUtils extends FetchUtilsBase {
     for (let i in (<any>options).body) {
       params.append(i, (<any>options).body[i]);
     }
+    delete options?.body;
 
     return this.fetchRequest(
       url,
@@ -345,6 +348,7 @@ export default class FetchUtils extends FetchUtilsBase {
     for (let i in (<any>options).body) {
       params.append(i, (<any>options).body[i]);
     }
+    delete options?.body;
 
     return this.fetchRequest(
       url,
@@ -353,8 +357,9 @@ export default class FetchUtils extends FetchUtilsBase {
           method: 'POST',
           body: params,
           headers: {
-            'Content-Type': 'multipart/form-data;clean',
-          },
+            'Content-Type': 'multipart/form-data;',
+            'clean-content-type': true,
+          } as any,
         },
         options
       )

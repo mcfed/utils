@@ -1,6 +1,6 @@
 {
   "name": "@mcfed/utils",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "@mcfed for utils",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
   "scripts": {
     "test": "jest --detectOpenHandles",
     "build": "tsc -d",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run test && npm run build"
   },
   "files": [
     "dist/",
