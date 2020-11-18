@@ -35,7 +35,56 @@ describe('FetchUtils使用 Get 请求', () => {
       done();
     });
   });
+  it('fetch Get 请求200 global responseProcess', (done) => {
+    let mockResult = {
+      body: {code: 0},
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    let responseProcessResult = {
+      body: {code: 1},
+    };
+    let url = 'http://localhost/response/200';
+    let options = {body: {a: 1}};
+    fetchMock.mock(url, mockResult, options);
+    global.fetch.responseProcess = (): Promise<any> => {
+      return Promise.resolve(responseProcessResult);
+    };
+    FetchUtils.fetchGet(url).then((result) => {
+      expect(result).toEqual(responseProcessResult);
+      // @ts-ignore
+      global.fetch.responseProcess = undefined;
+      done();
+    });
+  });
+  it('fetch Get 请求200 global responseProcess default', (done) => {
+    let mockResult = {
+      body: {code: 0},
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    let responseProcessResult = {
+      body: {code: 1},
+    };
+    let url = 'http://localhost/response/default/200';
+    let options = {body: {a: 1}};
+    fetchMock.mock(url, mockResult, options);
 
+    FetchUtils.fetchGet(url).then((result) => {
+      global.fetch.responseProcess = (): Promise<any> => {
+        return Promise.resolve(responseProcessResult);
+      };
+      expect(result).toEqual(mockResult.body);
+      FetchUtils.fetchGet(url).then((result) => {
+        expect(result).toEqual(responseProcessResult);
+        // @ts-ignore
+        global.fetch.responseProcess = undefined;
+        done();
+      });
+    });
+  });
   it('fetch Get 请求500 不带参数', (done) => {
     let mockResult = {
       code: 500,

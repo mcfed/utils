@@ -31,8 +31,6 @@ class FetchUtilsBase {
       return Promise.resolve({code: -2, message: 'fetch not found'});
     }
 
-    this.initFetchResponseFunction(options);
-
     if (options.method === 'GET' || options.method === 'HEAD') {
       delete options.body;
     }
@@ -44,24 +42,20 @@ class FetchUtilsBase {
     this.preRequestOptions();
 
     return fetch(url, this.options)
-      .then(this.responseProcessFunction as any)
-      .catch((e: Error) => this.catchFetchError(e));
-  }
-
-  protected static catchFetchError(e: Error) {
-    const resError = {
-      code: -1,
-      ok: false,
-      message: e.message,
-    };
-    if (
-      global.fetch &&
-      global.fetch.catchGlobalErrorProcess &&
-      typeof global.fetch.catchGlobalErrorProcess === 'function'
-    ) {
-      return global.fetch.catchGlobalErrorProcess(resError, e);
-    }
-    return resError;
+      .then(
+        (global.fetch.responseProcess ||
+          this.defauleFetchResponseProcess.call(this, options)) as any
+      )
+      .catch(
+        (global.fetch.catchGlobalErrorProcess ||
+          function (err: Error) {
+            return {
+              code: -1,
+              ok: false,
+              message: err.message,
+            };
+          }) as any
+      );
   }
 
   protected static preRequestOptions(): void {
@@ -70,19 +64,6 @@ class FetchUtilsBase {
       typeof global.fetch.preRequestOptions === 'function'
     ) {
       this.options = global.fetch.preRequestOptions(this.options);
-    }
-  }
-
-  // 初始化fetch的response处理函数
-  protected static initFetchResponseFunction(options: RequestInit): void {
-    if (!this.responseProcessFunction) {
-      const fetchResponseProcess:
-        | Function
-        | undefined = this.getFetchResponseProcess();
-      this.responseProcessFunction = this.defauleFetchResponseProcess(options);
-      if (fetchResponseProcess) {
-        this.responseProcessFunction = fetchResponseProcess;
-      }
     }
   }
 
@@ -120,21 +101,6 @@ class FetchUtilsBase {
         global.fetch = fetch
     `);
     return false;
-  }
-
-  // 获取请求的特殊处理函数
-  protected static getFetchResponseProcess(): Function | undefined {
-    // global绑定-兼容
-    if (
-      global.fetch &&
-      global.fetch.responseProcess &&
-      typeof global.fetch.responseProcess === 'function'
-    ) {
-      return global.fetch.responseProcess;
-    }
-
-    // 返回-undefined
-    return;
   }
 
   // 合并Options
