@@ -352,21 +352,8 @@ export default class FetchUtils extends FetchUtilsBase {
           return res.blob().then(
             (blob: Blob): Promise<any> => {
               if (blob) {
-                var a = document.createElement('a');
-                var url = window.URL.createObjectURL(blob);
                 var filename = res.headers.get('Content-Disposition') || '';
-                document.body.appendChild(a);
-                a.href = url;
-                a.download = decodeURI(
-                  filename.replace('attachment;filename=', '')
-                );
-                a.click();
-                //修正Firefox 无法下载问题
-                setTimeout(function () {
-                  document.body.removeChild(a);
-                  window.URL.revokeObjectURL(url);
-                }, 100);
-
+                this.downloadFileInBowser(blob, filename);
                 return Promise.resolve({code: 0, message: 'success'});
               } else {
                 return Promise.resolve({
@@ -383,6 +370,25 @@ export default class FetchUtils extends FetchUtilsBase {
         });
       }
     );
+  }
+
+  static downloadFileInBowser(blob, filename) {
+    if ('msSaveOrOpenBlob' in navigator) {
+      // 修复ie浏览器，无法下载的bug
+      window.navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+      var a = document.createElement('a');
+      var url = window.URL.createObjectURL(blob);
+      document.body.appendChild(a);
+      a.href = url;
+      a.download = decodeURI(filename.replace('attachment;filename=', ''));
+      a.click();
+      //修正Firefox 无法下载问题
+      setTimeout(function () {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    }
   }
 
   // 格式字符串Url重的/:id=>/1,用body={ id: 1 }

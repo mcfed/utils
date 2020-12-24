@@ -324,6 +324,28 @@ describe('FetchUtils使用 fetchDownload 请求', () => {
     );
   });
 });
+it('fetchDownload 浏览器兼容', (done) => {
+  let mockResult = {
+    blob: (): Promise<any> => {
+      return Promise.resolve();
+    },
+    headers: {},
+    body: {code: 0, message: 'success'},
+  };
+  window.navigator.msSaveOrOpenBlob = () => {
+    return true;
+  };
+  let url = 'http://localhost/200/down/ie';
+  const response = new Response(JSON.stringify(mockResult));
+  response.headers.set('Content-Type', 'text/xml');
+  fetchMock.mock(url, response, {method: 'GET'});
+  FetchUtils.fetchDownload(url).then(
+    (result: {code: number; msg: string; data: Object}) => {
+      expect(result).toEqual(mockResult.body);
+      done();
+    }
+  );
+});
 describe('FetchUtils使用 fetchGraphql请求', () => {
   it('fetchGraphql请求200', (done) => {
     let mockResult = {data: {}};
