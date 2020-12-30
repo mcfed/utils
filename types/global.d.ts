@@ -28,6 +28,10 @@ declare namespace NodeJS {
     fetch: {
       (url: string, options?: RequestInit): Promise<Response>;
       responseProcess: ResponseProcess;
+      preRequestProcess: (
+        url: string,
+        options?: RequestInit
+      ) => Promise<void> | void;
       preRequestOptions: Function;
       catchGlobalErrorProcess: Function;
     };

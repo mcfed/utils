@@ -1,3 +1,4 @@
+/// <reference path="../../../types/global.d.ts" />
 import '../../../setupTests';
 import {stringify} from 'qs';
 import fetchMock from 'fetch-mock';
@@ -30,7 +31,6 @@ describe('FetchUtils使用 Get 请求', () => {
     let mock = fetchMock.mock(url, mockResult, options);
     FetchUtils.fetchGet(url).then((result) => {
       expect(result).toEqual(mockResult.body);
-      expect(FetchUtils.getOptions().body).toEqual(undefined);
       mock.lastOptions(true, {headers: {}});
       done();
     });
@@ -51,10 +51,10 @@ describe('FetchUtils使用 Get 请求', () => {
     global.fetch.responseProcess = (): Promise<any> => {
       return Promise.resolve(responseProcessResult);
     };
-    FetchUtils.fetchGet(url).then((result) => {
+    FetchUtils.fetchRequest(url, {}).then((result) => {
       expect(result).toEqual(responseProcessResult);
       // @ts-ignore
-      global.fetch.responseProcess = undefined;
+      delete global.fetch.responseProcess;
       done();
     });
   });
@@ -80,7 +80,7 @@ describe('FetchUtils使用 Get 请求', () => {
       FetchUtils.fetchGet(url).then((result) => {
         expect(result).toEqual(responseProcessResult);
         // @ts-ignore
-        global.fetch.responseProcess = undefined;
+        delete global.fetch.responseProcess;
         done();
       });
     });
@@ -295,7 +295,7 @@ describe('FetchUtils使用 fetchDownload 请求', () => {
         message: 'success',
       },
     };
-    let url = 'http://localhost/200';
+    let url = 'http://localhost/download/200';
     const response = new Response(JSON.stringify(mockResult));
     response.headers.set('Content-Type', 'text/xml');
     fetchMock.mock(url, response, {method: 'GET'});
@@ -312,7 +312,7 @@ describe('FetchUtils使用 fetchDownload 请求', () => {
       headers: {},
       body: {code: 0, message: 'success'},
     };
-    let url = 'http://localhost/200/down';
+    let url = 'http://localhost/downloadfail/200/down';
     const response = new Response(JSON.stringify(mockResult));
     response.headers.set('Content-Type', 'text/xml');
     fetchMock.mock(url, response, {method: 'GET'});
@@ -335,7 +335,7 @@ it('fetchDownload 浏览器兼容', (done) => {
   window.navigator.msSaveOrOpenBlob = () => {
     return true;
   };
-  let url = 'http://localhost/200/down/ie';
+  let url = 'http://localhost/download/ie';
   const response = new Response(JSON.stringify(mockResult));
   response.headers.set('Content-Type', 'text/xml');
   fetchMock.mock(url, response, {method: 'GET'});
@@ -577,5 +577,71 @@ describe('FetchUtils使用 processBody 方法', () => {
       a: '',
     };
     expect(FetchUtils.processPraramItem(obj)).toEqual({a: undefined});
+  });
+});
+
+describe('FetchUtils使用 测试global.fetch方法', () => {
+  it('preRequestProcess', (done) => {
+    async function sleep(ms: number) {
+      return new Promise((resolve, reject) => {
+        setTimeout(resolve, ms);
+      });
+    }
+    global.fetch.preRequestProcess = async function (url, options) {
+      // @ts-ignore tmp global variable
+      global.preRequestProcess = true;
+      await sleep(500);
+    };
+    const url = 'http://localhost/prerequest';
+    const response = new Response(JSON.stringify({a: 1}));
+
+    fetchMock.mock(url, response, {method: 'GET'});
+
+    FetchUtils.fetchRequest(url, {}).then((result) => {
+      // @ts-ignore tmp global variable
+      expect(global.preRequestProcess).toEqual(true);
+      delete global.fetch.preRequestProcess;
+      done();
+    });
+  });
+
+  it('preRequestOptions', (done) => {
+    global.fetch.preRequestOptions = function (options, url) {
+      options.test = true;
+      return options;
+    };
+    const url = 'http://localhost/preRequestOptions';
+    const response = new Response(JSON.stringify({test: true}));
+    response.headers.set('Content-Type', 'application/json');
+
+    fetchMock.mock(url, response, {method: 'GET'});
+    FetchUtils.fetchRequest(url, {}).then((result) => {
+      expect(result.test).toEqual(true);
+      done();
+    });
+  });
+
+  it('catchGlobalErrorProcess', (done) => {
+    global.fetch.catchGlobalErrorProcess = function (err) {
+      // @ts-ignore
+      global.iserror = true;
+      return {
+        code: -1,
+        message: err.message,
+      };
+    };
+    global.fetch.responseProcess = (): Promise<any> => {
+      return Promise.reject({});
+    };
+    const url = 'http://localhost/catchGlobalErrorProcess/500/throw';
+    const response = new Response(JSON.stringify({test: true}));
+    response.headers.set('Content-Type', 'application/json');
+
+    fetchMock.mock(url, response, {method: 'GET'});
+    FetchUtils.fetchRequest(url, {}).then(() => {
+      // @ts-ignore
+      expect(global.iserror).toEqual(true);
+      done();
+    });
   });
 });

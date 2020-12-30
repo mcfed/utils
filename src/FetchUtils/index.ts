@@ -1,10 +1,5 @@
 import {stringify} from 'qs';
-import {
-  FetchConfig,
-  GraphqlBodyObject,
-  GraphqlParams,
-  defaultPageParams,
-} from './interface';
+import {GraphqlBodyObject, GraphqlParams, defaultPageParams} from './interface';
 
 // 默认的Headers
 const defaults: RequestInit = {
@@ -21,12 +16,8 @@ const defaults: RequestInit = {
 // notes: 所有自定义的的对象或常规对象上自定义挂载，都使用(<any>object)强制转换 不做校验
 
 class FetchUtilsBase {
-  protected static config: FetchConfig | undefined = undefined;
-  protected static options: RequestInit = {};
-  protected static responseProcessFunction: Function;
-
   // 获取请求
-  static fetchRequest(url: string, options: RequestInit): Promise<any> {
+  static async fetchRequest(url: string, options: RequestInit): Promise<any> {
     if (!this.checkFetch()) {
       return Promise.resolve({code: -2, message: 'fetch not found'});
     }
@@ -35,13 +26,23 @@ class FetchUtilsBase {
       delete options.body;
     }
 
-    this.options = this.removeContentType(
-      this.combineOptions(defaults, options)
-    );
+    options = this.removeContentType(this.combineOptions(defaults, options));
 
-    this.preRequestOptions();
+    if (
+      global.fetch.preRequestProcess &&
+      typeof global.fetch.preRequestProcess === 'function'
+    ) {
+      await global.fetch.preRequestProcess(url, options);
+    }
 
-    return fetch(url, this.options)
+    if (
+      global.fetch.preRequestOptions &&
+      typeof global.fetch.preRequestOptions === 'function'
+    ) {
+      options = global.fetch.preRequestOptions(options, url);
+    }
+
+    return fetch(url, options)
       .then(
         (global.fetch.responseProcess ||
           this.defauleFetchResponseProcess.call(this, options)) as any
@@ -56,15 +57,6 @@ class FetchUtilsBase {
             };
           }) as any
       );
-  }
-
-  protected static preRequestOptions(): void {
-    if (
-      global.fetch.preRequestOptions &&
-      typeof global.fetch.preRequestOptions === 'function'
-    ) {
-      this.options = global.fetch.preRequestOptions(this.options);
-    }
   }
 
   // 默认的处理返回数据函数
@@ -135,10 +127,6 @@ class FetchUtilsBase {
 }
 export default class FetchUtils extends FetchUtilsBase {
   static readonly defaultsHeaders = defaults;
-
-  static getOptions() {
-    return this.options;
-  }
 
   // 返回错误
   static fetchCatch(error: Error): Error {
