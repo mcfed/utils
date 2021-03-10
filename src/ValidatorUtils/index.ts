@@ -125,31 +125,6 @@ export function checkIPCust(rule: object = {}, value: any, callback: Function) {
 }
 
 /**
- * 验证非法字符
- *
- * @example 字符串验证的正则表达式为 /^[A-z0-9\\\s+\\_\\#\\$\\\u4e00-\u9fa5]*$/
- *
- * @inner
- * @param {object} rule 规则（暂时无用）
- * @param {string} value 需要验证的字符串
- * @param {function} callback 完成回调
- * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回请不要输入非法字符
- */
-export function validateToNextPassword(
-  rule: object = {},
-  value: any,
-  callback: Function
-) {
-  let message = '请不要输入非法字符';
-  let regEx = /^[A-z0-9\\\s+\\_\\#\\$\\\u4e00-\u9fa5]*$/;
-  if (value && !regEx.test(value)) {
-    callback(message);
-  } else {
-    callback();
-  }
-}
-
-/**
  * 验证密码强度
  *
  * @example 字符串验证的正则表达式为 /^\d{1,6}$/
@@ -360,6 +335,34 @@ export function maxLength(
 }
 
 /**
+ * 验证是否与某字段相同
+ *
+ *
+ * @example [
+ *  rule: { field: '123' }
+ *  value: '1234' -> 不通过
+ *  value: '123' ->  通过
+ * ]
+ * @inner
+ * @param {object} rule 校验规则
+ * @param {any} rule.field 需要匹配的字段
+ * @param {string} value 需要验证的字符串
+ * @param {function} callback 完成回调
+ */
+export function compareToField(
+  rule: {field?: any; message?: string} = {},
+  value: string,
+  callback: Function
+) {
+  const message = rule.message || '与需要匹配的字段不相同';
+  if (rule.field === value) {
+    callback();
+  } else {
+    callback(message);
+  }
+}
+
+/**
  * 验证标签最大长度
  *
  * Note: 默认最大长度为5，标签以英文逗号分隔
@@ -490,17 +493,22 @@ export function remote(
     options?: RequestInit;
     callback?: Function;
     params?: any;
+    paramsFormat?: Function;
   },
   value: any,
   callback: Function
 ) {
-  let url = rule.url;
-  let name = rule.field;
+  let {url, field, paramsFormat} = rule;
+  // let url = rule.url;
+  // let name = rule.field;
   let params = typeof rule.params === 'function' ? rule.params() : rule.params;
-  params = {[name]: value, ...params};
-  let isGet = rule.method ? rule.method.toUpperCase() === 'GET' : false;
-  let options = rule.options ? {...rule.options} : {};
-  options = {body: {[name]: value, ...params}};
+  params = {[field]: value, ...params};
+  let isGet = rule.method ? rule.method.toUpperCase() !== 'POST' : true;
+  let options = rule.options ? rule.options : {};
+  options.body =
+    paramsFormat === undefined
+      ? {[field]: value, ...params}
+      : paramsFormat({[field]: value, ...params});
   fetchWhich(isGet, url, options)
     .then((res: Response | CommonResponseJson) => {
       if (rule.callback) {

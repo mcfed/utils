@@ -296,47 +296,58 @@ describe('验证方法测试正确性', () => {
     });
   });
 
-  describe('验证validateToNextPassword正确性', () => {
+  describe('验证compareToField 正确性', () => {
     const testData = [
       {
-        value: '12345',
+        rule: {
+          field: '123',
+        },
+        value: '123',
         result: undefined,
       },
       {
-        value: '0',
-        result: undefined,
+        rule: {
+          field: '123',
+        },
+        value: '12',
+        result: '与需要匹配的字段不相同',
       },
       {
-        value: '*&',
-        result: '请不要输入非法字符',
+        rule: {
+          field: '123',
+          message: 'test message',
+        },
+        value: '12',
+        result: 'test message',
       },
       {
-        value: '_',
+        rule: {
+          field: '123',
+          message: 'test message',
+        },
+        value: '123',
         result: undefined,
       },
     ];
-    it(`validateToNextPassword[${testData[0].value}]`, (done) => {
-      rules.validateToNextPassword({}, testData[0].value, (args: any) => {
-        expect(args).toEqual(testData[0].result);
-        done();
+
+    it('compareToField test1', () => {
+      rules.compareToField(testData[0].rule, testData[0].value, (arg: any) => {
+        expect(arg).toEqual(testData[0].result);
       });
     });
-    it(`validateToNextPassword[${testData[1].value}]`, (done) => {
-      rules.validateToNextPassword({}, testData[1].value, (args: any) => {
-        expect(args).toEqual(testData[1].result);
-        done();
+    it('compareToField test2', () => {
+      rules.compareToField(testData[1].rule, testData[1].value, (arg: any) => {
+        expect(arg).toEqual(testData[1].result);
       });
     });
-    it(`validateToNextPassword[${testData[2].value}]`, (done) => {
-      rules.validateToNextPassword({}, testData[2].value, (args: any) => {
-        expect(args).toEqual(testData[2].result);
-        done();
+    it('compareToField test3', () => {
+      rules.compareToField(testData[2].rule, testData[2].value, (arg: any) => {
+        expect(arg).toEqual(testData[2].result);
       });
     });
-    it(`validateToNextPassword[${testData[3].value}]`, (done) => {
-      rules.validateToNextPassword({}, testData[3].value, (args: any) => {
-        expect(args).toEqual(testData[3].result);
-        done();
+    it('compareToField test4', () => {
+      rules.compareToField(testData[3].rule, testData[3].value, (arg: any) => {
+        expect(arg).toEqual(testData[3].result);
       });
     });
   });
