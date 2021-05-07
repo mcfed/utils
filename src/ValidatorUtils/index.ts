@@ -605,6 +605,50 @@ export function validateIpV6(
   }
 }
 
+/**
+ * 验证 IP 段
+ * @param rule 校验规则
+ * @param value 需要验证的字符串
+ * @param callback 完成回调
+ * @return {boolean} Desc: 通过验证返回 true，否则返回 false
+ */
+export function validateIpSection(
+  rule: Object = {},
+  value: string = '',
+  callback: Function
+) {
+  if (!value) {
+    callback('Ip地址不正确');
+  }
+  if (!ipSection(value)) {
+    callback('Ip地址不正确');
+  } else {
+    callback();
+  }
+}
+
+/**
+ * 验证 IP 段
+ * @param rule 校验规则
+ * @param value 需要验证的字符串
+ * @param callback 完成回调
+ * @return {boolean} Desc: 通过验证返回 true，否则返回 false
+ */
+export function validateMac(
+  rule: Object = {},
+  value: string = '',
+  callback: Function
+) {
+  if (!value) {
+    callback('Mac地址不正确');
+  }
+  if (!mac(value)) {
+    callback('Mac地址不正确');
+  } else {
+    callback();
+  }
+}
+
 export function ipV4(value: string = '') {
   var reg: RegExp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
   return reg.test(value);
@@ -612,5 +656,15 @@ export function ipV4(value: string = '') {
 
 export function ipV6(value: string = '') {
   var reg: RegExp = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+  return reg.test(value);
+}
+
+export function ipSection(value: string = '') {
+  var reg: RegExp = /^([0-9]{1,3}\.){3}\*|((([0-9A-Fa-f]{1,4}:){7}(\*|:\*))|(([0-9A-Fa-f]{1,4}:)*?([0-9A-Fa-f]{1,4})::([0-9A-Fa-f]{1,4}:)*?(\*))|(::([0-9A-Fa-f]{1,4}:)*?(\*))|(([0-9A-Fa-f]{1,4}:)*?([0-9A-Fa-f]{1,4})::\*)|(::\*))/;
+  return reg.test(value);
+}
+
+export function mac(value: string = '') {
+  var reg: RegExp = /^(([a-fA-F0-9]{2}(-[a-fA-F0-9]{2}){5})|([a-fA-F0-9]{2}(:[a-fA-F0-9]{2}){5})|([a-fA-F0-9]{12}))$/;
   return reg.test(value);
 }
