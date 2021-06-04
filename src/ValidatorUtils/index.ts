@@ -686,6 +686,48 @@ export function validateMac(
   }
 }
 
+/**
+ * 同时验证ipv4和ipv6格式，并能验证逗号隔开的多个ip
+ *
+ * Note: 一个输入框内同时存在ipv4和ipv6，并使用,隔开0
+ * 例如：192.168.0.1,192.168.0.2
+ *
+ * @inner
+ * @param {object} rule 校验规则
+ * @param {string} value 需要验证的字符串
+ * @param {function} callback 完成回调
+ */
+export function validateIpV4AndV6(
+  rule: Object = {},
+  value: string = '',
+  callback: Function
+) {
+  if (!value) {
+    callback();
+  } else if (validateIpArray(value)) {
+    callback();
+  } else {
+    callback('Ip地址不正确');
+  }
+}
+
+/**
+ * 验证ipv4数组和ipv6数组
+ * @inner
+ * @param {string} value 需要验证的字符串
+ * @return {boolean} Desc: 通过验证返回true，否则返回false
+ */
+function validateIpArray(value: string) {
+  let flag = true;
+  let valueArray = value.split(',');
+  valueArray.map((item) => {
+    if (!ipV4(item) && !ipV6(item)) {
+      flag = false;
+    }
+  });
+  return flag;
+}
+
 export function ipV4(value: string = '') {
   var reg: RegExp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
   return reg.test(value);

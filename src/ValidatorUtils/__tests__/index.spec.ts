@@ -1321,3 +1321,72 @@ describe('验证validateMac正确性', () => {
     });
   });
 });
+
+describe('验证 validateIpV4AndV6 正确性', () => {
+  const testData = [
+    {
+      ip: '',
+      result: undefined,
+    },
+    {
+      ip: '192.168.1.1',
+      result: undefined,
+    },
+    {
+      ip: '192.168.1.1,192.168.1.2',
+      result: undefined,
+    },
+    {
+      ip: '192.168.1.1,2001::192:202:167:1',
+      result: undefined,
+    },
+    {
+      ip: '2001::192:202:168:*****6',
+      result: 'Ip地址不正确',
+    },
+    {
+      ip: '2001::192:202:168:1,2001::192:202:167:1',
+      result: undefined,
+    },
+    {
+      ip: '192.1',
+      result: 'Ip地址不正确',
+    },
+    {
+      ip: '190.168.0.0.0',
+      result: 'Ip地址不正确',
+    },
+    {
+      ip: '1080:0:0:0:8:800:200C:417AB',
+      result: 'Ip地址不正确',
+    },
+    {
+      ip: '1080:::8:800:200C:417A',
+      result: 'Ip地址不正确',
+    },
+    {
+      ip: undefined,
+      result: undefined,
+    },
+    {
+      ip: '192',
+      result: 'Ip地址不正确',
+    },
+    {
+      ip: '192.168.60.*',
+      result: 'Ip地址不正确',
+    },
+    {
+      ip: '2001::192:202:167:*',
+      result: 'Ip地址不正确',
+    },
+  ];
+  testData.forEach((ipdata) => {
+    it(`validateIpV4AndV6[${ipdata.ip}]`, (done) => {
+      rules.validateIpV4AndV6('', ipdata.ip, (args: any) => {
+        expect(args).toEqual(ipdata.result);
+        done();
+      });
+    });
+  });
+});
