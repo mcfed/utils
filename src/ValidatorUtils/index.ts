@@ -595,13 +595,13 @@ export function validateIpV4V6(
   callback: Function
 ) {
   if (!value) {
-    callback('Ip地址不正确');
+    callback();
   }
   if (value && value.includes(':')) {
     validateIpV6(rule, value, callback);
   } else if (value && value.includes('.')) {
     validateIpV4(rule, value, callback);
-  } else if (value) {
+  } else if (!!value) {
     validateIpV4(rule, value, callback);
   } else {
     callback('Ip地址不正确');
@@ -622,9 +622,9 @@ export function validateIpV4(
   callback: Function
 ) {
   if (!value) {
-    callback('Ip地址不正确');
+    callback();
   }
-  if (!ipV4(value)) {
+  if (value && !ipV4(value)) {
     callback('Ip地址不正确');
   } else {
     callback();
@@ -646,9 +646,9 @@ export function validateIpV6(
   callback: Function
 ) {
   if (!value) {
-    callback('Ip地址不正确');
+    callback();
   }
-  if (!ipV6(value)) {
+  if (value && !ipV6(value)) {
     callback('Ip地址不正确');
   } else {
     callback();
@@ -687,10 +687,10 @@ export function validateIpV4Section(
   callback: Function
 ) {
   if (!value) {
-    callback('IP段不正确');
+    callback();
   }
-  if (!ipV4Section(value)) {
-    callback('IP段不正确');
+  if (value && !ipV4Section(value)) {
+    callback('Ip地址不正确');
   } else {
     callback();
   }
@@ -702,10 +702,10 @@ export function validateIpV6Section(
   callback: Function
 ) {
   if (!value) {
-    callback('IP段不正确');
+    callback();
   }
-  if (!ipV6Section(value)) {
-    callback('IP段不正确');
+  if (value && !ipV6Section(value)) {
+    callback('Ip地址不正确');
   } else {
     callback();
   }
@@ -724,9 +724,9 @@ export function validateMac(
   callback: Function
 ) {
   if (!value) {
-    callback('Mac地址不正确');
+    callback();
   }
-  if (!mac(value)) {
+  if (value && !mac(value)) {
     callback('Mac地址不正确');
   } else {
     callback();
