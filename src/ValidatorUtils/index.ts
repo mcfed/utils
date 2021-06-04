@@ -550,10 +550,12 @@ export function validateIpV4V6(
   if (!value) {
     callback('Ip地址不正确');
   }
-  if (value && value.includes('.')) {
-    validateIpV4(rule, value, callback);
-  } else if (value && value.includes(':')) {
+  if (value && value.includes(':')) {
     validateIpV6(rule, value, callback);
+  } else if (value && value.includes('.')) {
+    validateIpV4(rule, value, callback);
+  } else if (value) {
+    validateIpV4(rule, value, callback);
   } else {
     callback('Ip地址不正确');
   }
@@ -589,6 +591,7 @@ export function validateIpV4(
  * @param {string} value 需要验证的字符串
  * @param {function} callback 完成回调
  * @return {boolean} Desc: 通过验证返回true，否则返回false
+ * 目前不支持包含 ‘.’ 的 IPV6 格式
  */
 export function validateIpV6(
   rule: Object = {},
@@ -620,15 +623,49 @@ export function validateIpSection(
   if (!value) {
     callback('Ip地址不正确');
   }
-  if (!ipSection(value)) {
-    callback('Ip地址不正确');
+  if (value && value.includes(':')) {
+    validateIpV4Section(rule, value, callback);
+  } else if (value && value.includes('.')) {
+    validateIpV6Section(rule, value, callback);
+  } else if (value) {
+    validateIpV4Section(rule, value, callback);
+  } else {
+    callback();
+  }
+}
+
+export function validateIpV4Section(
+  rule: Object = {},
+  value: string = '',
+  callback: Function
+) {
+  if (!value) {
+    callback('IP段不正确');
+  }
+  if (!ipV4Section(value)) {
+    callback('IP段不正确');
+  } else {
+    callback();
+  }
+}
+
+export function validateIpV6Section(
+  rule: Object = {},
+  value: string = '',
+  callback: Function
+) {
+  if (!value) {
+    callback('IP段不正确');
+  }
+  if (!ipV6Section(value)) {
+    callback('IP段不正确');
   } else {
     callback();
   }
 }
 
 /**
- * 验证 IP 段
+ * 验证 Mac 地址
  * @param rule 校验规则
  * @param value 需要验证的字符串
  * @param callback 完成回调
@@ -659,8 +696,13 @@ export function ipV6(value: string = '') {
   return reg.test(value);
 }
 
-export function ipSection(value: string = '') {
-  var reg: RegExp = /^([0-9]{1,3}\.){3}\*|((([0-9A-Fa-f]{1,4}:){7}(\*|:\*))|(([0-9A-Fa-f]{1,4}:)*?([0-9A-Fa-f]{1,4})::([0-9A-Fa-f]{1,4}:)*?(\*))|(::([0-9A-Fa-f]{1,4}:)*?(\*))|(([0-9A-Fa-f]{1,4}:)*?([0-9A-Fa-f]{1,4})::\*)|(::\*))/;
+export function ipV4Section(value: string = '') {
+  var reg: RegExp = /(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.\*/;
+  return reg.test(value);
+}
+
+export function ipV6Section(value: string = '') {
+  var reg: RegExp = /((([0-9A-Fa-f]{1,4}:){7}\*)|(([0-9A-Fa-f]{1,4}:){6}(:\*))|(([0-9A-Fa-f]{1,4}:){5}((:[0-9A-Fa-f]{1,4}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,2}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,3}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,4}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,5}:\*)|:\*))|(:(((:[0-9A-Fa-f]{1,4}){1,6}:\*)|:\*)))/;
   return reg.test(value);
 }
 
