@@ -47,6 +47,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "emoji-regex": "^9.2.2",
     "qs": "^6.9.4"
   }
 }
