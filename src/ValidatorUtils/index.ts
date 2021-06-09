@@ -601,8 +601,6 @@ export function validateIpV4V6(
     validateIpV6(rule, value, callback);
   } else if (value && value.includes('.')) {
     validateIpV4(rule, value, callback);
-  } else if (!!value) {
-    validateIpV4(rule, value, callback);
   } else {
     callback('Ip地址不正确');
   }
@@ -677,7 +675,7 @@ export function validateIpSection(
   } else if (value) {
     validateIpV4Section(rule, value, callback);
   } else {
-    callback();
+    callback('IP地址不正确');
   }
 }
 
@@ -789,13 +787,13 @@ export function ipV6(value: string = '') {
 
 export function ipV4Section(value: string = '') {
   var reg: RegExp =
-    /(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.\*/;
+    /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.\*$/;
   return reg.test(value);
 }
 
 export function ipV6Section(value: string = '') {
   var reg: RegExp =
-    /((([0-9A-Fa-f]{1,4}:){7}\*)|(([0-9A-Fa-f]{1,4}:){6}(:\*))|(([0-9A-Fa-f]{1,4}:){5}((:[0-9A-Fa-f]{1,4}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,2}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,3}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,4}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,5}:\*)|:\*))|(:(((:[0-9A-Fa-f]{1,4}){1,6}:\*)|:\*)))/;
+    /^((([0-9A-Fa-f]{1,4}:){7}\*)|(([0-9A-Fa-f]{1,4}:){6}(:\*))|(([0-9A-Fa-f]{1,4}:){5}((:[0-9A-Fa-f]{1,4}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,2}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,3}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,4}:\*)|:\*))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,5}:\*)|:\*))|(:(((:[0-9A-Fa-f]{1,4}){1,6}:\*)|:\*)))$/;
   return reg.test(value);
 }
 
