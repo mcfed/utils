@@ -206,7 +206,7 @@ export function checkWeekPassword(
  * @return {string} Desc: 通过校验的字符串返回undefined 未通过返回手机号码格式不正确！
  */
 export function checkMobile(rule: object = {}, value: any, callback: Function) {
-  var rexp = /^(0?1[123456789]\d{9})$/;
+  var rexp = /^1\d{10}$/;
   if (value && !rexp.test(value)) {
     callback('手机号码格式不正确！');
   } else {
