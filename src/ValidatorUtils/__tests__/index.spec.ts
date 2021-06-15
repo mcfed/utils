@@ -1261,11 +1261,11 @@ describe('验证validateIpSection正确性', () => {
     //   result: undefined,
     // },
   ];
-  console.log(testData);
+  // console.log(testData);
   testData.forEach((ipdata) => {
     it(`validateIpSection[${ipdata.ip}]`, (done) => {
       rules.validateIpSection('', ipdata.ip, (args: any) => {
-        console.log('ip:', ipdata.ip, 'args', args);
+        // console.log('ip:', ipdata.ip, 'args', args);
         expect(args).toEqual(ipdata.result);
         done();
       });
