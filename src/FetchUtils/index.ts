@@ -334,30 +334,65 @@ export default class FetchUtils extends FetchUtilsBase {
         },
         options
       )
-    ).then(
-      (res: any): Promise<any> => {
-        if (res.blob && typeof res.blob === 'function') {
-          return res.blob().then(
-            (blob: Blob): Promise<any> => {
-              if (blob) {
-                var filename = res.headers.get('Content-Disposition') || '';
-                this.downloadFileInBowser(blob, filename);
-                return Promise.resolve({code: 0, message: 'success'});
-              } else {
-                return Promise.resolve({
-                  code: 1,
-                  message: 'fetch download fail, blob is not found',
-                });
-              }
-            }
-          );
-        }
-        return Promise.resolve({
-          code: 2,
-          message: 'fetch download fail, response blob is not function',
+    ).then((res: any): Promise<any> => {
+      if (res.blob && typeof res.blob === 'function') {
+        return res.blob().then((blob: Blob): Promise<any> => {
+          if (blob) {
+            var filename = res.headers.get('Content-Disposition') || '';
+            this.downloadFileInBowser(blob, filename);
+            return Promise.resolve({code: 0, message: 'success'});
+          } else {
+            return Promise.resolve({
+              code: 1,
+              message: 'fetch download fail, blob is not found',
+            });
+          }
         });
       }
-    );
+      return Promise.resolve({
+        code: 2,
+        message: 'fetch download fail, response blob is not function',
+      });
+    });
+  }
+
+  // POST方式下载文件流
+  static fetchPostDownload(url: string, options?: RequestInit): Promise<any> {
+    return this.fetchPost(
+      url,
+      this.combineOptions(
+        {
+          responseType: 'arraybuffer',
+          headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            Pragma: 'no-cache',
+          },
+        },
+        options
+      )
+    ).then((res: any): Promise<any> => {
+      if (res.blob && typeof res.blob === 'function') {
+        return res.blob().then((blob: Blob): Promise<any> => {
+          if (blob) {
+            var filename =
+              res.headers.get('Content-Disposition') ||
+              res.headers.get('Content-disposition') ||
+              '';
+            this.downloadFileInBowser(blob, filename);
+            return Promise.resolve({code: 0, message: 'success'});
+          } else {
+            return Promise.resolve({
+              code: 1,
+              message: 'fetch download fail, blob is not found',
+            });
+          }
+        });
+      }
+      return Promise.resolve({
+        code: 2,
+        message: 'fetch download fail, response blob is not function',
+      });
+    });
   }
 
   static downloadFileInBowser(blob, filename) {
