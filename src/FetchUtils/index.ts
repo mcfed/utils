@@ -379,19 +379,11 @@ export default class FetchUtils extends FetchUtilsBase {
               res.headers.get('Content-disposition') ||
               '';
             this.downloadFileInBowser(blob, filename);
-            return Promise.resolve({code: 0, message: 'success'});
-          } else {
-            return Promise.resolve({
-              code: 1,
-              message: 'fetch download fail, blob is not found',
-            });
           }
+          return Promise.resolve(res);
         });
       }
-      return Promise.resolve({
-        code: 2,
-        message: 'fetch download fail, response blob is not function',
-      });
+      return Promise.resolve(res);
     });
   }
 
