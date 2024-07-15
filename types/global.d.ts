@@ -33,6 +33,7 @@ declare namespace NodeJS {
         options?: RequestInit
       ) => Promise<void> | void;
       preRequestOptions: Function;
+      preRequestUrl: Function;
       catchGlobalErrorProcess: Function;
     };
   }

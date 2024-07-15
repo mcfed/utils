@@ -42,6 +42,14 @@ class FetchUtilsBase {
       options = global.fetch.preRequestOptions(options, url);
     }
 
+    /** 处理url，为兼容preRequestOptions，新开一个方法来调整url */
+    if (
+      global.fetch.preRequestUrl &&
+      typeof global.fetch.preRequestUrl === 'function'
+    ) {
+      url = global.fetch.preRequestUrl(options, url);
+    }
+
     return fetch(url, options)
       .then(
         (global.fetch.responseProcess ||
