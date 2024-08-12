@@ -387,6 +387,8 @@ export default class FetchUtils extends FetchUtilsBase {
               res.headers.get('Content-disposition') ||
               '';
             this.downloadFileInBowser(blob, filename);
+            // 有下载文件，不展示异常提示
+            return Promise.resolve({code: 0, message: 'success'});
           }
           return Promise.resolve(res);
         });
